@@ -1,0 +1,103 @@
+    //    pWin->wLogtable->table()->setCellWidget(currRow,6,
+    //        new QLabel("text1 <font color=red> text2 </font>"));
+    
+        //    for (int i=0; i<pWin->wLogtable->table()->horizontalHeader()->count() -1; i++)
+        //        pWin->wLogtable->table()->item(currRow,i)->setBackgroundColor
+        //        (pWin->wLogtable->logRowsColor());
+    
+    //                        QFont f = wLogtable->table()->item(currRow,0)->font();
+    //                        f.setPointSize(f.pointSize() + 4);
+    //                        wLogtable->table()->item(currRow,0)->setFont(f);
+    
+    //                        int realW = 0;
+    //                        for (int i=0; i<wLogtable->table()->rowCount(); i++)
+    //                            realW += wLogtable->table()->horizontalHeader()->  ->width();
+    
+    //                        wLogtable->setWindowTitle(QString::number(realW) + "/" +
+    //                                                  QString::number(wLogtable->width()));
+
+
+
+//    std::ifstream ifs(QString(pWin->exePath + "\\"+QString::number(pbID)).toStdString());
+
+//    if (ifs) {
+
+//        int _iTAnswerWait;
+//        int _iNRepeat;
+//        double _iTBtwRepeats;
+//        int _gNRepeat;
+//        double _gTBtwRepeats;
+//        double _U;
+//        char _R;
+
+//        ifs >> _iTAnswerWait;
+//        ifs >> _iNRepeat;
+//        ifs >> _iTBtwRepeats;
+//        ifs >> _gNRepeat;
+//        ifs >> _gTBtwRepeats;
+//        ifs >> _U;
+//        ifs >> _R;
+
+//        ifs.close();
+
+//    }
+
+    if (cmd == "ПС") {
+
+//        pWin->setStatusbarText(QString("Отправлена команда <Проверка связи> для ПБ") +
+//                               vmPersonal.getpbIndex() + " (" +
+//                               donor.getDst() + ", ID " + donor.getID() + "), попытка " + tryNum +
+//                               " из " + tryNumMax);
+
+
+
+        //http://doc.qt.io/qt-5/qtserialport-examples.html
+        //http://www.softelectro.ru/rs232prog.html
+        //QDateTime dt =
+        //qint64 elapsedSec = rLastTime.secsTo(QDateTime::currentDateTime());
+    }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	//    emulAnswer = "";
+
+//    if (cmd.mid(2,2) == "10")                //wr
+//        emulAnswer = cmd.left(12);
+//    else if (cmd.mid(2,10) == "0400100008"){ //rd
+//        emulAnswer = cmd.left(6) +
+//                     "1234" + //MC_VER
+//                     "000A" + //ADC
+
+//                     "000D" +  //сост: "C" - R2=0, R1=0;
+//                               //      "D" - R2=0, R1=1;
+//                               //      "E" - R2=1, R1=0;
+//                               //      "F" - R2=1, R1=1;
+
+//                     "00FF" + //№ гр. команды
+//                     "FFFF" +
+//                     "FFFF" +
+//                     "FFFF" +
+//                     "FFFF";
+//    } else if (cmd.left(1) == "*")
+//        emulAnswer = "*";
+
+//    if (emulAnswer != "")
+//        emulAnswer = ":" + emulAnswer + LRC(emulAnswer) + QString(char(0x0D)) + QString(char(0x0A));
