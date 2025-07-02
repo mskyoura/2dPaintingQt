@@ -63,7 +63,7 @@ public:
 
     void setComPortNum(QString port);
 
-    void logRequest(QString userCmdName, QString cmd, QString cmdName, QString cmdGr, QString cmdArg, QString pb,
+    void logRequest(QString cmd, CmdTypes cmdType, RecieverTypes rcvType, QString cmdArg, QString pb,
                     bool isSpecialCmd, int& TableLine);
     int  parseAndLogResponse(QString rx, SResponse &sr, int tryNum);
     QString bytesForShow(QString src);

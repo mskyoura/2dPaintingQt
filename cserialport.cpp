@@ -103,76 +103,20 @@ int CSerialport::_rTimeSlot(){
     return rTimeSlot;
 }
 
-void CSerialport::logRequest(QString userCmdName, QString cmd, QString cmdName, QString cmdGr, QString cmdArg,
+void CSerialport::logRequest(QString cmd, CmdTypes cmdType, RecieverTypes rcvType, QString cmdArg,
                              QString pb, bool isSpecialCmd, int& TableLine) {
 
     if (!isSpecialCmd) {//произвольные команды не логируем
 
         QDateTime now = QDateTime::currentDateTime();
-
-        //добавляем строку в таблицу и сохраняем ее номер в TableLine
-//        int currRow = pWin->wLogtable->table()->rowCount();
-//        pWin->wLogtable->table()->insertRow(currRow);
-//        TableLine = currRow;
-
-        //вставляем в колонку 0 текущую дату
-//        QTableWidgetItem* it = new QTableWidgetItem(now.date().toString("dd.MM.yy"));
-//        pWin->wLogtable->table()->setItem(currRow,0,it);
-
-            pWin->SaveToLog("","");
-            pWin->SaveToLog("№: ", QString::number(pWin->getLogFileBlockNumber()));
-            pWin->SaveToLog("Дата, время: ", now.date().toString("dd.MM.yy") + " " + now.time().toString("HH:mm:ss.zzz"));
-            TableLine = pWin->getLogFileRowCount();
-
-        //вставляем в колонку 1 текущее время
-//        it = new QTableWidgetItem(now.time().toString("HH:mm:ss.zzz"));
-//        pWin->wLogtable->table()->setItem(currRow,1, it);
-
-        //если это пользовательская команда, записать ее имя в колонку 2 с подкраской
-        if (userCmdName!=""){
-//            it = new QTableWidgetItem(pWin->cmdFullName("_"+userCmdName));
-//            QColor prevClr = QColor(255,255,255);
-//            QString userCmdName_R2 = userCmdName.right(2);
-//            it->setBackgroundColor(
-//                        userCmdName_R2 == "ПС"? PScolor:
-//                        userCmdName_R2 == "ЗБ"? ZBcolor:
-//                        userCmdName_R2 == "РБ"? RBcolor:
-//                        userCmdName_R2 == "ПК"? PKcolor:
-//                        prevClr
-//                                         );
-
-//            QFont font;
-//            font.setBold(true);
-//            it->setFont(font);
-//            it->setTextColor(QColor(255,255,255));
-
-
-//            pWin->wLogtable->table()->setItem(currRow,2, it);
-                pWin->SaveToLog("Команда: ", pWin->cmdFullName("_"+userCmdName));
-        }
-
-        //вставляем в колонку 3 полное имя команды
-//        it = new QTableWidgetItem(pWin->cmdFullName(cmdName));
-//        pWin->wLogtable->table()->setItem(currRow,3, it);
-            pWin->SaveToLog("Детально: ", pWin->cmdFullName(cmdName));
-
-        //вставляем в колонку 4 аргументы команды
-//        it = new QTableWidgetItem(cmdArg);
-//        pWin->wLogtable->table()->setItem(currRow,4, it);
-            pWin->SaveToLog("Параметры: ", cmdArg);
-
-        //вставляем в колонку 5 номер ПБ
-//        it = new QTableWidgetItem(pb);
-//        pWin->wLogtable->table()->setItem(currRow,5, it);
-            pWin->SaveToLog("ПБ: ", pb);
-
-        //вставляем в колонку 6 байты команды
-//        it = new QTableWidgetItem(bytesForShow(cmd));
-//        pWin->wLogtable->table()->setItem(currRow,6, it);
-            pWin->SaveToLog("Код: ", bytesForShow(cmd));
-
-//        pWin->wLogtable->setNextLogRowsColor();
-
+        pWin->SaveToLog("","");
+        pWin->SaveToLog("№: ", QString::number(pWin->getLogFileBlockNumber()));
+        pWin->SaveToLog("Дата, время: ", now.date().toString("dd.MM.yy") + " " + now.time().toString("HH:mm:ss.zzz"));
+        TableLine = pWin->getLogFileRowCount();
+        pWin->SaveToLog("Детально: ", pWin->cmdFullName(cmdType, rcvType));
+        pWin->SaveToLog("Параметры: ", cmdArg);
+        pWin->SaveToLog("ПБ: ", pb);
+        pWin->SaveToLog("Код: ", bytesForShow(cmd));
     }
 }
 
