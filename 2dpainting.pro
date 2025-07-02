@@ -24,7 +24,9 @@ HEADERS     = \
     processing.h \
     wwarning.h \
     dbg.h \
-    wconfirm.h
+    wconfirm.h \
+    commandtypes.h \
+    recievertypes.h
 
 SOURCES     = \
               main.cpp \

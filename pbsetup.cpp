@@ -4,6 +4,8 @@
 #include "appset.h"
 #include "admin.h"
 #include "saver.h"
+#include "commandtypes.h"
+#include "recievertypes.h"
 
 #include <QMessageBox>
 #include <QDateTime>
@@ -11,6 +13,12 @@
 #include <QFile>
 #include <QTextStream>
 #include <QList>
+
+QList <QString> PBsetup::commandNames =
+    {"ПС",
+     "ЗБ",
+     "РБ",
+     "ПУСК"};
 
 QString PBsetup::CRLF = QString(char (0x0D)) + QString(char (0x0A));
 QString PBsetup::LFCR = QString(char (0x0A)) + QString(char (0x0D));
@@ -94,7 +102,7 @@ int PBsetup::calcGroupCmdNum(QList <int> donorsNum){
     return list[index];
 }
 
-QString PBsetup::execCmd(QList <int> donorsNum, QString cmd){
+QString PBsetup::execCmd(QList <int> donorsNum, CmdTypes cmdType, RecieverTypes rcvType){
 
     int CmdResultLineNumber = -1,
         TableLine = -1;
@@ -104,6 +112,8 @@ QString PBsetup::execCmd(QList <int> donorsNum, QString cmd){
     int DeviceQty = donorsNum.size(); //к-во устройств
 
     bool userCmdNameIsWritten = false;
+
+
 
 #ifdef DbgqDebug
     for (int i=0; i<8; i++) {
@@ -157,41 +167,7 @@ QString PBsetup::execCmd(QList <int> donorsNum, QString cmd){
             }
 #endif
 
-        QString gCmdName   = "",
-                iCmdName   = "",
-                specialCmd = "";
 
-        if        (cmd ==   "ГПС") {
-            iCmdName =       "ПС";
-
-        } else if (cmd ==   "ГЗБ") {
-            gCmdName =       "ЗБ";
-            iCmdName =       "ПС";
-
-        } else if (cmd ==   "ГРБ") {
-            gCmdName =       "РБ";
-            iCmdName =       "ПС";
-
-        } else if (cmd ==   "ГПК"){
-            iCmdName =       "ПК";
-            gCmdName =       "ГПК";
-        }
-        else if ((cmd ==   "ПС") ||
-                   (cmd ==   "ЗБ") ||
-                   (cmd ==   "РБ") ||
-                   (cmd ==   "ПК")) {
-            iCmdName =       cmd;
-        } else {
-            specialCmd =     cmd;
-        }
-
-
-#ifdef Dbgfile
-        if (dbgfReady) out << "cmd="+cmd << endl;
-        if (dbgfReady) out << "gCmdName="+gCmdName << endl;
-        if (dbgfReady) out << "iCmdName="+iCmdName << endl;
-        if (dbgfReady) out << "specialCmd="+specialCmd << endl;
-#endif
         //групповые
         int    gTries        = pWin->Usb->_gNRepeat();
         double gTBtwRepeats  = pWin->Usb->_gTBtwRepeats()*1000;
@@ -208,14 +184,15 @@ QString PBsetup::execCmd(QList <int> donorsNum, QString cmd){
         QString RBdlit = pWin->Usb->byteToQStr(rRBdlit);
         int rTimeSlot = pWin->Usb->_rTimeSlot();
 
+
         //[(ГК)[<-gTBtwRepeats->(ГК)]<-gTAfterCmd_ms->](ИК)<-iTAnswerWait->[<-iTBtwRepeats->(ИК)<-iTAnswerWait->]
 
         //групповой блок
 
         //общее время
-        int tTotalGroup_ms = (gCmdName > "")?(gTries-1)*gTBtwRepeats + gTAfterCmd_ms:0;
+        int tTotalGroup_ms = (rcvType == GROUP)?(gTries-1)*gTBtwRepeats + gTAfterCmd_ms:0;
         int tTotalIndiv_ms = DeviceQty*(iTries*iTAnswerWait + (iTries-1)*iTBtwRepeats);
-        if ((iCmdName=="ЗБ") || (iCmdName=="РБ") || (iCmdName=="ПК"))
+        if (cmdType != STATUS)
             tTotalIndiv_ms *= 2;
         int tTotal_ms = tTotalGroup_ms + tTotalIndiv_ms;
 
@@ -237,10 +214,13 @@ QString PBsetup::execCmd(QList <int> donorsNum, QString cmd){
         int gCmdNumber0_255 = 0;//ниже - поиск минимального числа от 0 до 255, не занятого
                                 //ни "отправленным", ни "полученным" номером для ПБ
 
-        if ((cmd == "ГЗБ") || (cmd == "ГРБ") || (cmd == "ГПК"))
+        //Если команда широковещательная
+        //или отдельный случай для запуска Реле2 при отправке последовательно нескольким устройствам - считаем номер команды
+        if (rcvType == GROUP || (rcvType == MULTIPLE && cmdType == RELAY2ON))
             gCmdNumber0_255 = calcGroupCmdNum(donorsNum);
-
-        if ((cmd == "ГЗБ") || (cmd == "ГРБ") || (cmd == "ГПК" && rTimeSlot != 0)) {
+        //Если команда широковещательная
+        if (rcvType == GROUP)
+        {
 
 #ifdef Dbgfile
             if (dbgfReady) out << tr("групп. команда") << endl;
@@ -261,7 +241,7 @@ QString PBsetup::execCmd(QList <int> donorsNum, QString cmd){
 
                     wProcess->setText("Ожидание перед отправкой " + QString::number(tryNum+1) +  "-й из " +
                                       QString::number(gTries) + " групповой команды " +
-                                      pWin->cmdFullName(gCmdName) +
+                                      pWin->cmdFullName(cmdType, rcvType) +
                                       ".");
 
                     deltaT_ms = gTBtwRepeats;
@@ -281,30 +261,66 @@ QString PBsetup::execCmd(QList <int> donorsNum, QString cmd){
                     //qDebug() << "пауза между ГК " << gTBtwRepeats << ", прошло " << passed_ms;
                 }
 
-                //вставить отправку команды;
-                //qDebug() << "Групповая команда";
+                QString cmdRq = QString("FF") + "10" + "0000"; ..
+                if (rTimeSlot > 0)
+                {
+                    cmdRq += "000D" + "18"; //количество регистров, которые будут записаны (13) + кол-во байт в новом пакете
+                }
+                else
+                {
+                    cmdRq += "0007" + "0E";//аналогично в старом пакете
+                }
+                //Поля данных
+                cmdRq += "00" + pWin->Usb->byteToQStr(gCmdNumber0_255); "00 +ID команды - 1 регистр"
+                //2 регистр
+                switch (cmdType)
+                {
+                    case RELAY2ON:
+                        cmdRq += "FFFF"; //Игнорируем реле1 FFFF
+                    break;
+                    case RELAY1ON:
+                        cmdRq += "01" + RBdlit;//Реле1 вкл + длительность
+                    break;
+                    case RELAY1OFF:
+                        cmdRq = "0000";//Реле1 выкл + длительность
+                    break;
+                }
+                //3 регистр
+                cmdRq += "0000"; //для групп запуска реле1 задержка всегда ноль
+                //4 регистр
+                if (cmdType == RELAY2ON)
+                    cmdRq += "01" + T1;//Реле2 вкл + длительность
+                else
+                    cmdRq += "FFFF"; //игнорируем
+                //5 регистр
+                if (cmdType == RELAY2ON)
+                    cmdRq += T2;//задержка перед включением Реле2
+                else
+                    cmdRq += "FFFF"; //игнорируем
+                //6 и 7 регистры
+                cmdRq += "FFFFFFFF";//игнорируем Реле3
+                //если новый пакет
+                //c 8 по 11 регистры передаём адреса устройств в том порядке, в котором они добавлены
+                if (rTimeSlot > 0)
+                {
+                    //максимум 8 устройств
+                    for (int cnt = 0; cnt < 8; cnt++)
+                    {
+                        QString id = pWin->pb[pWin->vm[donorsNum[cnt]].getpbIndex()]._ID();
+                        if (i < DeviceQty && id != "")
+                        {
+                            cmdRq += id;
+                        }
+                        else
+                        {
+                            cmdRq += "00";
+                        }
+                    }
+                    //12 регистр - время слота
+                    cmd += "00" + pWin->Usb->byteToQStr(rTimeSlot);
+                }
 
-                //            gCmdName == "ЗБ"/"РБ"
-                QString cmdRq = QString("FF") + //ID = FF
-                    "10" +   //Func
-                    "0000" + //Addr
-                    "0007" + //к-во регистров
-                    "0E"   + //к-во байтов
-                    // 0000 ----------------------------------------------------------------------------
-                    "00" + pWin->Usb->byteToQStr(gCmdNumber0_255) + //номер гр. команды
-                    // 0001 0002 -----------------------------------------------------------------------
-                    (gCmdName == "ЗБ"? "00":"01")+ //Реле1 - состояние: 00 выкл(ЗБ), иначе - вкл(РБ)
-                    (gCmdName == "РБ"? RBdlit:"00")+ //    - длит. состояния
-                    "0000"+                        //      - задержка перед установкой
-                    // 0003 0004 -----------------------------------------------------------------------
-                    "FFFFFFFF" +                   //Реле2 - состояние: 00 выкл(ЗБ), иначе - вкл(РБ)
-                                                   //      - длит. состояния
-                                                   //      - задержка перед установкой
-                    // 0005 0006 -----------------------------------------------------------------------
-                    "FFFFFFFF";                    //Реле3 - состояние: 00 выкл(ЗБ), иначе - вкл(РБ)
-                                                   //      - длит. состояния
-                                                   //      - задержка перед установкой
-                    // ---------------------------------------------------------------------------------
+
 
                 cmdRq = cmdRq + pWin->Usb->LRC(cmdRq);
 
@@ -410,7 +426,7 @@ QString PBsetup::execCmd(QList <int> donorsNum, QString cmd){
                 Saver& donor = pWin->pb[pWin->vm[donorsNum[devNum]].getpbIndex()];
 
                 //во всех готовых к групповой команде у-вах обновляем номер команды-запроса
-                if ((cmd == "ГЗБ") || (cmd == "ГРБ")) {
+                if ((cmd == "ГЗБ") || (cmd == "ГРБ") || (cmd == "ГПК")) {
                     donor.CmdNumReq(gCmdNumber0_255);
 #ifdef Dbgfile
                     if (dbgfReady) out << tr("(cmd == ГЗБ) || (cmd == ГРБ): set CmdNumReq()=") << gCmdNumber0_255 << endl;
@@ -990,26 +1006,26 @@ void PBsetup::mousePressEvent(QMouseEvent *event){
     switch (vmPersonal.PersonalRemoteClickDispatch(event->pos())) {
     case 0:
         if (donor._ID()>0)
-            execCmd(donorsNum, "ПС");
+            execCmd(donorsNum, STATUS, SINGLE);
         else
             pWin->warn->showWarning("Задайте ID в настройках ПБ.");
         break;
     case 1:
         if (donor._ID()>0)
-            execCmd(donorsNum, "ЗБ");
+            execCmd(donorsNum, RELAY1OFF, SINGLE);
         else
             pWin->warn->showWarning("Задайте ID в настройках ПБ.");
         break;
     case 2:
         if (donor._ID()>0)
-            execCmd(donorsNum, "РБ");
+            execCmd(donorsNum, RELAY1ON, SINGLE);
         else
             pWin->warn->showWarning("Задайте ID в настройках ПБ.");
         break;
     case 3:
         if (donor._ID()>0) {
             if (donor.mayStart())
-                execCmd(donorsNum, "ПК");
+                execCmd(donorsNum, RELAY2ON, SINGLE);
             else
                 pWin->warn->showWarning(QString("Команда \"") + "Запустить Реле2" +
                         "\" возможна только\nв состоянии \"" + "Реле1 включено" + "\".");

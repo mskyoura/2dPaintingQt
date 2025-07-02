@@ -50,6 +50,7 @@
 #include "wlog.h"
 #include "wappsett.h"
 #include "wconfirm.h"
+#include "commandtypes.h"
 
 #include <QGraphicsEffect>
 #include <QTableWidget>
@@ -252,31 +253,13 @@ void Window::closeEvent(QCloseEvent* event) {
 #endif
 }
 
-QString Window::cmdFullName(QString name){
-    if      (name == "ПС")
-        return Vismo::PBcommands[0];
-    else if (name == "ЗБ")
-        return Vismo::PBcommands[1];
-    else if (name == "РБ")
-        return Vismo::PBcommands[2];
-    else if (name == "ПК")
-        return Vismo::PBcommands[3];
-    else if (name == "_ГПС")
-        return "ГРУПП. " + Vismo::PBcommands[0];
-    else if (name == "_ГЗБ")
-        return "ГРУПП. " + Vismo::PBcommands[1];
-    else if (name == "_ГРБ")
-        return "ГРУПП. " + Vismo::PBcommands[2];
-    else if (name == "_ГПК")
-        return "ГРУПП. " + Vismo::PBcommands[3];
-    else if (name == "_ПС")
-        return Vismo::PBcommands[0];
-    else if (name == "_ЗБ")
-        return Vismo::PBcommands[1];
-    else if (name == "_РБ")
-        return Vismo::PBcommands[2];
-    else if (name == "_ПК")
-        return Vismo::PBcommands[3];
+QString Window::cmdFullName(CmdTypes cmdType, RecieverTypes rcvType){
+    QString result = "";
+    if (rcvType != SINGLE)
+    {
+        result += "ГРУПП. ";
+    }
+    return result + Vismo::PBcommands[cmdType];
 }
 
 QString Window::getPBdescription(int num){
@@ -558,13 +541,13 @@ void Window::mousePressEvent(QMouseEvent *event){
                     }
             if (devIndexes.size()>0){
                 if      (action == 4)
-                    pbs->execCmd(devIndexes,"ГПС");
+                    pbs->execCmd(devIndexes, STATUS, MULTIPLE);
                 else if (action == 5)
-                    pbs->execCmd(devIndexes,"ГЗБ");
+                    pbs->execCmd(devIndexes, RELAY1OFF, GROUP);
                 else if (action == 6)
-                    pbs->execCmd(devIndexes,"ГРБ");
+                    pbs->execCmd(devIndexes, RELAY1ON, GROUP);
                 else if (action == 7)
-                    pbs->execCmd(devIndexes,"ГПК");
+                    pbs->execCmd(devIndexes, RELAY2ON, Usb->_rTimeSlot() > 0 ? GROUP : MULTIPLE);
             }
 
             caught = true;
@@ -809,6 +792,10 @@ int Window::saveSettings(QString fn){
                     xmlWriter.writeCharacters(QString::number(Usb->_rUseRBdlit()));
                     xmlWriter.writeEndElement();
 
+                    xmlWriter.writeStartElement("rTimeSlot");
+                    xmlWriter.writeCharacters(QString::number(Usb->_rTimeSlot()));
+                    xmlWriter.writeEndElement();
+
                     xmlWriter.writeStartElement("cStartIndicatorFading");
                     xmlWriter.writeCharacters(QString::number(Saver::_isStartIndicatorFading()));
                     xmlWriter.writeEndElement();
@@ -989,6 +976,10 @@ int Window::readSettings(QString fn){
                     xmlReader.readNext();
                     int ri = xmlReader.text().toInt(&ok);
                     if (ok) Usb->setrUseRBdlit(ri);
+                } else if (xmlReader.name() == "rTimeSlot") {
+                    xmlReader.readNext();
+                    int ri = xmlReader.text().toInt(&ok);
+                    if (ok) Usb->setrTimeSlot(ri);
                 } else if (xmlReader.name() == "A") {
                     xmlReader.readNext();
                     pwdhash = xmlReader.text().toLongLong(&pwdhash_ok);//не читал код для пароля "6", решено заменой на toLongLong

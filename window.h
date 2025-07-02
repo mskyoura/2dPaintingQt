@@ -66,6 +66,8 @@
 #include "wappsett.h"
 #include "wwarning.h"
 #include "wconfirm.h"
+#include "commandtypes.h"
+#include "recievertypes.h"
 
 class Widget;
 class PBsetup;
@@ -133,7 +135,7 @@ public:
     void TestInRange(double min, double max, double& var,
                      QString value, QLineEdit *e, bool &eAccepted);
 
-    QString cmdFullName(QString name);
+    QString cmdFullName(CmdTypes cmdType, RecieverTypes rcvType);
     QString getPBdescription(int num);
 
     void upd();

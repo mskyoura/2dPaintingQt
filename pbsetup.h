@@ -6,6 +6,8 @@
 #include "vismo.h"
 #include "window.h"
 #include "processing.h"
+#include "commandtypes.h"
+#include "recievertypes.h"
 
 #include <QWidget>
 #include <QDialog>
@@ -20,6 +22,8 @@ class Widget;
 class Window;
 class Processing;
 
+
+
 class PBsetup : public QDialog
 {
     Q_OBJECT
@@ -31,7 +35,7 @@ public:
     Vismo vmPersonal;
     void paint(QPainter *painter, QPaintEvent *event);
 
-    QString execCmd(QList<int> donorsNum, QString cmd);
+    QString execCmd(QList<int> donorsNum, CmdTypes cmdType, RecieverTypes rcvType);
 
 private slots:
     void on_PBsetup_rejected();
