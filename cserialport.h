@@ -4,6 +4,8 @@
 #include <QString>
 #include "window.h"
 #include "processing.h"
+#include "commandtypes.h"
+#include "recievertypes.h"
 
 struct SResponse {
     double U;
