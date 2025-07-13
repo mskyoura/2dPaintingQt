@@ -196,28 +196,6 @@ void Appset::paintEvent(QPaintEvent *event)
     painter.end();
 }
 
-void Appset::on_sendBtn_clicked()
-{
-    if (ui->eMsg->currentText() == "")
-        return;
-
-    ui->eAnsw->setText("");
-
-    bool needToAdd = true;
-    for (int i=0; (i < ui->eMsg->count()) && needToAdd; i++)
-        if (ui->eMsg->itemText(i) == ui->eMsg->currentText())
-            needToAdd = false;
-
-    if (needToAdd)
-        ui->eMsg->addItem(ui->eMsg->currentText());
-
-    QList <int> dev;
-    dev << pWin->pbs->vmPersonal.getpbIndex();
-    QString ans = pWin->pbs->execCmd(dev, ui->eMsg->currentText());
-    ui->eAnsw->setText(ans==""? "<Нет ответа>":ans.mid(1,ans.length()-3));
-
-}
-
 void Appset::on_clrLstBtn_clicked()
 {
     ui->eMsg->clear();

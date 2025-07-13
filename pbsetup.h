@@ -65,7 +65,6 @@ private:
                    LFCR;
 
     int calcGroupCmdNum(QList <int> donorsNum);
-    bool initSerialPort(QSerialPort& serialPort, const QString& portname);
     bool waitWithProgress(int ms, int& passed_ms, int total_ms, const QString& text);
     QString buildGroupCommand(int gCmdNumber0_255, CmdTypes cmdType, const QList<int>& donorsNum, QString& rbdlit,
                               int timeSlot, const QString& t1, const QString& t2);

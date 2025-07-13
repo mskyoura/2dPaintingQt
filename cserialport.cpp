@@ -100,6 +100,15 @@ int    CSerialport::_rRBdlit(){
     return rRBdlit;
 }
 
+int CSerialport::_rT1(){
+    return t1;
+}
+
+int CSerialport::_rT2()
+{
+    return t2;
+}
+
 int    CSerialport::_rUseRBdlit(){
     return rUseRBdlit;
 }
@@ -110,6 +119,25 @@ int CSerialport::_rTimeSlot(){
 
 int CSerialport::_rSlotAddDelay(){
     return rSlotAddDelay;
+}
+
+bool CSerialport::initSerialPort(QSerialPort& serialPort, const QString& portname) {
+    if (portname.length() <= 3 || !portname.startsWith("COM")) {
+        pWin->warn->showWarning("Выберите COM-порт (меню Настройки|Основные).");
+        return false;
+    }
+    serialPort.setPortName(portname);
+    serialPort.setBaudRate(QSerialPort::Baud9600);
+    serialPort.setDataBits(QSerialPort::Data8);
+    serialPort.setParity(QSerialPort::NoParity);
+    serialPort.setStopBits(QSerialPort::OneStop);
+    serialPort.setFlowControl(QSerialPort::NoFlowControl);
+
+    if (!serialPort.open(QIODevice::ReadWrite)) {
+        pWin->warn->showWarning("Не удалось открыть порт:" + portname + ": " + serialPort.errorString());
+        return false;
+    }
+    return true;
 }
 
 void CSerialport::logRequest(QString cmd, CmdTypes cmdType, RecieverTypes rcvType, QString cmdArg,

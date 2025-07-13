@@ -2,6 +2,7 @@
 #define CSERIALPORT_H
 
 #include <QString>
+#include <QSerialPort>
 #include "window.h"
 #include "processing.h"
 #include "commandtypes.h"
@@ -73,7 +74,7 @@ public:
     int    _rT2();
 
     void setComPortNum(QString port);
-
+    bool initSerialPort(QSerialPort& serialPort, const QString& portname);
     void logRequest(QString cmd, CmdTypes cmdType, RecieverTypes rcvType, QString cmdArg, QString pb,
                     bool isSpecialCmd, int& TableLine);
     int  parseAndLogResponse(QString rx, SResponse &sr, int tryNum);

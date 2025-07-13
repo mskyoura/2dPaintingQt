@@ -96,24 +96,7 @@ int PBsetup::calcGroupCmdNum(QList <int> donorsNum){
     return list[index];
 }
 
-bool initSerialPort(QSerialPort& serialPort, const QString& portname, Window* pWin) {
-    if (portname.length() <= 3 || !portname.startsWith("COM")) {
-        pWin->warn->showWarning("Выберите COM-порт (меню Настройки|Основные).");
-        return false;
-    }
-    serialPort.setPortName(portname);
-    serialPort.setBaudRate(QSerialPort::Baud9600);
-    serialPort.setDataBits(QSerialPort::Data8);
-    serialPort.setParity(QSerialPort::NoParity);
-    serialPort.setStopBits(QSerialPort::OneStop);
-    serialPort.setFlowControl(QSerialPort::NoFlowControl);
 
-    if (!serialPort.open(QIODevice::ReadWrite)) {
-        pWin->warn->showWarning("Не удалось открыть порт:" + portname + ": " + serialPort.errorString());
-        return false;
-    }
-    return true;
-}
 
 // Пауза с отображением прогресса и проверкой отмены
 bool PBsetup::waitWithProgress(int ms, int& passed_ms, int total_ms, const QString& text) {
@@ -343,7 +326,7 @@ QString PBsetup::execCmd(QList <int> donorsNum, CmdTypes cmdType, RecieverTypes 
 
         QString portname = pWin->wAppsettings->comPortName(1);
 
-        if (!initSerialPort(serialPort, portname))
+        if (!pWin->Usb->initSerialPort(serialPort, portname))
             return pWin->Usb->emulAnswer;
 
         connect(&serialPort, SIGNAL(bytesWritten(qint64)), SLOT(on_BytesWritten));

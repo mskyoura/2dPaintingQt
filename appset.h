@@ -54,8 +54,6 @@ private slots:
 
     void on_eDst_textChanged(const QString &arg1);
 
-    void on_sendBtn_clicked();
-
     void on_clrLstBtn_clicked();
 
 private:
