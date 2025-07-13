@@ -67,6 +67,11 @@ void CSerialport::setrTimeSlot(int _rTimeSlot)
     rTimeSlot = _rTimeSlot;
 }
 
+void CSerialport::setrSlotAddDelay(int _rSlotAddDelay)
+{
+    rSlotAddDelay = _rSlotAddDelay;
+}
+
 int    CSerialport::_iTAnswerWait(){
     return iTAnswerWait;
 }
@@ -101,6 +106,10 @@ int    CSerialport::_rUseRBdlit(){
 
 int CSerialport::_rTimeSlot(){
     return rTimeSlot;
+}
+
+int CSerialport::_rSlotAddDelay(){
+    return rSlotAddDelay;
 }
 
 void CSerialport::logRequest(QString cmd, CmdTypes cmdType, RecieverTypes rcvType, QString cmdArg,

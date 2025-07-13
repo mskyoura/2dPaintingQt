@@ -65,16 +65,16 @@ private:
                    LFCR;
 
     int calcGroupCmdNum(QList <int> donorsNum);
-    bool initSerialPort(QSerialPort& serialPort, const QString& portname, QWidget* pWin);
-    bool waitWithProgress(Processing* wProcess, int ms, int& passed_ms, int total_ms, const QString& text);
-    QString buildGroupCommand(int gCmdNumber0_255, int cmdType, int rTimeSlot, const QList<int>& donorsNum, const Window* pWin, const QString& RBdlit, const QString& T1, const QString& T2);
-    bool sendCommand(QSerialPort& serialPort, const QString& frameCmd, Processing* wProcess);
-    bool sendGroupCommands(QSerialPort& serialPort, const QList<int>& donorsNum, int cmdType, int rTimeSlot,
-                           int gTries, double gTBtwRepeats, int gTAfterCmd_ms,
-                           Processing* wProcess, Window* pWin);
-    void processDeviceSlots(QSerialPort& serialPort, const QList<int>& donorsNum, int slotDelayMs, Window* pWin, Processing* wProcess);
-    void readResponseInSlot(QSerialPort& serialPort, Saver& donor, Window* pWin, Processing* wProcess, int timeoutPerSlotMs, bool& cont);
-    bool waitForSlot(int devSlot, int slotDelayMs, bool& cont, Processing* wProcess);
+    bool initSerialPort(QSerialPort& serialPort, const QString& portname);
+    bool waitWithProgress(int ms, int& passed_ms, int total_ms, const QString& text);
+    QString buildGroupCommand(int gCmdNumber0_255, CmdTypes cmdType, const QList<int>& donorsNum, QString& rbdlit,
+                              int timeSlot, const QString& t1, const QString& t2);
+    bool sendCommand(QSerialPort& serialPort, const QString& frameCmd);
+    bool sendGroupCommands(QSerialPort& serialPort, const QList<int>&  donorsNum, CmdTypes cmdType, int timeSlot,
+                           int gTries, double gTBtwRepeats, int gTAfterCmd_ms);
+    void processDeviceSlots(QSerialPort& serialPort, const QList<int>& donorsNum);
+    void readResponseInSlot(QSerialPort& serialPort, Saver& donor, int timeoutPerSlotMs, bool& cont);
+    bool waitForSlot(int devSlot, int slotDelayMs, int slotAddDelayMs, bool& cont);
 
 #ifdef Dbg
         int R1status;

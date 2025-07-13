@@ -17,7 +17,7 @@
 QString PBsetup::CRLF = QString(char (0x0D)) + QString(char (0x0A));
 QString PBsetup::LFCR = QString(char (0x0A)) + QString(char (0x0D));
 
-PBsetup::PBsetup(Window *_parent) :
+PBsetup::PBsetup(QWidget *_parent) :
     QDialog(_parent)
 {
     parent = _parent;
@@ -116,7 +116,7 @@ bool initSerialPort(QSerialPort& serialPort, const QString& portname, Window* pW
 }
 
 // Пауза с отображением прогресса и проверкой отмены
-bool waitWithProgress(Processing* wProcess, int ms, int& passed_ms, int total_ms, const QString& text) {
+bool PBsetup::waitWithProgress(int ms, int& passed_ms, int total_ms, const QString& text) {
     if (!wProcess->isVisible()) wProcess->show();
     wProcess->setText(text);
 
@@ -134,9 +134,10 @@ bool waitWithProgress(Processing* wProcess, int ms, int& passed_ms, int total_ms
 }
 
 // Формирование командного запроса для группового типа
-QString buildGroupCommand(int gCmdNumber0_255, int cmdType, int rTimeSlot, const QList<int>& donorsNum, const Window* pWin, const QString& RBdlit, const QString& T1, const QString& T2) {
+QString PBsetup::buildGroupCommand(int gCmdNumber0_255, CmdTypes cmdType, const QList<int>& donorsNum, QString& rbDlit,
+                                   int timeSlot, const QString& t1, const QString& t2) {
     QString cmdRq = "FF10" + QString("0000");
-    if (rTimeSlot > 0) {
+    if (timeSlot > 0) {
         cmdRq += "000D18"; // 13 регистров + байты нового пакета
     } else {
         cmdRq += "00070E"; // старый пакет
@@ -145,25 +146,25 @@ QString buildGroupCommand(int gCmdNumber0_255, int cmdType, int rTimeSlot, const
 
     switch (cmdType) {
     case RELAY2ON: cmdRq += "FFFF"; break; // Игнорируем реле1
-    case RELAY1ON: cmdRq += "01" + RBdlit; break; // Реле1 вкл + длительность
+    case RELAY1ON: cmdRq += "01" + rbDlit; break; // Реле1 вкл + длительность
     case RELAY1OFF: cmdRq += "0000"; break; // Реле1 выкл + длительность
     }
 
     cmdRq += "0000"; // задержка всегда 0
 
     if (cmdType == RELAY2ON)
-        cmdRq += "01" + T1;
+        cmdRq += "01" + t1;
     else
         cmdRq += "FFFF";
 
     if (cmdType == RELAY2ON)
-        cmdRq += T2;
+        cmdRq += t2;
     else
         cmdRq += "FFFF";
 
     cmdRq += "FFFFFFFF"; // Реле3 игнорируем
 
-    if (rTimeSlot > 0) {
+    if (timeSlot > 0) {
         // Добавляем адреса устройств
         for (int i = 0; i < 8; i++) {
             if (i < donorsNum.size()) {
@@ -173,7 +174,7 @@ QString buildGroupCommand(int gCmdNumber0_255, int cmdType, int rTimeSlot, const
                 cmdRq += "00";
             }
         }
-        cmdRq += "00" + pWin->Usb->byteToQStr(rTimeSlot);
+        cmdRq += "00" + pWin->Usb->byteToQStr(timeSlot);
     }
 
     cmdRq += pWin->Usb->LRC(cmdRq);
@@ -181,7 +182,7 @@ QString buildGroupCommand(int gCmdNumber0_255, int cmdType, int rTimeSlot, const
 }
 
 // Отправка команды и ожидание завершения записи
-bool sendCommand(QSerialPort& serialPort, const QString& frameCmd, Processing* wProcess) {
+bool PBsetup::sendCommand(QSerialPort& serialPort, const QString& frameCmd) {
     QByteArray writeData = frameCmd.toLatin1();
     bool isWriteDone = false;
 
@@ -202,47 +203,49 @@ bool sendCommand(QSerialPort& serialPort, const QString& frameCmd, Processing* w
     return isWriteDone;
 }
 
-bool sendGroupCommands(QSerialPort& serialPort, const QList<int>& donorsNum, int cmdType, int rTimeSlot,
-                       int gTries, double gTBtwRepeats, int gTAfterCmd_ms,
-                       Processing* wProcess, Window* pWin) {
+bool PBsetup::sendGroupCommands(QSerialPort& serialPort, const QList<int>&  donorsNum, CmdTypes cmdType, int timeSlot,
+                                int gTries, double gTBtwRepeats, int gTAfterCmd_ms) {
     int passed_ms = 0;
     int total_ms = (gTries - 1) * gTBtwRepeats + gTAfterCmd_ms;
 
     int gCmdNumber0_255 = calcGroupCmdNum(donorsNum);
 
     QString RBdlit = pWin->Usb->byteToQStr(pWin->Usb->_rRBdlit());
-    QString T1 = pWin->Usb->byteToQStr(donor._T1());
-    QString T2 = pWin->Usb->byteToQStr(donor._T2());
+    QString t1 = pWin->Usb->byteToQStr(pWin->Usb->_rT1());
+    QString t2 = pWin->Usb->byteToQStr(pWin->Usb->_rT2());
+    int tableLine = -1;
 
     for (int tryNum = 0; tryNum < gTries; ++tryNum) {
         if (tryNum > 0) {
-            if (!waitWithProgress(wProcess, int(gTBtwRepeats), passed_ms, total_ms,
+            if (!waitWithProgress(int(gTBtwRepeats), passed_ms, total_ms,
                                   QString("Ожидание перед отправкой %1-й из %2 групповой команды %3.")
                                       .arg(tryNum + 1).arg(gTries).arg(pWin->cmdFullName(cmdType, GROUP)))) {
                 return false;
             }
         }
 
-        QString cmdRq = buildGroupCommand(gCmdNumber0_255, cmdType, rTimeSlot, donorsNum, pWin, RBdlit, T1, T2);
+        QString cmdRq = buildGroupCommand(gCmdNumber0_255, cmdType, donorsNum, RBdlit, timeSlot, t1, t2);
 
-        if (!sendCommand(serialPort, cmdRq, wProcess)) {
+        if (!sendCommand(serialPort, cmdRq)) {
             return false;
         }
 
         if (pWin->wAppsettings->getValueLogWriteOn()) {
             pWin->Usb->logRequest(cmdRq, cmdType, GROUP, QString("№ %1, попытка %2 из %3")
-                                .arg(gCmdNumber0_255).arg(tryNum + 1).arg(gTries), "Группа ПБ", false, -1);
+                                .arg(gCmdNumber0_255).arg(tryNum + 1).arg(gTries), "Группа ПБ", false, tableLine);
         }
     }
     return true;
 }
 
 // Основной цикл обхода устройств с ожиданием и чтением ответа
-void processDeviceSlots(QSerialPort& serialPort, const QList<int>& donorsNum, int slotDelayMs, Window* pWin, Processing* wProcess) {
+void PBsetup::processDeviceSlots(QSerialPort& serialPort, const QList<int>& donorsNum) {
     bool cont = true;
-    const int DeviceQty = donorsNum.size();
+    const int deviceQty = donorsNum.size();
+    int rTimeSlot = pWin->Usb->_rTimeSlot();
+    int rSlotAddDelay = pWin->Usb->_rSlotAddDelay();
 
-    for (int devSlot = 0; devSlot < DeviceQty && cont; ++devSlot) {
+    for (int devSlot = 0; devSlot < deviceQty && cont; ++devSlot) {
         const int pbIndex = pWin->vm[donorsNum[devSlot]].getpbIndex();
         Saver& donor = pWin->pb[pbIndex];
 
@@ -252,15 +255,15 @@ void processDeviceSlots(QSerialPort& serialPort, const QList<int>& donorsNum, in
         donor.setHasLastOperationGoodAnswer(false);
         donor.CmdNumRsp(-1);
 
-        if (!waitForSlot(devSlot, slotDelayMs, cont, wProcess))
+        if (!waitForSlot(devSlot, rTimeSlot, rSlotAddDelay, cont))
             break;
 
-        readResponseInSlot(serialPort, donor, pWin, wProcess, cont);
+        readResponseInSlot(serialPort, donor, rTimeSlot + rSlotAddDelay, cont);
     }
 }
 
 // Читаем ответ устройства в своём слоте, парсим и обновляем состояние
-void readResponseInSlot(QSerialPort& serialPort, Saver& donor, Window* pWin, Processing* wProcess, int timeoutPerSlotMs, bool& cont) {
+void PBsetup::readResponseInSlot(QSerialPort& serialPort, Saver& donor, int timeoutPerSlotMs, bool& cont) {
     QByteArray readData;
     const QDateTime readStart = QDateTime::currentDateTime();
     SResponse sr;
@@ -276,7 +279,7 @@ void readResponseInSlot(QSerialPort& serialPort, Saver& donor, Window* pWin, Pro
             if (ParsingCode == 2) { // получили валидный ответ на ПС
                 donor.CmdNumRsp(sr.CmdNumRsp);
 
-                if (donor.CmdNumReq() == sr.CmdNumRsp() || donor.CmdNumReq() == -1) {
+                if (donor.CmdNumReq() == sr.CmdNumRsp || donor.CmdNumReq() == -1) {
                     donor.setLastOperationWithGoodAnswer("ПС");
                     donor.setPressedButton("ПС");
                     donor.setLastGoodAnswerTime(QDateTime::currentDateTime());
@@ -300,8 +303,8 @@ void readResponseInSlot(QSerialPort& serialPort, Saver& donor, Window* pWin, Pro
 }
 
 // Ожидаем наступления своего слота
-bool waitForSlot(int devSlot, int slotDelayMs, bool& cont, Processing* wProcess) {
-    const int waitBeforeSlot = slotDelayMs != 0 ? devSlot * slotDelayMs : ;
+bool PBsetup::waitForSlot(int devSlot, int slotDelay, int slotAddDelay, bool& cont) {
+    const int waitBeforeSlot = devSlot * slotDelay + slotAddDelay;
     QDateTime slotStart = QDateTime::currentDateTime();
 
     while (slotStart.msecsTo(QDateTime::currentDateTime()) < waitBeforeSlot && cont) {
@@ -340,10 +343,10 @@ QString PBsetup::execCmd(QList <int> donorsNum, CmdTypes cmdType, RecieverTypes 
 
         QString portname = pWin->wAppsettings->comPortName(1);
 
-        if (!initSerialPort(serialPort, portname, pWin))
+        if (!initSerialPort(serialPort, portname))
             return pWin->Usb->emulAnswer;
 
-        connect(serialPort, &QSerialPort::bytesWritten, this, &MyClass::on_BytesWritten);
+        connect(&serialPort, SIGNAL(bytesWritten(qint64)), SLOT(on_BytesWritten));
 
         wProcess->setWindowTitle("Отправка команды");
         wProcess->setProgress(0);
@@ -354,10 +357,9 @@ QString PBsetup::execCmd(QList <int> donorsNum, CmdTypes cmdType, RecieverTypes 
             if (sendGroupCommands(serialPort, donorsNum, cmdType, rTimeSlot,
                                              gTries,
                                              gTBtwRepeats,
-                                             gTAfterCmd_ms,
-                                             wProcess, pWin))            
+                                             gTAfterCmd_ms))
             {
-               processDeviceSlots(serialPort, donorsNum, rTimeSlot, pWin, wProcess);
+               processDeviceSlots(serialPort, donorsNum);
             }
 
         }
@@ -820,8 +822,6 @@ QString PBsetup::execCmd(QList <int> donorsNum, CmdTypes cmdType, RecieverTypes 
 
 //    - обновить статус ПБ
 //    - обновить лог после (не)получения ответа;
-
-}
 
 
 void PBsetup::mousePressEvent(QMouseEvent *event){
