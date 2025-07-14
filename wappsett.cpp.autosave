@@ -70,6 +70,8 @@ void wAppsett::setE(int _e1, int _e2, double _e3, int _e4, double _e5, int _e6, 
     ui->checkUseRBdlit->setChecked(_e8);
     on_checkUseRBdlit_clicked(_e8);
     ui->e9->setText(QString::number(_e9));
+    ui->e10->setText(QString::number(_e10));
+    ui->e11->setText(QString::number(_e11));
 
     //важно проинициализировать до установки текста
     NamesFonts = _fonts;
@@ -107,7 +109,8 @@ void wAppsett::setStartIndicatorFading(bool b){
     ui->cStartIndicator->setChecked(b);
 }
 
-void wAppsett::getE(int& _e1, int& _e2, double& _e3, int& _e4, double& _e5, int& _e6, int &_e7, int &_e8, int &_e9, QList <QString> &_names){
+void wAppsett::getE(int& _e1, int& _e2, double& _e3, int& _e4, double& _e5, int& _e6, int &_e7,
+                    int &_e8, int &_e9, int &_e10, int &_e11, QList <QString> &_names){
     _e1 = E1;
     _e2 = E2;
     _e3 = E3;
@@ -117,6 +120,8 @@ void wAppsett::getE(int& _e1, int& _e2, double& _e3, int& _e4, double& _e5, int&
     _e7 = E7;
     _e8 = E8;
     _e9 = E9;
+    _e10 = E10;
+    _e11 = E11;
 
     names [ 0] = ui->statSh0->text()==""? names[ 0]:ui->statSh0->text();
     names [ 1] = ui->statLn0->text()==""? names[ 1]:ui->statLn0->text();
@@ -154,7 +159,7 @@ wAppsett::~wAppsett()
 
 void wAppsett::accept(){
     if (e1Accepted && e2Accepted && e3Accepted && e4Accepted && e5Accepted && e6Accepted && e7Accepted
-                   && e8Accepted && e9Accepted) {
+                   && e8Accepted && e9Accepted && e10Accepted && e11Accepted) {
         pWin->wAboutprog->setAboutText(ui->textEdit->toPlainText());
         QDialog::accept();
     }

@@ -27,7 +27,9 @@ public:
     void setStartIndicatorFading(bool b);
     void setFocusOnDefaultBtn();
 
-    void getE(int& _e1, int& _e2, double& _e3, int& _e4, double& _e5, int &_e6, int &_e7, int &_e8, int &_e9, int &_e10, int &_e11, QList<QString> &_names);
+    void getE(int& _e1, int& _e2, double& _e3, int& _e4, double& _e5,
+              int &_e6, int &_e7, int &_e8, int &_e9, int &_e10,
+              int &_e11, QList<QString> &_names);
     void getStartIndicatorFading(bool& b);
     void getComPortNum(QString& a);
 

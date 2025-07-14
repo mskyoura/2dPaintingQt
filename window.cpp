@@ -477,10 +477,10 @@ void Window::mousePressEvent(QMouseEvent *event){
                || wAppsettings->adminPwdEnabled(false))*/{
 
                 if (wAppsettings->exec() == QDialog::Accepted) {
-                    int e1,e2,e4,e6,e7,e8,e9;
+                    int e1,e2,e4,e6,e7,e8,e9,e10,e11;
                     double e3,e5;
                     QList <QString> names;
-                    wAppsettings->getE(e1,e2,e3,e4,e5,e6,e7,e8,e9,names);
+                    wAppsettings->getE(e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,names);
                     Usb->setiTAnswerWait(e1);
                     Usb->setiNRepeat    (e2);
                     Usb->setiTBtwRepeats(e3);
@@ -490,6 +490,8 @@ void Window::mousePressEvent(QMouseEvent *event){
                     Usb->setrRBdlit     (e7);
                     Usb->setrUseRBdlit  (e8);
                     Usb->setrTimeSlot   (e9);
+                    Usb->setrT1(e10);
+                    Usb->setrT1(e11);
 
                     int indNames = 0;
 

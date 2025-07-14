@@ -42,8 +42,6 @@ public:
     void TestInRange(double min, double max, double& var,
                      QString value, QLineEdit *e, bool &eAccepted);
 
-    void showSpecialAnswer(QString s);
-
 private slots:
     void on_eID_textChanged(const QString &arg1);
     void on_eT1_textChanged(const QString &arg1);
@@ -54,8 +52,6 @@ private slots:
 
     void on_eDst_textChanged(const QString &arg1);
 
-    void on_clrLstBtn_clicked();
-
 private:
     Ui::Appset *ui;
     Window* pWin;
@@ -65,9 +61,6 @@ private:
 
     int AdminPwdEnabled;
     QPainter painter;
-    void paintEvent(QPaintEvent *event);
-    void resizeEvent(QResizeEvent *event);
-    void showEvent(QShowEvent * event);
 
 };
 
