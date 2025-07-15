@@ -67,9 +67,25 @@ void CSerialport::setrTimeSlot(int _rTimeSlot)
     rTimeSlot = _rTimeSlot;
 }
 
+void CSerialport::setT1(int a){
+    rT1 = a;
+}
+
+void CSerialport::setT2(double a){
+    rT2 = a;
+}
+
 void CSerialport::setrSlotAddDelay(int _rSlotAddDelay)
 {
     rSlotAddDelay = _rSlotAddDelay;
+}
+
+int CSerialport::_T1(){
+    return rT1;
+}
+
+double CSerialport::_T2(){
+    return rT2;
 }
 
 int    CSerialport::_iTAnswerWait(){
@@ -100,13 +116,12 @@ int    CSerialport::_rRBdlit(){
     return rRBdlit;
 }
 
-int CSerialport::_rT1(){
-    return t1;
+QString CSerialport::getT1(bool txt){
+    return QString::number(rT1) + (txt?" с":"");
 }
 
-int CSerialport::_rT2()
-{
-    return t2;
+QString CSerialport::getT2(bool txt){
+    return QString::number(rT2,0,1) + (txt?" с":"");
 }
 
 int    CSerialport::_rUseRBdlit(){

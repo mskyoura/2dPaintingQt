@@ -464,7 +464,7 @@ void Window::mousePressEvent(QMouseEvent *event){
 
             wAppsettings->setE    (Usb->_iTAnswerWait(), Usb->_iNRepeat(), Usb->_iTBtwRepeats(),
                                    Usb->_gNRepeat(), Usb->_gTBtwRepeats(), Usb->_gTBtwGrInd(),
-                                   Usb->_rRBdlit(), Usb->_rUseRBdlit(), Usb->_rTimeSlot(), names, fonts, pixels, Vismo::FontPainter);
+                                   Usb->_rRBdlit(), Usb->_rUseRBdlit(), Usb->_rTimeSlot(), Usb->_T1(), Usb->_T2(), names, fonts, pixels, Vismo::FontPainter);
 
             wAppsettings->setStartIndicatorFading(Saver::_isStartIndicatorFading());
 
@@ -477,8 +477,8 @@ void Window::mousePressEvent(QMouseEvent *event){
                || wAppsettings->adminPwdEnabled(false))*/{
 
                 if (wAppsettings->exec() == QDialog::Accepted) {
-                    int e1,e2,e4,e6,e7,e8,e9,e10,e11;
-                    double e3,e5;
+                    int e1,e2,e4,e6,e7,e8,e9,e10;
+                    double e3,e5,e11;
                     QList <QString> names;
                     wAppsettings->getE(e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,names);
                     Usb->setiTAnswerWait(e1);
@@ -490,8 +490,8 @@ void Window::mousePressEvent(QMouseEvent *event){
                     Usb->setrRBdlit     (e7);
                     Usb->setrUseRBdlit  (e8);
                     Usb->setrTimeSlot   (e9);
-                    Usb->setrT1(e10);
-                    Usb->setrT1(e11);
+                    Usb->setT1(e10);
+                    Usb->setT2(e11);
 
                     int indNames = 0;
 

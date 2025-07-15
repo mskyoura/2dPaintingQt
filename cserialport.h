@@ -36,8 +36,9 @@ class CSerialport
     int     rUseRBdlit;  //использовать ли ограничение на время разблокировки
     int     rTimeSlot;
     int     rSlotAddDelay;
-    int     t1;
-    int     t2;
+    int       rT1;
+    double    rT2;
+
 
     int GroupCmdNum;
 
@@ -57,8 +58,13 @@ public:
     void setrUseRBdlit(int _rUseRBdlit);
     void setrTimeSlot(int _rTimeSlot);
     void setrSlotAddDelay(int _rSlotAddDelay);
-    void setrT1(int t1);
-    void setrT2(int t2);
+    void setT1(int a);
+    void setT2(double a);
+
+    int     _T1();
+    double  _T2();
+
+
 
     int    _iTAnswerWait();
     int    _iNRepeat();
@@ -70,8 +76,10 @@ public:
     int    _rUseRBdlit();
     int     _rTimeSlot();
     int     _rSlotAddDelay();
-    int     _rT1();
-    int    _rT2();
+    QString getT1(bool txt = false);
+    QString getT2(bool txt = false);
+
+
 
     void setComPortNum(QString port);
     bool initSerialPort(QSerialPort& serialPort, const QString& portname);

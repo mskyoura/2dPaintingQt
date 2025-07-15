@@ -194,8 +194,9 @@ bool PBsetup::sendGroupCommands(QSerialPort& serialPort, const QList<int>&  dono
     int gCmdNumber0_255 = calcGroupCmdNum(donorsNum);
 
     QString RBdlit = pWin->Usb->byteToQStr(pWin->Usb->_rRBdlit());
-    QString t1 = pWin->Usb->byteToQStr(pWin->Usb->_rT1());
-    QString t2 = pWin->Usb->byteToQStr(pWin->Usb->_rT2());
+    QString t1 = pWin->Usb->byteToQStr(pWin->Usb->_T1());
+    int intT2 = pWin->Usb->_T2()*10.0;
+    QString t2 = pWin->Usb->byteToQStr((intT2 & 0xFF00)>>8) + pWin->Usb->byteToQStr(intT2 & 0x00FF);
     int tableLine = -1;
 
     for (int tryNum = 0; tryNum < gTries; ++tryNum) {
@@ -212,10 +213,18 @@ bool PBsetup::sendGroupCommands(QSerialPort& serialPort, const QList<int>&  dono
         if (!sendCommand(serialPort, cmdRq)) {
             return false;
         }
+        QString cmdArgs;
+        switch (cmdType)
+        {
+            case RELAY1ON:
+            case RELAY1OFF:
+                cmdArgs = QString("№ %1, попытка %2 из %3").arg(gCmdNumber0_255).arg(tryNum + 1).arg(gTries);
+            case RELAY2ON:
+                cmdArgs = "№ "+QString::number(gCmdNumber0_255) + ", " + pWin->Usb->getT1() + " с, " + pWin->Usb->getT2() + " с";
+        }
 
         if (pWin->wAppsettings->getValueLogWriteOn()) {
-            pWin->Usb->logRequest(cmdRq, cmdType, GROUP, QString("№ %1, попытка %2 из %3")
-                                .arg(gCmdNumber0_255).arg(tryNum + 1).arg(gTries), "Группа ПБ", false, tableLine);
+            pWin->Usb->logRequest(cmdRq, cmdType, GROUP, cmdArgs, "Группа ПБ", false, tableLine);
         }
     }
     return true;

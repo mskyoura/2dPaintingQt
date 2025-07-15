@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_wAppsett_t {
-    QByteArrayData data[33];
-    char stringdata0[639];
+    QByteArrayData data[35];
+    char stringdata0[677];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -63,7 +63,9 @@ QT_MOC_LITERAL(28, 533, 18), // "on_eg2_textChanged"
 QT_MOC_LITERAL(29, 552, 18), // "on_eg3_textChanged"
 QT_MOC_LITERAL(30, 571, 18), // "on_eg4_textChanged"
 QT_MOC_LITERAL(31, 590, 20), // "on_cancelBtn_clicked"
-QT_MOC_LITERAL(32, 611, 27) // "on_logfileWrEnabled_clicked"
+QT_MOC_LITERAL(32, 611, 27), // "on_logfileWrEnabled_clicked"
+QT_MOC_LITERAL(33, 639, 18), // "on_e10_textChanged"
+QT_MOC_LITERAL(34, 658, 18) // "on_e11_textChanged"
 
     },
     "wAppsett\0on_e1_textChanged\0\0arg1\0"
@@ -82,7 +84,8 @@ QT_MOC_LITERAL(32, 611, 27) // "on_logfileWrEnabled_clicked"
     "on_eg0_textChanged\0on_eg1_textChanged\0"
     "on_eg2_textChanged\0on_eg3_textChanged\0"
     "on_eg4_textChanged\0on_cancelBtn_clicked\0"
-    "on_logfileWrEnabled_clicked"
+    "on_logfileWrEnabled_clicked\0"
+    "on_e10_textChanged\0on_e11_textChanged"
 };
 #undef QT_MOC_LITERAL
 
@@ -92,7 +95,7 @@ static const uint qt_meta_data_wAppsett[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      29,   14, // methods
+      31,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -100,35 +103,37 @@ static const uint qt_meta_data_wAppsett[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    1,  159,    2, 0x08 /* Private */,
-       4,    1,  162,    2, 0x08 /* Private */,
-       5,    1,  165,    2, 0x08 /* Private */,
-       6,    1,  168,    2, 0x08 /* Private */,
-       7,    1,  171,    2, 0x08 /* Private */,
-       8,    1,  174,    2, 0x08 /* Private */,
-       9,    1,  177,    2, 0x08 /* Private */,
-      10,    1,  180,    2, 0x08 /* Private */,
-      11,    0,  183,    2, 0x08 /* Private */,
-      12,    1,  184,    2, 0x08 /* Private */,
-      14,    0,  187,    2, 0x08 /* Private */,
-      15,    1,  188,    2, 0x08 /* Private */,
-      16,    1,  191,    2, 0x08 /* Private */,
-      17,    1,  194,    2, 0x08 /* Private */,
-      18,    1,  197,    2, 0x08 /* Private */,
-      19,    1,  200,    2, 0x08 /* Private */,
-      20,    1,  203,    2, 0x08 /* Private */,
-      21,    1,  206,    2, 0x08 /* Private */,
-      22,    1,  209,    2, 0x08 /* Private */,
-      23,    1,  212,    2, 0x08 /* Private */,
-      24,    1,  215,    2, 0x08 /* Private */,
-      25,    1,  218,    2, 0x08 /* Private */,
-      26,    1,  221,    2, 0x08 /* Private */,
-      27,    1,  224,    2, 0x08 /* Private */,
-      28,    1,  227,    2, 0x08 /* Private */,
-      29,    1,  230,    2, 0x08 /* Private */,
-      30,    1,  233,    2, 0x08 /* Private */,
-      31,    0,  236,    2, 0x08 /* Private */,
-      32,    0,  237,    2, 0x08 /* Private */,
+       1,    1,  169,    2, 0x08 /* Private */,
+       4,    1,  172,    2, 0x08 /* Private */,
+       5,    1,  175,    2, 0x08 /* Private */,
+       6,    1,  178,    2, 0x08 /* Private */,
+       7,    1,  181,    2, 0x08 /* Private */,
+       8,    1,  184,    2, 0x08 /* Private */,
+       9,    1,  187,    2, 0x08 /* Private */,
+      10,    1,  190,    2, 0x08 /* Private */,
+      11,    0,  193,    2, 0x08 /* Private */,
+      12,    1,  194,    2, 0x08 /* Private */,
+      14,    0,  197,    2, 0x08 /* Private */,
+      15,    1,  198,    2, 0x08 /* Private */,
+      16,    1,  201,    2, 0x08 /* Private */,
+      17,    1,  204,    2, 0x08 /* Private */,
+      18,    1,  207,    2, 0x08 /* Private */,
+      19,    1,  210,    2, 0x08 /* Private */,
+      20,    1,  213,    2, 0x08 /* Private */,
+      21,    1,  216,    2, 0x08 /* Private */,
+      22,    1,  219,    2, 0x08 /* Private */,
+      23,    1,  222,    2, 0x08 /* Private */,
+      24,    1,  225,    2, 0x08 /* Private */,
+      25,    1,  228,    2, 0x08 /* Private */,
+      26,    1,  231,    2, 0x08 /* Private */,
+      27,    1,  234,    2, 0x08 /* Private */,
+      28,    1,  237,    2, 0x08 /* Private */,
+      29,    1,  240,    2, 0x08 /* Private */,
+      30,    1,  243,    2, 0x08 /* Private */,
+      31,    0,  246,    2, 0x08 /* Private */,
+      32,    0,  247,    2, 0x08 /* Private */,
+      33,    1,  248,    2, 0x08 /* Private */,
+      34,    1,  251,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void, QMetaType::QString,    3,
@@ -160,6 +165,8 @@ static const uint qt_meta_data_wAppsett[] = {
     QMetaType::Void, QMetaType::QString,    3,
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void, QMetaType::QString,    3,
+    QMetaType::Void, QMetaType::QString,    3,
 
        0        // eod
 };
@@ -199,6 +206,8 @@ void wAppsett::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
         case 26: _t->on_eg4_textChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         case 27: _t->on_cancelBtn_clicked(); break;
         case 28: _t->on_logfileWrEnabled_clicked(); break;
+        case 29: _t->on_e10_textChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 30: _t->on_e11_textChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -229,13 +238,13 @@ int wAppsett::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 29)
+        if (_id < 31)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 29;
+        _id -= 31;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 29)
+        if (_id < 31)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 29;
+        _id -= 31;
     }
     return _id;
 }
