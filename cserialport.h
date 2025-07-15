@@ -35,9 +35,9 @@ class CSerialport
     int     rRBdlit;     //ограничение на время разблокировки
     int     rUseRBdlit;  //использовать ли ограничение на время разблокировки
     int     rTimeSlot;
-    int     rSlotAddDelay;
-    int       rT1;
-    double    rT2;
+    int     rSlotAddDelay = 50;
+    int       rT1 = 1;
+    double    rT2 = 0;
 
 
     int GroupCmdNum;

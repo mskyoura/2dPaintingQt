@@ -55,7 +55,7 @@ void wAppsett::comportChange(){
 
 void wAppsett::setE(int _e1, int _e2, double _e3, int _e4, double _e5,
                     int _e6, int _e7, int _e8, int _e9, int _e10,
-                    double _e11, QList <QString> & _names, QList <QFont> & _fonts, QList <int> & _fontsMaxWidth,
+                    double _e11, int _e12, QList <QString> & _names, QList <QFont> & _fonts, QList <int> & _fontsMaxWidth,
                     QPainter* _FontPainter){
 
     FontPainter = _FontPainter;
@@ -73,6 +73,7 @@ void wAppsett::setE(int _e1, int _e2, double _e3, int _e4, double _e5,
     ui->e9->setText(QString::number(_e9));
     ui->e10->setText(QString::number(_e10));
     ui->e11->setText(QString::number(_e11, 0,1));
+    ui->e12->setText(QString::number(_e12));
 
     //важно проинициализировать до установки текста
     NamesFonts = _fonts;
@@ -111,7 +112,7 @@ void wAppsett::setStartIndicatorFading(bool b){
 }
 
 void wAppsett::getE(int& _e1, int& _e2, double& _e3, int& _e4, double& _e5, int& _e6, int &_e7,
-                    int &_e8, int &_e9, int &_e10, double &_e11, QList <QString> &_names){
+                    int &_e8, int &_e9, int &_e10, double &_e11, int &_e12, QList <QString> &_names){
     _e1 = E1;
     _e2 = E2;
     _e3 = E3;
@@ -123,6 +124,7 @@ void wAppsett::getE(int& _e1, int& _e2, double& _e3, int& _e4, double& _e5, int&
     _e9 = E9;
     _e10 = E10;
     _e11 = E11;
+    _e12 = E12;
 
     names [ 0] = ui->statSh0->text()==""? names[ 0]:ui->statSh0->text();
     names [ 1] = ui->statLn0->text()==""? names[ 1]:ui->statLn0->text();
@@ -449,4 +451,9 @@ void wAppsett::on_e10_textChanged(const QString &arg1)
 void wAppsett::on_e11_textChanged(const QString &arg1)
 {
     pWin->TestInRange(0.0, 255.0, E11, arg1, ui->e11, e11Accepted);
+}
+
+void wAppsett::on_e12_textChanged(const QString &arg1)
+{
+    pWin->TestInRange(0.0, 1000, E12, arg1, ui->e12, e12Accepted);
 }

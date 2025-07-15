@@ -116,10 +116,11 @@ bool PBsetup::waitWithProgress(int ms, int& passed_ms, int total_ms, const QStri
     return true;
 }
 
+
 // Формирование командного запроса для группового типа
 QString PBsetup::buildGroupCommand(int gCmdNumber0_255, CmdTypes cmdType, const QList<int>& donorsNum, QString& rbDlit,
                                    int timeSlot, const QString& t1, const QString& t2) {
-    QString cmdRq = "FF10" + QString("0000");
+    QString cmdRq = QString("FF") + "10" + QString("0000");
     if (timeSlot > 0) {
         cmdRq += "000D18"; // 13 регистров + байты нового пакета
     } else {
@@ -193,7 +194,8 @@ bool PBsetup::sendGroupCommands(QSerialPort& serialPort, const QList<int>&  dono
 
     int gCmdNumber0_255 = calcGroupCmdNum(donorsNum);
 
-    QString RBdlit = pWin->Usb->byteToQStr(pWin->Usb->_rRBdlit());
+    int    rRBdlit    = pWin->Usb->_rUseRBdlit() == 0? 0: pWin->Usb->_rRBdlit();
+    QString RBdlit = pWin->Usb->byteToQStr(rRBdlit);
     QString t1 = pWin->Usb->byteToQStr(pWin->Usb->_T1());
     int intT2 = pWin->Usb->_T2()*10.0;
     QString t2 = pWin->Usb->byteToQStr((intT2 & 0xFF00)>>8) + pWin->Usb->byteToQStr(intT2 & 0x00FF);
@@ -219,6 +221,7 @@ bool PBsetup::sendGroupCommands(QSerialPort& serialPort, const QList<int>&  dono
             case RELAY1ON:
             case RELAY1OFF:
                 cmdArgs = QString("№ %1, попытка %2 из %3").arg(gCmdNumber0_255).arg(tryNum + 1).arg(gTries);
+            break;
             case RELAY2ON:
                 cmdArgs = "№ "+QString::number(gCmdNumber0_255) + ", " + pWin->Usb->getT1() + " с, " + pWin->Usb->getT2() + " с";
         }

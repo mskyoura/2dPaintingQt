@@ -464,7 +464,7 @@ void Window::mousePressEvent(QMouseEvent *event){
 
             wAppsettings->setE    (Usb->_iTAnswerWait(), Usb->_iNRepeat(), Usb->_iTBtwRepeats(),
                                    Usb->_gNRepeat(), Usb->_gTBtwRepeats(), Usb->_gTBtwGrInd(),
-                                   Usb->_rRBdlit(), Usb->_rUseRBdlit(), Usb->_rTimeSlot(), Usb->_T1(), Usb->_T2(), names, fonts, pixels, Vismo::FontPainter);
+                                   Usb->_rRBdlit(), Usb->_rUseRBdlit(), Usb->_rTimeSlot(), Usb->_T1(), Usb->_T2(), Usb->_rSlotAddDelay(), names, fonts, pixels, Vismo::FontPainter);
 
             wAppsettings->setStartIndicatorFading(Saver::_isStartIndicatorFading());
 
@@ -477,10 +477,10 @@ void Window::mousePressEvent(QMouseEvent *event){
                || wAppsettings->adminPwdEnabled(false))*/{
 
                 if (wAppsettings->exec() == QDialog::Accepted) {
-                    int e1,e2,e4,e6,e7,e8,e9,e10;
+                    int e1,e2,e4,e6,e7,e8,e9,e10,e12;
                     double e3,e5,e11;
                     QList <QString> names;
-                    wAppsettings->getE(e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,names);
+                    wAppsettings->getE(e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,names);
                     Usb->setiTAnswerWait(e1);
                     Usb->setiNRepeat    (e2);
                     Usb->setiTBtwRepeats(e3);
@@ -492,6 +492,7 @@ void Window::mousePressEvent(QMouseEvent *event){
                     Usb->setrTimeSlot   (e9);
                     Usb->setT1(e10);
                     Usb->setT2(e11);
+                    Usb->setrSlotAddDelay(e12);
 
                     int indNames = 0;
 
@@ -798,6 +799,18 @@ int Window::saveSettings(QString fn){
                     xmlWriter.writeCharacters(QString::number(Usb->_rTimeSlot()));
                     xmlWriter.writeEndElement();
 
+                    xmlWriter.writeStartElement("rSlotAddDelay");
+                    xmlWriter.writeCharacters(QString::number(Usb->_rSlotAddDelay()));
+                    xmlWriter.writeEndElement();
+
+                    xmlWriter.writeStartElement("rT1");
+                    xmlWriter.writeCharacters(QString::number(Usb->_T1()));
+                    xmlWriter.writeEndElement();
+
+                    xmlWriter.writeStartElement("rT2");
+                    xmlWriter.writeCharacters(QString::number(Usb->_T2()));
+                    xmlWriter.writeEndElement();
+
                     xmlWriter.writeStartElement("cStartIndicatorFading");
                     xmlWriter.writeCharacters(QString::number(Saver::_isStartIndicatorFading()));
                     xmlWriter.writeEndElement();
@@ -982,6 +995,18 @@ int Window::readSettings(QString fn){
                     xmlReader.readNext();
                     int ri = xmlReader.text().toInt(&ok);
                     if (ok) Usb->setrTimeSlot(ri);
+                } else if (xmlReader.name() == "rSlotAddDelay") {
+                    xmlReader.readNext();
+                    int ri = xmlReader.text().toInt(&ok);
+                    if (ok) Usb->setrSlotAddDelay(ri);
+                } else if (xmlReader.name() == "rT1") {
+                    xmlReader.readNext();
+                    int ri = xmlReader.text().toInt(&ok);
+                    if (ok) Usb->setT1(ri);
+                } else if (xmlReader.name() == "rT2") {
+                    xmlReader.readNext();
+                    double ri = xmlReader.text().toDouble(&ok);
+                    if (ok) Usb->setT2(ri);
                 } else if (xmlReader.name() == "A") {
                     xmlReader.readNext();
                     pwdhash = xmlReader.text().toLongLong(&pwdhash_ok);//не читал код для пароля "6", решено заменой на toLongLong

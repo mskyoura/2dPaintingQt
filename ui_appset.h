@@ -75,7 +75,7 @@ public:
     {
         if (Appset->objectName().isEmpty())
             Appset->setObjectName(QStringLiteral("Appset"));
-        Appset->resize(849, 544);
+        Appset->resize(1306, 852);
         gridLayoutWidget = new QWidget(Appset);
         gridLayoutWidget->setObjectName(QStringLiteral("gridLayoutWidget"));
         gridLayoutWidget->setGeometry(QRect(10, 10, 1070, 584));

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1500</width>
-    <height>781</height>
+    <width>1761</width>
+    <height>760</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -24,27 +24,11 @@
     <rect>
      <x>0</x>
      <y>10</y>
-     <width>1202</width>
+     <width>1234</width>
      <height>763</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
-    <item row="3" column="1">
-     <spacer name="verticalSpacer_6">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Fixed</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
     <item row="1" column="0" colspan="4">
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
@@ -165,6 +149,22 @@ color: rgb(255, 255, 255);</string>
        </spacer>
       </item>
      </layout>
+    </item>
+    <item row="3" column="1">
+     <spacer name="verticalSpacer_6">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
     </item>
     <item row="0" column="0" colspan="4">
      <widget class="QTabWidget" name="tabWidget">
@@ -492,16 +492,23 @@ color: rgb(255, 255, 255);</string>
        <widget class="QWidget" name="gridLayoutWidget_3">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>-10</x>
           <y>20</y>
-          <width>1487</width>
-          <height>559</height>
+          <width>731</width>
+          <height>611</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
          <property name="horizontalSpacing">
           <number>7</number>
          </property>
+         <item row="17" column="3">
+          <widget class="QLabel" name="label_19">
+           <property name="text">
+            <string>с</string>
+           </property>
+          </widget>
+         </item>
          <item row="12" column="3">
           <widget class="QLabel" name="label_20">
            <property name="text">
@@ -530,10 +537,17 @@ color: rgb(255, 255, 255);</string>
            </property>
           </widget>
          </item>
+         <item row="11" column="3">
+          <widget class="QLabel" name="label_16">
+           <property name="text">
+            <string>мс</string>
+           </property>
+          </widget>
+         </item>
          <item row="12" column="1">
           <widget class="QLabel" name="label_21">
            <property name="text">
-            <string>Время слота:</string>
+            <string>Время слота (0..256):</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -547,10 +561,17 @@ color: rgb(255, 255, 255);</string>
            </property>
           </widget>
          </item>
-         <item row="11" column="3">
-          <widget class="QLabel" name="label_16">
+         <item row="6" column="3">
+          <widget class="QLabel" name="label_13">
            <property name="text">
-            <string>мс</string>
+            <string>с</string>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="3">
+          <widget class="QLabel" name="label_23">
+           <property name="text">
+            <string>c</string>
            </property>
           </widget>
          </item>
@@ -572,27 +593,6 @@ color: rgb(255, 255, 255);</string>
             <font>
              <pointsize>16</pointsize>
             </font>
-           </property>
-          </widget>
-         </item>
-         <item row="14" column="3">
-          <widget class="QLabel" name="label_23">
-           <property name="text">
-            <string>c</string>
-           </property>
-          </widget>
-         </item>
-         <item row="17" column="3">
-          <widget class="QLabel" name="label_19">
-           <property name="text">
-            <string>с</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="3">
-          <widget class="QLabel" name="label_13">
-           <property name="text">
-            <string>с</string>
            </property>
           </widget>
          </item>
@@ -644,65 +644,15 @@ color: rgb(255, 255, 255);</string>
            </item>
           </layout>
          </item>
-         <item row="3" column="2" colspan="3">
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
-           <item>
-            <widget class="QLineEdit" name="e1">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>120</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="baseSize">
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>16</pointsize>
-              </font>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_12">
-             <property name="text">
-              <string>мс</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_7">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
+         <item row="9" column="1">
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>Кол-во попыток (1...5):</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
          </item>
          <item row="1" column="2">
           <spacer name="verticalSpacer_4">
@@ -720,44 +670,6 @@ color: rgb(255, 255, 255);</string>
            </property>
           </spacer>
          </item>
-         <item row="2" column="1" colspan="4">
-          <widget class="QLabel" name="label">
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Параметры индивидуальных команд:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="9" column="1">
-          <widget class="QLabel" name="label_8">
-           <property name="text">
-            <string>Кол-во попыток (1...5):</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="11" column="2">
-          <widget class="QLineEdit" name="e6">
-           <property name="maximumSize">
-            <size>
-             <width>120</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>16</pointsize>
-            </font>
-           </property>
-          </widget>
-         </item>
          <item row="10" column="1">
           <widget class="QLabel" name="label_9">
            <property name="text">
@@ -768,97 +680,8 @@ color: rgb(255, 255, 255);</string>
            </property>
           </widget>
          </item>
-         <item row="11" column="1">
-          <widget class="QLabel" name="label_15">
-           <property name="text">
-            <string>Время между групповой и индивидуальной командами (10...1000):</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <spacer name="horizontalSpacer_4">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="21" column="2">
-          <spacer name="verticalSpacer_3">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="6" column="2">
-          <widget class="QLineEdit" name="e3">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>120</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>16</pointsize>
-            </font>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QLabel" name="label_5">
-           <property name="text">
-            <string>Время ожидания ответа (10...3000):</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="1" colspan="4">
-          <widget class="QLabel" name="label_11">
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Параметры групповых команд:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="9" column="2">
-          <widget class="QLineEdit" name="e4">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
+         <item row="11" column="2">
+          <widget class="QLineEdit" name="e6">
            <property name="maximumSize">
             <size>
              <width>120</width>
@@ -887,18 +710,18 @@ color: rgb(255, 255, 255);</string>
            </property>
           </widget>
          </item>
-         <item row="5" column="1">
-          <widget class="QLabel" name="label_7">
+         <item row="3" column="1">
+          <widget class="QLabel" name="label_5">
            <property name="text">
-            <string>Кол-во попыток (1...5):</string>
+            <string>Время ожидания ответа (10...3000):</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
-         <item row="5" column="2">
-          <widget class="QLineEdit" name="e2">
+         <item row="6" column="2">
+          <widget class="QLineEdit" name="e3">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -918,6 +741,37 @@ color: rgb(255, 255, 255);</string>
            </property>
           </widget>
          </item>
+         <item row="9" column="2">
+          <widget class="QLineEdit" name="e4">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>120</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>16</pointsize>
+            </font>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Кол-во попыток (1...5):</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
          <item row="6" column="1">
           <widget class="QLabel" name="label_6">
            <property name="text">
@@ -925,19 +779,6 @@ color: rgb(255, 255, 255);</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="16" column="1" colspan="4">
-          <widget class="QLabel" name="label_17">
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Ограничения:</string>
            </property>
           </widget>
          </item>
@@ -962,20 +803,31 @@ color: rgb(255, 255, 255);</string>
            </property>
           </widget>
          </item>
+         <item row="5" column="2">
+          <widget class="QLineEdit" name="e2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>120</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>16</pointsize>
+            </font>
+           </property>
+          </widget>
+         </item>
          <item row="15" column="1">
           <widget class="QLabel" name="label_24">
            <property name="text">
             <string>Задержка включения реле ПУСК (0..120):</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="14" column="1">
-          <widget class="QLabel" name="label_25">
-           <property name="text">
-            <string>Время включения реле ПУСК (0..255):</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1010,47 +862,177 @@ color: rgb(255, 255, 255);</string>
            </property>
           </widget>
          </item>
+         <item row="14" column="1">
+          <widget class="QLabel" name="label_25">
+           <property name="text">
+            <string>Время включения реле ПУСК (0..255):</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="21" column="2">
+          <spacer name="verticalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="3" column="0">
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="11" column="1">
+          <widget class="QLabel" name="label_15">
+           <property name="text">
+            <string>Время между групповой и индивидуальной командами (10...1000):</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="2">
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QLineEdit" name="e1">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>120</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="baseSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>16</pointsize>
+              </font>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="3" column="3">
+          <widget class="QLabel" name="label_12">
+           <property name="text">
+            <string>мс</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1" colspan="3">
+          <widget class="QLabel" name="label_11">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Параметры групповых команд:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="16" column="1" colspan="3">
+          <widget class="QLabel" name="label_17">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Ограничения:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" colspan="2">
+          <widget class="QLabel" name="label">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Параметры индивидуальных команд:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="1">
+          <widget class="QLabel" name="label_27">
+           <property name="text">
+            <string>Добавочное время (0..1000):</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="3">
+          <widget class="QLabel" name="label_22">
+           <property name="text">
+            <string>мс</string>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="2">
+          <widget class="QLineEdit" name="e12">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>120</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>16</pointsize>
+            </font>
+           </property>
+          </widget>
+         </item>
         </layout>
-       </widget>
-       <widget class="QLineEdit" name="e9_2">
-        <property name="geometry">
-         <rect>
-          <x>1238</x>
-          <y>490</y>
-          <width>120</width>
-          <height>33</height>
-         </rect>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>120</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>16</pointsize>
-         </font>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_22">
-        <property name="geometry">
-         <rect>
-          <x>1365</x>
-          <y>490</y>
-          <width>333</width>
-          <height>33</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>x10мс</string>
-        </property>
        </widget>
       </widget>
       <widget class="QWidget" name="tab_7">
