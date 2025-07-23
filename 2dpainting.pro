@@ -26,7 +26,9 @@ HEADERS     = \
     dbg.h \
     wconfirm.h \
     commandtypes.h \
-    recievertypes.h
+    recievertypes.h \
+    response.h \
+    relaystatus.h
 
 SOURCES     = \
               main.cpp \

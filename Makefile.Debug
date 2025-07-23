@@ -114,7 +114,9 @@ DIST          =  widget.h \
 		dbg.h \
 		wconfirm.h \
 		commandtypes.h \
-		recievertypes.h main.cpp \
+		recievertypes.h \
+		response.h \
+		relaystatus.h main.cpp \
 		widget.cpp \
 		window.cpp \
 		vismo.cpp \
@@ -151,7 +153,7 @@ qmake: FORCE
 qmake_all: FORCE
 
 dist:
-	$(ZIP) 2dpainting.zip $(SOURCES) $(DIST) 2dpainting.pro C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\spec_pre.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\qdevice.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\device_config.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\common\g++-base.conf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\common\angle.conf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\common\sanitize.conf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\common\gcc-base.conf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\qconfig.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3danimation.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3danimation_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dcore.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dcore_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dextras.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dextras_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dinput.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dinput_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dlogic.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dlogic_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquick.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquick_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquickanimation.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquickanimation_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquickextras.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquickextras_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquickinput.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquickinput_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquickrender.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquickrender_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquickscene2d.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquickscene2d_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3drender.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3drender_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_accessibility_support_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_axbase.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_axbase_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_axcontainer.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_axcontainer_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_axserver.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_axserver_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_bluetooth.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_bluetooth_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_bootstrap_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_charts.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_charts_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_concurrent.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_concurrent_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_core.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_core_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_datavisualization.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_datavisualization_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_dbus.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_dbus_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_designer.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_designer_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_designercomponents_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_devicediscovery_support_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_egl_support_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_eventdispatcher_support_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_fb_support_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_fontdatabase_support_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_gamepad.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_gamepad_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_gui.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_gui_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_help.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_help_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_location.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_location_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_multimedia.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_multimedia_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_multimediawidgets.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_multimediawidgets_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_network.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_network_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_networkauth.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_networkauth_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_nfc.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_nfc_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_opengl.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_opengl_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_openglextensions.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_openglextensions_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_packetprotocol_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_platformcompositor_support_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_positioning.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_positioning_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_printsupport.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_printsupport_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_purchasing.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_purchasing_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_qml.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_qml_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_qmldebug_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_qmldevtools_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_qmltest.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_qmltest_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_qtmultimediaquicktools_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_quick.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_quick_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_quickcontrols2.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_quickcontrols2_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_quickparticles_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_quicktemplates2_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_quickwidgets.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_quickwidgets_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_remoteobjects.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_remoteobjects_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_repparser.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_repparser_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_script.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_script_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_scripttools.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_scripttools_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_scxml.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_scxml_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_sensors.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_sensors_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_serialbus.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_serialbus_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_serialport.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_serialport_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_sql.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_sql_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_svg.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_svg_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_testlib.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_testlib_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_texttospeech.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_texttospeech_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_theme_support_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_uiplugin.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_uitools.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_uitools_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_webchannel.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_webchannel_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_websockets.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_websockets_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_widgets.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_widgets_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_winextras.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_winextras_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_xml.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_xml_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_xmlpatterns.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_xmlpatterns_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\qt_functions.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\qt_config.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\win32-g++\qmake.conf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\spec_post.prf .qmake.stash C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\exclusive_builds.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\toolchain.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\default_pre.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\win32\default_pre.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\resolve_config.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\exclusive_builds_post.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\default_post.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\build_pass.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\qml_debug.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\precompile_header.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\warn_on.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\qt.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\resources.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\moc.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\win32\opengl.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\uic.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\qmake_use.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\file_copies.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\win32\windows.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\testcase_targets.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\exceptions.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\yacc.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\lex.prf 2dpainting.pro C:\Qt\Qt5.9.1\5.9.1\mingw53_32\lib\qtmaind.prl C:\Qt\Qt5.9.1\5.9.1\mingw53_32\lib\Qt5Widgetsd.prl C:\Qt\Qt5.9.1\5.9.1\mingw53_32\lib\Qt5Guid.prl C:\Qt\Qt5.9.1\5.9.1\mingw53_32\lib\Qt5SerialPortd.prl C:\Qt\Qt5.9.1\5.9.1\mingw53_32\lib\Qt5Cored.prl    C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\data\dummy.cpp widget.h window.h vismo.h pbsetup.h appset.h saver.h admin.h cserialport.h cserialport.h wappsett.h wabout.h wlog.h processing.h wwarning.h dbg.h wconfirm.h commandtypes.h recievertypes.h main.cpp widget.cpp window.cpp vismo.cpp pbsetup.cpp appset.cpp saver.cpp admin.cpp cserialport.cpp wappsett.cpp wabout.cpp wlog.cpp processing.cpp wwarning.cpp wconfirm.cpp pbsetup.ui appset.ui admin.ui wappsett.ui wabout.ui wlog.ui processing.ui wwarning.ui wconfirm.ui    
+	$(ZIP) 2dpainting.zip $(SOURCES) $(DIST) 2dpainting.pro C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\spec_pre.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\qdevice.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\device_config.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\common\g++-base.conf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\common\angle.conf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\common\sanitize.conf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\common\gcc-base.conf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\qconfig.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3danimation.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3danimation_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dcore.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dcore_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dextras.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dextras_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dinput.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dinput_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dlogic.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dlogic_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquick.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquick_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquickanimation.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquickanimation_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquickextras.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquickextras_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquickinput.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquickinput_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquickrender.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquickrender_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquickscene2d.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3dquickscene2d_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3drender.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_3drender_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_accessibility_support_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_axbase.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_axbase_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_axcontainer.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_axcontainer_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_axserver.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_axserver_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_bluetooth.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_bluetooth_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_bootstrap_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_charts.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_charts_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_concurrent.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_concurrent_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_core.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_core_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_datavisualization.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_datavisualization_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_dbus.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_dbus_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_designer.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_designer_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_designercomponents_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_devicediscovery_support_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_egl_support_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_eventdispatcher_support_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_fb_support_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_fontdatabase_support_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_gamepad.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_gamepad_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_gui.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_gui_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_help.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_help_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_location.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_location_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_multimedia.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_multimedia_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_multimediawidgets.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_multimediawidgets_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_network.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_network_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_networkauth.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_networkauth_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_nfc.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_nfc_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_opengl.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_opengl_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_openglextensions.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_openglextensions_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_packetprotocol_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_platformcompositor_support_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_positioning.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_positioning_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_printsupport.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_printsupport_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_purchasing.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_purchasing_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_qml.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_qml_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_qmldebug_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_qmldevtools_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_qmltest.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_qmltest_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_qtmultimediaquicktools_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_quick.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_quick_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_quickcontrols2.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_quickcontrols2_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_quickparticles_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_quicktemplates2_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_quickwidgets.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_quickwidgets_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_remoteobjects.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_remoteobjects_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_repparser.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_repparser_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_script.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_script_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_scripttools.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_scripttools_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_scxml.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_scxml_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_sensors.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_sensors_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_serialbus.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_serialbus_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_serialport.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_serialport_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_sql.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_sql_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_svg.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_svg_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_testlib.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_testlib_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_texttospeech.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_texttospeech_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_theme_support_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_uiplugin.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_uitools.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_uitools_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_webchannel.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_webchannel_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_websockets.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_websockets_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_widgets.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_widgets_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_winextras.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_winextras_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_xml.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_xml_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_xmlpatterns.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\modules\qt_lib_xmlpatterns_private.pri C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\qt_functions.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\qt_config.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\win32-g++\qmake.conf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\spec_post.prf .qmake.stash C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\exclusive_builds.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\toolchain.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\default_pre.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\win32\default_pre.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\resolve_config.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\exclusive_builds_post.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\default_post.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\build_pass.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\qml_debug.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\precompile_header.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\warn_on.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\qt.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\resources.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\moc.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\win32\opengl.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\uic.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\qmake_use.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\file_copies.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\win32\windows.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\testcase_targets.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\exceptions.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\yacc.prf C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\lex.prf 2dpainting.pro C:\Qt\Qt5.9.1\5.9.1\mingw53_32\lib\qtmaind.prl C:\Qt\Qt5.9.1\5.9.1\mingw53_32\lib\Qt5Widgetsd.prl C:\Qt\Qt5.9.1\5.9.1\mingw53_32\lib\Qt5Guid.prl C:\Qt\Qt5.9.1\5.9.1\mingw53_32\lib\Qt5SerialPortd.prl C:\Qt\Qt5.9.1\5.9.1\mingw53_32\lib\Qt5Cored.prl    C:\Qt\Qt5.9.1\5.9.1\mingw53_32\mkspecs\features\data\dummy.cpp widget.h window.h vismo.h pbsetup.h appset.h saver.h admin.h cserialport.h cserialport.h wappsett.h wabout.h wlog.h processing.h wwarning.h dbg.h wconfirm.h commandtypes.h recievertypes.h response.h relaystatus.h main.cpp widget.cpp window.cpp vismo.cpp pbsetup.cpp appset.cpp saver.cpp admin.cpp cserialport.cpp wappsett.cpp wabout.cpp wlog.cpp processing.cpp wwarning.cpp wconfirm.cpp pbsetup.ui appset.ui admin.ui wappsett.ui wabout.ui wlog.ui processing.ui wwarning.ui wconfirm.ui    
 
 clean: compiler_clean 
 	-$(DEL_FILE) debug\main.o debug\widget.o debug\window.o debug\vismo.o debug\pbsetup.o debug\appset.o debug\saver.o debug\admin.o debug\cserialport.o debug\wappsett.o debug\wabout.o debug\wlog.o debug\processing.o debug\wwarning.o debug\wconfirm.o debug\moc_widget.o debug\moc_window.o debug\moc_pbsetup.o debug\moc_appset.o debug\moc_admin.o debug\moc_wappsett.o debug\moc_wabout.o debug\moc_wlog.o debug\moc_processing.o debug\moc_wwarning.o debug\moc_wconfirm.o
@@ -313,10 +315,11 @@ debug/moc_widget.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QWidget \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QString \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QColor \
 		colors.h \
+		commandtypes.h \
+		relaystatus.h \
 		processing.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qdialog.h \
-		commandtypes.h \
 		recievertypes.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/QSerialPort \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/qserialport.h \
@@ -329,6 +332,7 @@ debug/moc_widget.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QWidget \
 		wabout.h \
 		appset.h \
 		cserialport.h \
+		response.h \
 		wlog.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QTableWidget \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qtablewidget.h \
@@ -487,10 +491,11 @@ debug/moc_window.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QBrush \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QString \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QColor \
 		colors.h \
+		commandtypes.h \
+		relaystatus.h \
 		processing.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qdialog.h \
-		commandtypes.h \
 		recievertypes.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/QSerialPort \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/qserialport.h \
@@ -500,6 +505,7 @@ debug/moc_window.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QBrush \
 		wabout.h \
 		appset.h \
 		cserialport.h \
+		response.h \
 		wlog.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QTableWidget \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qtablewidget.h \
@@ -661,10 +667,11 @@ debug/moc_pbsetup.cpp: dbg.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QString \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QColor \
 		colors.h \
+		commandtypes.h \
+		relaystatus.h \
 		processing.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qdialog.h \
-		commandtypes.h \
 		recievertypes.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/QSerialPort \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/qserialport.h \
@@ -674,6 +681,7 @@ debug/moc_pbsetup.cpp: dbg.h \
 		wabout.h \
 		appset.h \
 		cserialport.h \
+		response.h \
 		wlog.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QTableWidget \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qtablewidget.h \
@@ -837,8 +845,9 @@ debug/moc_appset.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QString \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QColor \
 		colors.h \
-		processing.h \
 		commandtypes.h \
+		relaystatus.h \
+		processing.h \
 		recievertypes.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/QSerialPort \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/qserialport.h \
@@ -851,6 +860,7 @@ debug/moc_appset.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog \
 		wabout.h \
 		appset.h \
 		cserialport.h \
+		response.h \
 		wlog.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QTableWidget \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qtablewidget.h \
@@ -1118,8 +1128,9 @@ debug/moc_wappsett.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QString \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QColor \
 		colors.h \
-		processing.h \
 		commandtypes.h \
+		relaystatus.h \
+		processing.h \
 		recievertypes.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/QSerialPort \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/qserialport.h \
@@ -1132,6 +1143,7 @@ debug/moc_wappsett.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog
 		wabout.h \
 		appset.h \
 		cserialport.h \
+		response.h \
 		wlog.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QTableWidget \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qtablewidget.h \
@@ -1893,10 +1905,11 @@ debug/main.o: main.cpp window.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QString \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QColor \
 		colors.h \
+		commandtypes.h \
+		relaystatus.h \
 		processing.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qdialog.h \
-		commandtypes.h \
 		recievertypes.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/QSerialPort \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/qserialport.h \
@@ -1909,6 +1922,7 @@ debug/main.o: main.cpp window.h \
 		wabout.h \
 		appset.h \
 		cserialport.h \
+		response.h \
 		wlog.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QTableWidget \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qtablewidget.h \
@@ -2072,10 +2086,11 @@ debug/widget.o: widget.cpp widget.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QString \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QColor \
 		colors.h \
+		commandtypes.h \
+		relaystatus.h \
 		processing.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qdialog.h \
-		commandtypes.h \
 		recievertypes.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/QSerialPort \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/qserialport.h \
@@ -2085,6 +2100,7 @@ debug/widget.o: widget.cpp widget.h \
 		wabout.h \
 		appset.h \
 		cserialport.h \
+		response.h \
 		wlog.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QTableWidget \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qtablewidget.h \
@@ -2264,9 +2280,10 @@ debug/window.o: window.cpp C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QFileIn
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QString \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QColor \
 		colors.h \
+		commandtypes.h \
+		relaystatus.h \
 		processing.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog \
-		commandtypes.h \
 		recievertypes.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/QSerialPort \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/qserialport.h \
@@ -2279,6 +2296,7 @@ debug/window.o: window.cpp C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QFileIn
 		wabout.h \
 		appset.h \
 		cserialport.h \
+		response.h \
 		wlog.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QTableWidget \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qtablewidget.h \
@@ -2426,6 +2444,8 @@ debug/vismo.o: vismo.cpp vismo.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QDebug \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QColor \
 		colors.h \
+		commandtypes.h \
+		relaystatus.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/qmath.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\vismo.o vismo.cpp
 
@@ -2565,13 +2585,15 @@ debug/pbsetup.o: pbsetup.cpp pbsetup.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QString \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QColor \
 		colors.h \
+		commandtypes.h \
+		relaystatus.h \
 		cserialport.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/QSerialPort \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/qserialport.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/qserialportglobal.h \
 		processing.h \
-		commandtypes.h \
 		recievertypes.h \
+		response.h \
 		wlog.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QTableWidget \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qtablewidget.h \
@@ -2753,8 +2775,9 @@ debug/appset.o: appset.cpp appset.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QString \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QColor \
 		colors.h \
-		processing.h \
 		commandtypes.h \
+		relaystatus.h \
+		processing.h \
 		recievertypes.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/QSerialPort \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/qserialport.h \
@@ -2766,6 +2789,7 @@ debug/appset.o: appset.cpp appset.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QCloseEvent \
 		wabout.h \
 		cserialport.h \
+		response.h \
 		wlog.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QTableWidget \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qtablewidget.h \
@@ -2894,6 +2918,8 @@ debug/saver.o: saver.cpp saver.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/qrgba64.h \
 		colors.h \
 		dbg.h \
+		commandtypes.h \
+		relaystatus.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QFile \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/qfile.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/qfiledevice.h
@@ -3191,10 +3217,11 @@ debug/cserialport.o: cserialport.cpp cserialport.h \
 		saver.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QColor \
 		colors.h \
+		commandtypes.h \
+		relaystatus.h \
 		processing.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qdialog.h \
-		commandtypes.h \
 		recievertypes.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QTimer \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/qtimer.h \
@@ -3226,6 +3253,7 @@ debug/cserialport.o: cserialport.cpp cserialport.h \
 		wappsett.h \
 		wwarning.h \
 		wconfirm.h \
+		response.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QApplication \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qapplication.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/qcoreapplication.h \
@@ -3368,8 +3396,9 @@ debug/wappsett.o: wappsett.cpp wappsett.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QString \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QColor \
 		colors.h \
-		processing.h \
 		commandtypes.h \
+		relaystatus.h \
+		processing.h \
 		recievertypes.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/QSerialPort \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/qserialport.h \
@@ -3382,6 +3411,7 @@ debug/wappsett.o: wappsett.cpp wappsett.h \
 		wabout.h \
 		appset.h \
 		cserialport.h \
+		response.h \
 		wlog.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QTableWidget \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qtablewidget.h \

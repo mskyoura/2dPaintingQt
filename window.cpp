@@ -544,13 +544,13 @@ void Window::mousePressEvent(QMouseEvent *event){
                     }
             if (devIndexes.size()>0){
                 if      (action == 4)
-                    pbs->execCmd(devIndexes, STATUS, MULTIPLE);
+                    pbs->execCmd(devIndexes, _STATUS, MULTIPLE);
                 else if (action == 5)
-                    pbs->execCmd(devIndexes, RELAY1OFF, GROUP);
+                    pbs->execCmd(devIndexes, _RELAY1OFF, GROUP);
                 else if (action == 6)
-                    pbs->execCmd(devIndexes, RELAY1ON, GROUP);
+                    pbs->execCmd(devIndexes, _RELAY1ON, GROUP);
                 else if (action == 7)
-                    pbs->execCmd(devIndexes, RELAY2ON, Usb->_rTimeSlot() > 0 ? GROUP : MULTIPLE);
+                    pbs->execCmd(devIndexes, _RELAY2ON, Usb->_rTimeSlot() > 0 ? GROUP : MULTIPLE);
             }
 
             caught = true;

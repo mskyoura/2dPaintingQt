@@ -8,6 +8,7 @@
 #include "processing.h"
 #include "commandtypes.h"
 #include "recievertypes.h"
+#include "relaystatus.h"
 
 #include <QWidget>
 #include <QDialog>
@@ -69,10 +70,13 @@ private:
     QString buildGroupCommand(int gCmdNumber0_255, CmdTypes cmdType, const QList<int>& donorsNum, QString& rbdlit,
                               int timeSlot, const QString& t1, const QString& t2);
     bool sendCommand(QSerialPort& serialPort, const QString& frameCmd);
-    bool sendGroupCommands(QSerialPort& serialPort, const QList<int>&  donorsNum, CmdTypes cmdType, int timeSlot,
+    int sendGroupCommands(QSerialPort& serialPort, const QList<int>&  donorsNum, CmdTypes cmdType, int timeSlot,
                            int gTries, double gTBtwRepeats, int gTAfterCmd_ms);
-    void processDeviceSlots(QSerialPort& serialPort, const QList<int>& donorsNum);
-    void readResponseInSlot(QSerialPort& serialPort, Saver& donor, int timeoutPerSlotMs, bool& cont);
+    // Обработка получения ответов на команду нового формата от всех ПБ из группы с учётом задержек
+    void processDeviceSlots(QSerialPort& serialPort, CmdTypes cmdType, int gCmdNumber, const QList<int>& donorsNum);
+    // Чтение и парсинг данных ответа на команду нового формата от заданного ПБ с учётом заданной задержки
+    void readResponseInSlot(QSerialPort& serialPort, RelayStatus relayStatus, Saver& donor, int timeoutPerSlotMs, bool& cont);
+    //Ожидание3
     bool waitForSlot(int devSlot, int slotDelayMs, int slotAddDelayMs, bool& cont);
 
 #ifdef Dbg

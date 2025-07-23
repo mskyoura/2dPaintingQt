@@ -17,6 +17,9 @@
 QString PBsetup::CRLF = QString(char (0x0D)) + QString(char (0x0A));
 QString PBsetup::LFCR = QString(char (0x0A)) + QString(char (0x0D));
 
+QMap<CmdTypes, RelayStatus> cmdToStatusConverter = QMap<CmdTypes, RelayStatus>(
+{{_RELAY1OFF, RELAY1OFF}, {_RELAY1ON, RELAY1ON}, {_RELAY2ON, RELAY2ON}});
+
 PBsetup::PBsetup(QWidget *_parent) :
     QDialog(_parent)
 {
@@ -129,39 +132,42 @@ QString PBsetup::buildGroupCommand(int gCmdNumber0_255, CmdTypes cmdType, const 
     cmdRq += "00" + pWin->Usb->byteToQStr(gCmdNumber0_255); // ID команды
 
     switch (cmdType) {
-    case RELAY2ON: cmdRq += "FFFF"; break; // Игнорируем реле1
-    case RELAY1ON: cmdRq += "01" + rbDlit; break; // Реле1 вкл + длительность
-    case RELAY1OFF: cmdRq += "0000"; break; // Реле1 выкл + длительность
+    case _RELAY2ON: cmdRq += "FFFF"; break; // Игнорируем реле1
+    case _RELAY1ON: cmdRq += "01" + rbDlit; break; // Реле1 вкл + длительность
+    case _RELAY1OFF: cmdRq += "0000"; break; // Реле1 выкл + длительность
     }
 
     cmdRq += "0000"; // задержка всегда 0
 
-    if (cmdType == RELAY2ON)
+    if (cmdType == _RELAY2ON)
+    {
         cmdRq += "01" + t1;
-    else
-        cmdRq += "FFFF";
-
-    if (cmdType == RELAY2ON)
         cmdRq += t2;
+    }
     else
-        cmdRq += "FFFF";
+    {
+        cmdRq += "FFFFFFFF";
+    }
 
     cmdRq += "FFFFFFFF"; // Реле3 игнорируем
 
     if (timeSlot > 0) {
         // Добавляем адреса устройств
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++) {           
             if (i < donorsNum.size()) {
-                QString id = pWin->pb[pWin->vm[donorsNum[i]].getpbIndex()]._ID();
-                cmdRq += id.isEmpty() ? "00" : id;
-            } else {
+                Saver& donor = pWin->pb[pWin->vm[donorsNum[i]].getpbIndex()];
+                if (donor.mayStart() || cmdType != RELAY2ON)
+                {
+                    QString id = donor._ID();
+                    cmdRq += id.isEmpty() ? "00" : id;
+                }
+            } else
                 cmdRq += "00";
-            }
         }
         cmdRq += "00" + pWin->Usb->byteToQStr(timeSlot);
     }
 
-    cmdRq += pWin->Usb->LRC(cmdRq);
+    cmdRq += pWin->Usb->computeLRC(cmdRq);
     return ":" + cmdRq + CRLF;
 }
 
@@ -187,7 +193,7 @@ bool PBsetup::sendCommand(QSerialPort& serialPort, const QString& frameCmd) {
     return isWriteDone;
 }
 
-bool PBsetup::sendGroupCommands(QSerialPort& serialPort, const QList<int>&  donorsNum, CmdTypes cmdType, int timeSlot,
+int PBsetup::sendGroupCommands(QSerialPort& serialPort, const QList<int>&  donorsNum, CmdTypes cmdType, int timeSlot,
                                 int gTries, double gTBtwRepeats, int gTAfterCmd_ms) {
     int passed_ms = 0;
     int total_ms = (gTries - 1) * gTBtwRepeats + gTAfterCmd_ms;
@@ -206,35 +212,35 @@ bool PBsetup::sendGroupCommands(QSerialPort& serialPort, const QList<int>&  dono
             if (!waitWithProgress(int(gTBtwRepeats), passed_ms, total_ms,
                                   QString("Ожидание перед отправкой %1-й из %2 групповой команды %3.")
                                       .arg(tryNum + 1).arg(gTries).arg(pWin->cmdFullName(cmdType, GROUP)))) {
-                return false;
+                return -1;
             }
         }
 
         QString cmdRq = buildGroupCommand(gCmdNumber0_255, cmdType, donorsNum, RBdlit, timeSlot, t1, t2);
 
         if (!sendCommand(serialPort, cmdRq)) {
-            return false;
+            return -1;
         }
         QString cmdArgs;
         switch (cmdType)
         {
-            case RELAY1ON:
-            case RELAY1OFF:
+            case _RELAY1ON:
+            case _RELAY1OFF:
                 cmdArgs = QString("№ %1, попытка %2 из %3").arg(gCmdNumber0_255).arg(tryNum + 1).arg(gTries);
             break;
-            case RELAY2ON:
+            case _RELAY2ON:
                 cmdArgs = "№ "+QString::number(gCmdNumber0_255) + ", " + pWin->Usb->getT1() + " с, " + pWin->Usb->getT2() + " с";
         }
 
         if (pWin->wAppsettings->getValueLogWriteOn()) {
-            pWin->Usb->logRequest(cmdRq, cmdType, GROUP, cmdArgs, "Группа ПБ", false, tableLine);
+            pWin->Usb->logRequest(cmdRq, cmdType, GROUP, cmdArgs, "Группа ПБ", tableLine);
         }
     }
-    return true;
+    return gCmdNumber0_255;
 }
 
 // Основной цикл обхода устройств с ожиданием и чтением ответа
-void PBsetup::processDeviceSlots(QSerialPort& serialPort, const QList<int>& donorsNum) {
+void PBsetup::processDeviceSlots(QSerialPort& serialPort, CmdTypes cmdType, int gCmdNumber, const QList<int>& donorsNum) {
     bool cont = true;
     const int deviceQty = donorsNum.size();
     int rTimeSlot = pWin->Usb->_rTimeSlot();
@@ -247,18 +253,16 @@ void PBsetup::processDeviceSlots(QSerialPort& serialPort, const QList<int>& dono
         if (donor._ID().isEmpty())
             continue;
 
-        donor.setHasLastOperationGoodAnswer(false);
-        donor.CmdNumRsp(-1);
-
         if (!waitForSlot(devSlot, rTimeSlot, rSlotAddDelay, cont))
             break;
+        donor.CmdNumReq(gCmdNumber);
 
-        readResponseInSlot(serialPort, donor, rTimeSlot + rSlotAddDelay, cont);
+        readResponseInSlot(serialPort, cmdToStatusConverter[cmdType], donor, rTimeSlot + rSlotAddDelay, cont);
     }
 }
 
 // Читаем ответ устройства в своём слоте, парсим и обновляем состояние
-void PBsetup::readResponseInSlot(QSerialPort& serialPort, Saver& donor, int timeoutPerSlotMs, bool& cont) {
+void PBsetup::readResponseInSlot(QSerialPort& serialPort, RelayStatus rStatus, Saver& donor, int timeoutPerSlotMs, bool& cont) {
     QByteArray readData;
     const QDateTime readStart = QDateTime::currentDateTime();
     SResponse sr;
@@ -271,16 +275,12 @@ void PBsetup::readResponseInSlot(QSerialPort& serialPort, Saver& donor, int time
         if (readData.endsWith("\r\n") || readData.endsWith("\n\r")) {
             int ParsingCode = pWin->Usb->parseAndLogResponse(pWin->Usb->emulAnswer, sr, -1);
 
-            if (ParsingCode == 2) { // получили валидный ответ на ПС
-                donor.CmdNumRsp(sr.CmdNumRsp);
-
-                if (donor.CmdNumReq() == sr.CmdNumRsp || donor.CmdNumReq() == -1) {
-                    donor.setLastOperationWithGoodAnswer("ПС");
-                    donor.setPressedButton("ПС");
-                    donor.setLastGoodAnswerTime(QDateTime::currentDateTime());
-                    donor.setHasLastOperationGoodAnswer(true);
-                    donor.setParams(sr.Input, sr.U, sr.Relay1, sr.Relay2);
-                }
+            if (ParsingCode == 1 && donor._ID() == sr.DeviceId) //если получили подтверждение
+                //считаем, что статус был изменен при условии, что идентификаторы совпадают
+            {
+                donor.setLastOperationWithGoodAnswer(rStatus);
+                donor.setLastGoodAnswerTime(QDateTime::currentDateTime());
+                donor.setHasLastOperationGoodAnswer(true);
             }
             break; // Выход из цикла чтения по окончании ответа
         }
@@ -349,12 +349,10 @@ QString PBsetup::execCmd(QList <int> donorsNum, CmdTypes cmdType, RecieverTypes 
         //Для широковещательной
         if (rcvType == GROUP)
         {
-            if (sendGroupCommands(serialPort, donorsNum, cmdType, rTimeSlot,
-                                             gTries,
-                                             gTBtwRepeats,
-                                             gTAfterCmd_ms))
+            int gCmdNumber = sendGroupCommands(serialPort, donorsNum, cmdType, rTimeSlot,
+                                             gTries, gTBtwRepeats, gTAfterCmd_ms);
             {
-               processDeviceSlots(serialPort, donorsNum);
+               processDeviceSlots(serialPort, cmdType, gCmdNumber, donorsNum);
             }
 
         }
@@ -846,26 +844,26 @@ void PBsetup::mousePressEvent(QMouseEvent *event){
     switch (vmPersonal.PersonalRemoteClickDispatch(event->pos())) {
     case 0:
         if (donor._ID()>0)
-            execCmd(donorsNum, STATUS, SINGLE);
+            execCmd(donorsNum, _STATUS, SINGLE);
         else
             pWin->warn->showWarning("Задайте ID в настройках ПБ.");
         break;
     case 1:
         if (donor._ID()>0)
-            execCmd(donorsNum, RELAY1OFF, SINGLE);
+            execCmd(donorsNum, _RELAY1OFF, SINGLE);
         else
             pWin->warn->showWarning("Задайте ID в настройках ПБ.");
         break;
     case 2:
         if (donor._ID()>0)
-            execCmd(donorsNum, RELAY1ON, SINGLE);
+            execCmd(donorsNum, _RELAY1ON, SINGLE);
         else
             pWin->warn->showWarning("Задайте ID в настройках ПБ.");
         break;
     case 3:
         if (donor._ID()>0) {
             if (donor.mayStart())
-                execCmd(donorsNum, RELAY2ON, SINGLE);
+                execCmd(donorsNum, _RELAY2ON, SINGLE);
             else
                 pWin->warn->showWarning(QString("Команда \"") + "Запустить Реле2" +
                         "\" возможна только\nв состоянии \"" + "Реле1 включено" + "\".");

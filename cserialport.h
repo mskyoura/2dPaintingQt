@@ -7,18 +7,7 @@
 #include "processing.h"
 #include "commandtypes.h"
 #include "recievertypes.h"
-
-struct SResponse {
-    double U;
-    int CmdNumRsp;
-    int statusRelay;
-    int Input;
-    int Relay3;
-    int Relay2;
-    int Relay1;
-};
-
-
+#include "response.h"
 
 class Window;
 
@@ -41,9 +30,18 @@ class CSerialport
 
 
     int GroupCmdNum;
-
     QString ComPort;
 
+    QString stripFrame(const QString& raw);
+    QString extractMessage(const QString& frame);
+    QString extractLRC(const QString& frame);
+    QString formatRawBytes(const QString& src);
+    void logResponse(const QString& raw, int code, const SResponse& sr, int tryNum);
+    QString parseDeviceId(const QString& frame);
+    QString parseVersion(const QString& frame);
+    double parseVoltage(const QString& frame);
+    void parseStatusRelay(const QString& frame, SResponse& sr);
+    ushort parseCmdNumRsp(const QString& frame);
 public:
     CSerialport(Window *_pWin);
     void setPortNum(int n);
@@ -83,15 +81,15 @@ public:
 
     void setComPortNum(QString port);
     bool initSerialPort(QSerialPort& serialPort, const QString& portname);
-    void logRequest(QString cmd, CmdTypes cmdType, RecieverTypes rcvType, QString cmdArg, QString pb,
-                    bool isSpecialCmd, int& TableLine);
-    int  parseAndLogResponse(QString rx, SResponse &sr, int tryNum);
+    void logRequest(QString cmd, CmdTypes cmdType, RecieverTypes rcvType,
+                    QString cmdArg, QString pb, int& TableLine);
+
+    int parseAndLogResponse(const QString& rx, SResponse& sr, int tryNum);
     QString bytesForShow(QString src);
 
     int groupCmdNum();
     int incGroupCmdNum();
-
-    QString LRC(QString s);
+    QString computeLRC(const QString& hexString);
     QString byteToQStr(int byte);
 
     Processing* wProcess;

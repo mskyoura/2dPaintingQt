@@ -7,6 +7,8 @@
 #include <QColor>
 #include "colors.h"
 #include "dbg.h"
+#include "commandtypes.h"
+#include "relaystatus.h"
 
 class Saver
 {
@@ -19,8 +21,6 @@ class Saver
     QString   rDst;
 
     QDateTime rLastGoodAnswerTime;
-    QString   rLastOperationWithGoodAnswer;
-    QString   rLastOperationWithGoodAnswer_T2; //2021-02-26
     int       rHasLastOperationGoodAnswer;
 
     int       rCmdNumReq, //номер команды, отправляемой на у-во
@@ -28,8 +28,7 @@ class Saver
 
     double    rU;
     int       rCoil_StatusAtGoodAnswer;
-    int       rRelay1ZB_StatusAtGoodAnswer;
-    int       rRelay2PK_StatusAtGoodAnswer;
+    RelayStatus lastRSTatus;
 
     QString   Cmd_WaitingForDelayT2;
     bool      isCmdBtw_PK_gPK;
@@ -106,12 +105,11 @@ public:
     void setU(double a);
     void setU1(double a);
     void setU2(double a);
-    void setParams(int Input, double U, int Relay1, int Relay2);
-    void dbg_setParams(int Relay1, int grNum);//для отладки Dbg
+    void setParams(int Input, double U, RelayStatus rStatus);
     void setPolarity(int a);
     void setDst(QString a);
     void setLastGoodAnswerTime(QDateTime a);
-    int  setLastOperationWithGoodAnswer(QString a);
+    void  setLastOperationWithGoodAnswer(RelayStatus rStatus);
     void setCoil_StatusAtGoodAnswer(int a);
 
     void getU_coil(QString &_u, QColor &_uClr, QString &_coil, QColor &_coilClr);

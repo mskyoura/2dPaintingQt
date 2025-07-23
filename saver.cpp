@@ -91,10 +91,6 @@ QString Saver::getElapsedTime(){
 
         int timeStartIndicatorFading = ceil(rT1 + rT2);
 
-        //comm. 2021-02-26
-        //if (rLastOperationWithGoodAnswer == "ПК" && (elapsedSec > timeStartIndicatorFading) && (rT1 != 0) && isStartIndicatorFading)
-        //    setLastOperationWithGoodAnswer("");
-
         int h = elapsedSec/3600;
         int m = (elapsedSec - h*3600)/60;
         int s = elapsedSec - h*3600 - m*60;
@@ -128,31 +124,28 @@ void Saver::setU(double a){
     }
 }
 
-QString Saver::getLastOperationWithGoodAnswer(int mode, QColor& clr, QList <QString> &PBstatuses){
-
-    QString ret = rLastOperationWithGoodAnswer;
-
-    if (rLastOperationWithGoodAnswer == "НИ"){ //неизвестно
-        ret = mode == 1? PBstatuses[0]:PBstatuses[1];
-        clr = PScolor;
+QString Saver::getLastOperationWithGoodAnswer(int mode, QColor& clr, QList <QString> &PBstatuses)
+{
+    QString ret;
+    switch (lastRSTatus)
+    {
+        case UNKNOWN:
+            ret = mode == 1? PBstatuses[0]:PBstatuses[1];
+            clr = PScolor;
+        break;
+        case RELAY1OFF:
+            ret = mode == 1? PBstatuses[2]:PBstatuses[3];
+            clr = ZBcolor;
+        break;
+        case RELAY1ON:
+            ret = mode == 1? PBstatuses[4]:PBstatuses[5];
+            clr = RBcolor;
+        break;
+        case RELAY2ON:
+            ret = mode == 1? PBstatuses[6]:PBstatuses[7];
+            clr = PKcolor;
+        break;
     }
-    else if (rLastOperationWithGoodAnswer == "ЗБ"){ //заблокировано
-        ret = mode == 1? PBstatuses[2]:PBstatuses[3];
-        clr = ZBcolor;
-    }
-    else if (rLastOperationWithGoodAnswer == "РБ"){ //разблокировано
-        ret = mode == 1? PBstatuses[4]:PBstatuses[5];
-        clr = RBcolor;
-    }
-    else if (rLastOperationWithGoodAnswer == "ПК"){ //запущено
-        ret = mode == 1? PBstatuses[6]:PBstatuses[7];
-        clr = PKcolor;
-    }
-    else if (rLastOperationWithGoodAnswer == "ID"){
-        ret =            "Задайте ID";
-        clr = clGreen;
-    }
-
     return ret;
 }
 
@@ -213,23 +206,14 @@ void Saver::getU_coil(QString& _u, QColor& _uClr, QString& _coil, QColor& _coilC
     _coilClr = coilClr;
 }
 
-void Saver::setParams(int Input, double U, int Relay1, int Relay2){
+void Saver::setParams(int Input, double U, RelayStatus rStatus)
+{
 
     setCoil_StatusAtGoodAnswer(Input);
     setU(U);
-    rRelay1ZB_StatusAtGoodAnswer = Relay1;
-    rRelay2PK_StatusAtGoodAnswer = Relay2;
+    lastRSTatus = rStatus;
 
-    setLastOperationWithGoodAnswer(rLastOperationWithGoodAnswer);
-
-}
-
-void Saver::dbg_setParams(int Relay1, int grNum){
-
-    rRelay1ZB_StatusAtGoodAnswer = Relay1;
-    rCmdNumReq = grNum;
-
-    setLastOperationWithGoodAnswer(rLastOperationWithGoodAnswer);
+    setLastOperationWithGoodAnswer(rStatus);
 
 }
 
@@ -249,70 +233,44 @@ QString Saver::getPressedButton() {
     return pressedButton;
 }
 
-int Saver::setLastOperationWithGoodAnswer(QString a){
-    rLastOperationWithGoodAnswer = a;
-    int ret = 0;
-
-    //if (rLastOperationWithGoodAnswer == "ПК") {
-        //в таймере на 60-120 с сделать rLastOperationWithGoodAnswer="" по истечении времени
-
-        //проверим, что если после ПУСКа Relay2 == 0 (реле не включилось), то ошибка
-        //(покажем статус ЗБ или РБ)
-        //if (rRelay2PK_StatusAtGoodAnswer == 0) {
-        //    rLastOperationWithGoodAnswer = rRelay1ZB_StatusAtGoodAnswer == 0? "ЗБ":"РБ";
-        //    ret = -1;
-        //}
-    //} else {
-
-        //2021 - закомментировано то, что надежно работало раньше (а в режиме отложенного взрыва - неверно отображалось)
-        //rLastOperationWithGoodAnswer = rRelay1ZB_StatusAtGoodAnswer == 0? "ЗБ":
-        //                               rRelay2PK_StatusAtGoodAnswer == 0? "РБ":"ПК";
-
-        //2021 - решена проблема отображения "ПК" при отложенном запуске (T2>0)
-        if (rRelay1ZB_StatusAtGoodAnswer == 0)
-            rLastOperationWithGoodAnswer = "ЗБ";
-        else {
-            if (rRelay2PK_StatusAtGoodAnswer == 0) {
-                if (pressedButton == "ПК" || pressedButton == "ГПК")
-                    rLastOperationWithGoodAnswer = "ПК";
-                else
-                    rLastOperationWithGoodAnswer = "РБ";
-            } else
-                rLastOperationWithGoodAnswer = "ПК";
-        }
-
-
-        //2021
-        //setDebugText(QString("было: ") + a + "_стало: " + rLastOperationWithGoodAnswer + QString(","));
-
-    //}
-
-#ifdef Dbg
-    static QFile dbgf("d:\\dbg1.txt");
-    static bool dbgfReady = dbgf.open(QIODevice::WriteOnly);
-    static QTextStream out(&dbgf);
-    out << rRelay1ZB_StatusAtGoodAnswer << "\t" << rRelay2PK_StatusAtGoodAnswer << "\t" <<
-        rLastOperationWithGoodAnswer
-        << endl;
-#endif
-
-    return ret;
+void Saver::setLastOperationWithGoodAnswer(RelayStatus rStatus){
+    switch (lastRSTatus)
+    {
+        case UNKNOWN:
+            if (rStatus == RELAY1OFF)
+                lastRSTatus = RELAY1OFF;
+            if (rStatus == RELAY1ON)
+                lastRSTatus = RELAY1ON;
+        break;
+        case RELAY1OFF:
+            if (rStatus == RELAY1ON)
+                lastRSTatus = RELAY1ON;
+        break;
+        case RELAY1ON:
+            if (rStatus == RELAY2ON)
+                lastRSTatus = RELAY2ON;
+            if (rStatus == RELAY1OFF)
+                lastRSTatus = RELAY1OFF;
+        break;
+        case RELAY2ON:
+            if (rStatus == RELAY1OFF)
+                lastRSTatus = RELAY1OFF;
+        break;
+    }
 }
 
 bool Saver::mayStart(){
-    return ((rLastOperationWithGoodAnswer == "РБ") &&
+    return ((lastRSTatus == RELAY1ON) &&
             (rHasLastOperationGoodAnswer == 1));
 }
 
 void Saver::setStatusNI(){
     rLastGoodAnswerTime = noTime();
-    rLastOperationWithGoodAnswer = "НИ";
+    lastRSTatus = UNKNOWN;
     rHasLastOperationGoodAnswer = 1;
 
     rU = -100;
     rCoil_StatusAtGoodAnswer = -1;
-    rRelay1ZB_StatusAtGoodAnswer = -1;
-    rRelay2PK_StatusAtGoodAnswer = -1;
 
     rCmdNumReq = -1;
     rCmdNumRsp = -1;
@@ -338,11 +296,7 @@ Saver::Saver(QString _rID,
     rU2 = _rU2;
     rPolarity = _rPolarity;
     rDst = _rDst;
-
-    rLastOperationWithGoodAnswer = "";
-    rLastOperationWithGoodAnswer_T2 = "";
     debugText = "";
-    pressedButton = "";
 
     setStatusNI();
 }

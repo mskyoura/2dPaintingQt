@@ -156,119 +156,144 @@ bool CSerialport::initSerialPort(QSerialPort& serialPort, const QString& portnam
 }
 
 void CSerialport::logRequest(QString cmd, CmdTypes cmdType, RecieverTypes rcvType, QString cmdArg,
-                             QString pb, bool isSpecialCmd, int& TableLine) {
-
-    if (!isSpecialCmd) {//произвольные команды не логируем
-
-        QDateTime now = QDateTime::currentDateTime();
-        pWin->SaveToLog("","");
-        pWin->SaveToLog("№: ", QString::number(pWin->getLogFileBlockNumber()));
-        pWin->SaveToLog("Дата, время: ", now.date().toString("dd.MM.yy") + " " + now.time().toString("HH:mm:ss.zzz"));
-        TableLine = pWin->getLogFileRowCount();
-        pWin->SaveToLog("Детально: ", pWin->cmdFullName(cmdType, rcvType));
-        pWin->SaveToLog("Параметры: ", cmdArg);
-        pWin->SaveToLog("ПБ: ", pb);
-        pWin->SaveToLog("Код: ", bytesForShow(cmd));
-    }
+                             QString pb, int& TableLine) {
+    QDateTime now = QDateTime::currentDateTime();
+    pWin->SaveToLog("","");
+    pWin->SaveToLog("№: ", QString::number(pWin->getLogFileBlockNumber()));
+    pWin->SaveToLog("Дата, время: ", now.date().toString("dd.MM.yy") + " " + now.time().toString("HH:mm:ss.zzz"));
+    TableLine = pWin->getLogFileRowCount();
+    pWin->SaveToLog("Детально: ", pWin->cmdFullName(cmdType, rcvType));
+    pWin->SaveToLog("Параметры: ", cmdArg);
+    pWin->SaveToLog("ПБ: ", pb);
+    pWin->SaveToLog("Код: ", bytesForShow(cmd));
 }
 
-int CSerialport::parseAndLogResponse(QString rx, SResponse& sr, int tryNum) {
+QString CSerialport::stripFrame(const QString& raw)
+{
+    return raw.mid(1, raw.length() - 3); // remove ':' and trailing <LRC><CRLF>
+}
 
-    int ret = -1;
-    QString rx_woFrame = rx;
+QString CSerialport::extractMessage(const QString& frame)
+{
+    return frame.left(frame.length() - 2); // remove last two chars (LRC)
+}
 
-    QString rdInfo = "";
+QString CSerialport::extractLRC(const QString& frame)
+{
+    return frame.right(2);
+}
 
+QString CSerialport::formatRawBytes(const QString& src)
+{
+    QString out;
+    for (char c : src.toLatin1()) {
+        if (c >= ' ') out += c;
+        else if (c == 0x0D) out += "<CR>";
+        else if (c == 0x0A) out += "<LF>";
+    }
+    return out;
+}
 
-    static QString CrLf = QString(char(0x0D)) + QString(char(0x0A));
-    static QString LfCr = QString(char(0x0A)) + QString(char(0x0D));//Роман сделал и оставил так - неправильно
+void CSerialport::logResponse(const QString& raw, int code, const SResponse& sr, int tryNum)
+{
+    if (!pWin->wAppsettings->getValueLogWriteOn()) return;
 
-    rx_woFrame = rx.mid(1,rx.length()-3);
-    QString msg = rx_woFrame.left(rx_woFrame.length()-2);
-    QString gotLRC = rx_woFrame.right(2);
-    QString nowLRC = LRC(msg);
+    QDateTime now = QDateTime::currentDateTime();
+    pWin->SaveToLog("", "");
+    pWin->SaveToLog("№: ", QString::number(pWin->getLogFileBlockNumber()));
+    pWin->SaveToLog("Дата, время: ", now.toString("dd.MM.yy HH:mm:ss.zzz"));
 
-    QString l = rx.left(1),
-            r = rx.right(2);
-
-    if ((l == ":") && ((r == CrLf) || (r == LfCr) )) {
-        if (gotLRC == nowLRC) {
-
-            QString Func = rx_woFrame.mid(2,2);
-            if (       Func == "10") { //подтв. записи
-                ret = 1;
-            } else if (Func == "04" && rx_woFrame.length() == 40) { //данные из рг.
-
-                bool bStatus = false;
-
-                sr.U  = rx_woFrame.mid(10,4).toUInt(&bStatus,16)*0.06612 + 0.6;
-                sr.CmdNumRsp = rx_woFrame.mid(18,4).toUInt(&bStatus,16);
-                sr.statusRelay  = rx_woFrame.mid(14,4).toUInt(&bStatus,16);
-                sr.Input  = (sr.statusRelay & 0x8) > 0;
-                sr.Relay3 = (sr.statusRelay & 0x4) > 0;
-                sr.Relay2 = (sr.statusRelay & 0x2) > 0;
-                sr.Relay1 = (sr.statusRelay & 0x1) > 0;
-
-                rdInfo = "v." + rx_woFrame.mid( 6,4) + ", " +
-                         "U=" + QString::number(sr.U,0,2) + " В, " +
-                         "Реле1=" + (sr.Relay1?"вкл.":"выкл.") + ", " +
-                         "Реле2=" + (sr.Relay2?"вкл.":"выкл.") + ", " +
-                         "№ "  + QString::number(sr.CmdNumRsp) + ", " +
-                         "Готов=" + QString::number(sr.Input);
-                ret = 2;
-            } else {
-                ret = 0;//фрейм есть, LRC верный, но не функции 10 или 14
-            }
-
-        } else {
-            ret = 0;//фрейм есть, но LRC кривой
-        }
+    if (code > 0) {
+        pWin->SaveToLog("Детально: ", "   Ответ");
+        QString info = (code == 2) ?
+            QString("v.%1, U=%2 В, Реле1=%3, Реле2=%4, № %5, Готов=%6")
+                .arg(sr.Version)
+                .arg(QString::number(sr.U, 'f', 2))
+                .arg(sr.Relay1 ? "вкл." : "выкл.")
+                .arg(sr.Relay2 ? "вкл." : "выкл.")
+                .arg(sr.CmdNumRsp)
+                .arg(sr.Input ? "1" : "0")
+            : "";
+        pWin->SaveToLog("Параметры: ", info);
+        pWin->SaveToLog("ПБ: ", QString("ID ") + sr.DeviceId);
+    } else {
+        pWin->SaveToLog("Детально: ", raw.isEmpty() ? "Нет ответа" : "Неверный ответ");
+        pWin->SaveToLog("Параметры: ", QString("Попытка %1").arg(tryNum + 1));
     }
 
+    pWin->SaveToLog("Код: ", formatRawBytes(raw));
+}
 
-    if (pWin->wAppsettings->getValueLogWriteOn() && ((ret>0) || (tryNum > -1))) {
+QString CSerialport::parseDeviceId(const QString& frame) {
+    return frame.left(2);
+}
 
-        QDateTime now = QDateTime::currentDateTime();
+QString CSerialport::parseVersion(const QString& frame) {
+    return frame.mid(6, 4);
+}
 
-//        int currRow = pWin->wLogtable->table()->rowCount();
-//        pWin->wLogtable->table()->insertRow(currRow);
+double CSerialport::parseVoltage(const QString& frame) {
+    bool ok = false;
+    auto raw  = frame.mid(10, 4);
+    quint32 v = raw.toUInt(&ok, 16);
+    return ok ? v * 0.06612 + 0.6 : 0.0;
+}
 
-//        QTableWidgetItem* it = new QTableWidgetItem(now.date().toString("dd.MM.yy"));
-//        pWin->wLogtable->table()->setItem(currRow,0,it);
+void CSerialport::parseStatusRelay(const QString& frame, SResponse& sr) {
+    bool ok = false;
+    auto raw       = frame.mid(14, 4);
+    sr.StatusRelay    = raw.toUShort(&ok, 16);
+    sr.Input          =    (sr.StatusRelay & 0x8);
+    sr.Relay3         =    (sr.StatusRelay & 0x4);
+    sr.Relay2         =    (sr.StatusRelay & 0x2);
+    sr.Relay1         =    (sr.StatusRelay & 0x1);
+}
 
-//        it = new QTableWidgetItem(now.time().toString("HH:mm:ss.zzz"));
-//        pWin->wLogtable->table()->setItem(currRow,1, it);
+ushort CSerialport::parseCmdNumRsp(const QString& frame) {
+    bool ok = false;
+    auto raw       = frame.mid(18, 4);
+    return raw.toUShort(&ok, 16);
+}
 
-        pWin->SaveToLog("","");
-        pWin->SaveToLog("№: ", QString::number(pWin->getLogFileBlockNumber()));
-        pWin->SaveToLog("Дата, время: ", now.date().toString("dd.MM.yy") + " " + now.time().toString("HH:mm:ss.zzz"));
+int CSerialport::parseAndLogResponse(const QString& rx, SResponse& sr, int tryNum)
+{
+    const QString crlf = QString("\r\n");
+    const QString lfcr = QString("\n\r");
 
-//        it = new QTableWidgetItem(ret>0?"   Ответ":(rx==""?"Нет ответа":"Неверный ответ"));
-//        if (ret <= 0)
-//            it->setBackgroundColor(BADcolor);
-//        pWin->wLogtable->table()->setItem(currRow,3, it);
-        pWin->SaveToLog("Детально: ", ret>0?"   Ответ":(rx==""?"Нет ответа":"Неверный ответ"));
+    if (!rx.startsWith(":") || !(rx.endsWith(crlf) || rx.endsWith(lfcr))) return -1;
 
-        if (ret>0) {
-//            it = new QTableWidgetItem(ret==2?rdInfo:"");
-//            pWin->wLogtable->table()->setItem(currRow,4, it);
-            pWin->SaveToLog("Параметры: ",(ret==2?rdInfo:""));
+    QString frame = stripFrame(rx);
+    QString msg   = extractMessage(frame);
+    QString lrc   = extractLRC(frame);
 
-//            it = new QTableWidgetItem("ID " + rx_woFrame.left(2));
-//            pWin->wLogtable->table()->setItem(currRow,5, it);
-            pWin->SaveToLog("ПБ: ", QString("ID ") + rx_woFrame.left(2));
-        } else {
-//            it = new QTableWidgetItem("Попытка " + QString::number(tryNum+1));
-//            pWin->wLogtable->table()->setItem(currRow,4, it);
-            pWin->SaveToLog("Параметры: ", "Попытка " + QString::number(tryNum+1));
-        }
+    if (lrc != computeLRC(msg)) return 0; // Invalid LRC
 
-//        it = new QTableWidgetItem(bytesForShow(rx));
-//        pWin->wLogtable->table()->setItem(currRow,6, it);
-        pWin->SaveToLog("Код: ", bytesForShow(rx));
+    QString func = frame.mid(2, 2);
+    if (func == "10")
+    {
+        sr.DeviceId = parseDeviceId(frame);
+        return 1; // Write Acknowledgement
     }
 
-    return ret;
+    if (func == "04" && frame.length() == 40) {
+        bool ok = false;
+        sr.DeviceId = frame.left(2);
+        sr.Version  = frame.mid(6, 4);
+        sr.U        = frame.mid(10, 4).toUInt(&ok, 16) * 0.06612 + 0.6;
+        sr.StatusRelay = frame.mid(14, 4).toUInt(&ok, 16);
+        sr.CmdNumRsp   = frame.mid(18, 4).toUInt(&ok, 16);
+
+        sr.Input  = (sr.StatusRelay & 0x8) > 0;
+        sr.Relay3 = (sr.StatusRelay & 0x4) > 0;
+        sr.Relay2 = (sr.StatusRelay & 0x2) > 0;
+        sr.Relay1 = (sr.StatusRelay & 0x1) > 0;
+
+        logResponse(rx, 2, sr, tryNum);
+        return 2;
+    }
+
+    logResponse(rx, 0, sr, tryNum);
+    return 0;
 }
 
 QString CSerialport::bytesForShow(QString src){
@@ -286,26 +311,23 @@ QString CSerialport::bytesForShow(QString src){
     return ret;
 }
 
-QString CSerialport::LRC(QString s){
-
-    QString ret;
-
+QString CSerialport::computeLRC(const QString& hexString)
+{
     unsigned char lrc = 0;
-    QByteArray ba = s.toLatin1();
-
-    for (int i = 0; i<s.length(); i+=2)
-        lrc+= ((ba[i]>'9'?ba[i]-'A'+10:ba[i]-'0') << 4) +
-               (ba[i+1]>'9'?ba[i+1]-'A'+10:ba[i+1]-'0');
-
-    lrc = (unsigned char)(-((char)lrc));
-
-    int hi = (0xF0 & lrc) >> 4;
-    int lo = (0x0F & lrc);
-    ret = QString(char(hi>9?'A'+hi-10:'0'+hi)) +
-          QString(char(lo>9?'A'+lo-10:'0'+lo));
-
-    return ret;
+    QByteArray ba = hexString.toLatin1();
+    for (int i = 0; i < hexString.length(); i += 2)
+    {
+        unsigned char high = (ba[i] > '9') ? ba[i] - 'A' + 10 : ba[i] - '0';
+        unsigned char low  = (ba[i+1] > '9') ? ba[i+1] - 'A' + 10 : ba[i+1] - '0';
+        lrc += (high << 4) + low;
+    }
+    lrc = static_cast<unsigned char>(-static_cast<char>(lrc));
+    QString result;
+    result += (lrc >> 4) > 9 ? QChar('A' + ((lrc >> 4) - 10)) : QChar('0' + (lrc >> 4));
+    result += (lrc & 0x0F) > 9 ? QChar('A' + ((lrc & 0x0F) - 10)) : QChar('0' + (lrc & 0x0F));
+    return result;
 }
+
 
 QString CSerialport::byteToQStr(int byte){
 
