@@ -240,8 +240,9 @@ int PBsetup::sendGroupCommands(QSerialPort& serialPort, const QList<int>&  donor
 }
 
 // Основной цикл обхода устройств с ожиданием и чтением ответа
-void PBsetup::processDeviceSlots(QSerialPort& serialPort, CmdTypes cmdType, int gCmdNumber, const QList<int>& donorsNum) {
+QList<QString> PBsetup::processDeviceSlots(QSerialPort& serialPort, CmdTypes cmdType, int gCmdNumber, const QList<int>& donorsNum) {
     bool cont = true;
+    QList<QString> nonResponsiveDevices = new QList<QString>();
     const int deviceQty = donorsNum.size();
     int rTimeSlot = pWin->Usb->_rTimeSlot();
     int rSlotAddDelay = pWin->Usb->_rSlotAddDelay();
@@ -257,12 +258,15 @@ void PBsetup::processDeviceSlots(QSerialPort& serialPort, CmdTypes cmdType, int 
             break;
         donor.CmdNumReq(gCmdNumber);
 
-        readResponseInSlot(serialPort, cmdToStatusConverter[cmdType], donor, rTimeSlot + rSlotAddDelay, cont);
+        if (!readResponseInSlot(serialPort, cmdToStatusConverter[cmdType], donor,
+                               rTimeSlot + rSlotAddDelay, cont))
+            nonResponsiveDevices.append(donor._ID());
     }
+    return nonResponsiveDevices
 }
 
 // Читаем ответ устройства в своём слоте, парсим и обновляем состояние
-void PBsetup::readResponseInSlot(QSerialPort& serialPort, RelayStatus rStatus, Saver& donor, int timeoutPerSlotMs, bool& cont) {
+bool PBsetup::readResponseInSlot(QSerialPort& serialPort, RelayStatus rStatus, Saver& donor, int timeoutPerSlotMs, bool& cont) {
     QByteArray readData;
     const QDateTime readStart = QDateTime::currentDateTime();
     SResponse sr;
@@ -281,6 +285,7 @@ void PBsetup::readResponseInSlot(QSerialPort& serialPort, RelayStatus rStatus, S
                 donor.setLastOperationWithGoodAnswer(rStatus);
                 donor.setLastGoodAnswerTime(QDateTime::currentDateTime());
                 donor.setHasLastOperationGoodAnswer(true);
+                return true;
             }
             break; // Выход из цикла чтения по окончании ответа
         }
@@ -295,6 +300,7 @@ void PBsetup::readResponseInSlot(QSerialPort& serialPort, RelayStatus rStatus, S
     if (readData.isEmpty()) {
         pWin->Usb->parseAndLogResponse("", sr, 0); // логируем отсутствие ответа
     }
+    return false;
 }
 
 // Ожидаем наступления своего слота
@@ -312,7 +318,9 @@ bool PBsetup::waitForSlot(int devSlot, int slotDelay, int slotAddDelay, bool& co
     return cont;
 }
 
-QString PBsetup::execCmd(QList <int> donorsNum, CmdTypes cmdType, RecieverTypes rcvType){
+QString PBsetup::execCmd(QList <int> donorsNum, CmdTypes cmdType, RecieverTypes rcvType,
+                         bool isTimeSlotActive)
+{
 
     int CmdResultLineNumber = -1,
         TableLine = -1;
@@ -351,8 +359,10 @@ QString PBsetup::execCmd(QList <int> donorsNum, CmdTypes cmdType, RecieverTypes 
         {
             int gCmdNumber = sendGroupCommands(serialPort, donorsNum, cmdType, rTimeSlot,
                                              gTries, gTBtwRepeats, gTAfterCmd_ms);
+            if (isTimeSlotActive)
             {
-               processDeviceSlots(serialPort, cmdType, gCmdNumber, donorsNum);
+                processDeviceSlots(serialPort, cmdType, gCmdNumber, donorsNum);
+
             }
 
         }
