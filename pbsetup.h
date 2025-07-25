@@ -74,11 +74,12 @@ private:
     int sendGroupCommands(QSerialPort& serialPort, const QList<int>&  donorsNum, CmdTypes cmdType, int timeSlot,
                            int gTries, double gTBtwRepeats, int gTAfterCmd_ms);
     // Обработка получения ответов на команду нового формата от всех ПБ из группы с учётом задержек
-    void processDeviceSlots(QSerialPort& serialPort, CmdTypes cmdType, int gCmdNumber, const QList<int>& donorsNum);
+    QList<QString> processDeviceSlots(QSerialPort& serialPort, CmdTypes cmdType, int gCmdNumber, const QList<int>& donorsNum);
     // Чтение и парсинг данных ответа на команду нового формата от заданного ПБ с учётом заданной задержки
-    void readResponseInSlot(QSerialPort& serialPort, RelayStatus relayStatus, Saver& donor, int timeoutPerSlotMs, bool& cont);
+    bool readResponseInSlot(QSerialPort& serialPort, RelayStatus relayStatus, Saver& donor, int timeoutPerSlotMs, bool& cont);
     //Ожидание3
     bool waitForSlot(int devSlot, int slotDelayMs, int slotAddDelayMs, bool& cont);
+    QString getT2Text(int t2);
 
 #ifdef Dbg
         int R1status;
