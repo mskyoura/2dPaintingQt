@@ -36,7 +36,7 @@ class CSerialport
     QString extractMessage(const QString& frame);
     QString extractLRC(const QString& frame);
     QString formatRawBytes(const QString& src);
-    void logResponse(const QString& raw, int code, const SResponse& sr, int tryNum);
+
     QString parseDeviceId(const QString& frame);
     QString parseVersion(const QString& frame);
     double parseVoltage(const QString& frame);
@@ -83,6 +83,9 @@ public:
     bool initSerialPort(QSerialPort& serialPort, const QString& portname);
     void logRequest(QString cmd, CmdTypes cmdType, RecieverTypes rcvType,
                     QString cmdArg, QString pb, int& TableLine);
+    void logResponse(const QString& raw, int code, const SResponse& sr, int tryNum);
+
+    void logResponse(const QString& raw);
 
     int parseAndLogResponse(const QString& rx, SResponse& sr, int tryNum);
     QString bytesForShow(QString src);

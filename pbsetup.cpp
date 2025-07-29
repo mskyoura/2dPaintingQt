@@ -9,7 +9,6 @@
 
 #include <QMessageBox>
 #include <QDateTime>
-//#include <QDebug>
 #include <QFile>
 #include <QTextStream>
 #include <QList>
@@ -119,6 +118,33 @@ bool PBsetup::waitWithProgress(int ms, int& passed_ms, int total_ms, const QStri
     return true;
 }
 
+QList<QString> PBsetup::FindActiveSlotsId(CmdTypes cmdType, QList<int> donorsNum)
+{
+    QList<QString>* activeSlots = new QList<QString>();
+    // Добавляем адреса устройств
+    for (int i = 0; i < donorsNum.size(); i++)
+    {
+        Saver& donor = pWin->pb[pWin->vm[donorsNum[i]].getpbIndex()];
+        if ((donor.mayStart() || cmdType != RELAY2ON) && !donor._ID().isEmpty())
+            {
+                activeSlots->append(donor._ID());
+            }
+    }
+        return *activeSlots;
+}
+
+int PBsetup::CalculateActiveSlots(CmdTypes cmdType, QList<int> donorsNum)
+{
+    int cnt = 0;
+    for (int i = 0; i < donorsNum.size(); i++)
+    {
+        Saver& donor = pWin->pb[pWin->vm[donorsNum[i]].getpbIndex()];
+        if ((donor.mayStart() || cmdType != RELAY2ON) && !donor._ID().isEmpty())
+            cnt++;
+    }
+        return cnt;
+}
+
 
 // Формирование командного запроса для группового типа
 QString PBsetup::buildGroupCommand(int gCmdNumber0_255, CmdTypes cmdType, const QList<int>& donorsNum, QString& rbDlit,
@@ -152,18 +178,14 @@ QString PBsetup::buildGroupCommand(int gCmdNumber0_255, CmdTypes cmdType, const 
     cmdRq += "FFFFFFFF"; // Реле3 игнорируем
 
     if (timeSlot > 0) {
+        QList<QString> activeSlots = FindActiveSlotsId(cmdType, donorsNum);
+        if (activeSlots.size() == 0)
+            return nullptr;
         // Добавляем адреса устройств
-        for (int i = 0; i < 8; i++) {           
-            if (i < donorsNum.size()) {
-                Saver& donor = pWin->pb[pWin->vm[donorsNum[i]].getpbIndex()];
-                if (donor.mayStart() || cmdType != RELAY2ON)
-                {
-                    QString id = donor._ID();
-                    cmdRq += id.isEmpty() ? "00" : id;
-                }
-            } else
-                cmdRq += "00";
-        }
+        for (int i = 0; i < activeSlots.size(); i++)
+            cmdRq += activeSlots[i];
+        for (int i = activeSlots.size(); i < 8; i++)
+            cmdRq += "00";
         cmdRq += "00" + pWin->Usb->byteToQStr(timeSlot);
     }
 
@@ -208,19 +230,15 @@ int PBsetup::sendGroupCommands(QSerialPort& serialPort, const QList<int>&  donor
     int tableLine = -1;
 
     for (int tryNum = 0; tryNum < gTries; ++tryNum) {
-        if (tryNum > 0) {
-            if (!waitWithProgress(int(gTBtwRepeats), passed_ms, total_ms,
-                                  QString("Ожидание перед отправкой %1-й из %2 групповой команды %3.")
-                                      .arg(tryNum + 1).arg(gTries).arg(pWin->cmdFullName(cmdType, GROUP)))) {
-                return -1;
-            }
-        }
-
         QString cmdRq = buildGroupCommand(gCmdNumber0_255, cmdType, donorsNum, RBdlit, timeSlot, t1, t2);
-
-        if (!sendCommand(serialPort, cmdRq)) {
+        if (cmdRq == nullptr)
             return -1;
-        }
+        if (!sendCommand(serialPort, cmdRq))
+            return -1;
+        if (!waitWithProgress(int(gTBtwRepeats), passed_ms, total_ms,
+                              QString("Ожидание перед отправкой %1-й из %2 групповой команды %3.")
+                                  .arg(tryNum + 1).arg(gTries).arg(pWin->cmdFullName(cmdType, GROUP))))
+            return -1;
         QString cmdArgs;
         switch (cmdType)
         {
@@ -240,54 +258,52 @@ int PBsetup::sendGroupCommands(QSerialPort& serialPort, const QList<int>&  donor
 }
 
 // Основной цикл обхода устройств с ожиданием и чтением ответа
-void PBsetup::processDeviceSlots(QSerialPort& serialPort, CmdTypes cmdType, int gCmdNumber, const QList<int>& donorsNum) {
+void PBsetup::processDeviceSlots(QSerialPort& serialPort, CmdTypes cmdType, int gCmdNumber, QList<int> donorsNum)
+{
     bool cont = true;
-    const int deviceQty = donorsNum.size();
+    int activeSlotsQty = CalculateActiveSlots(cmdType, donorsNum);
     int rTimeSlot = pWin->Usb->_rTimeSlot();
     int rSlotAddDelay = pWin->Usb->_rSlotAddDelay();
-
-    for (int devSlot = 0; devSlot < deviceQty && cont; ++devSlot) {
-        const int pbIndex = pWin->vm[donorsNum[devSlot]].getpbIndex();
-        Saver& donor = pWin->pb[pbIndex];
-
-        if (donor._ID().isEmpty())
-            continue;
-
+    for (int devSlot = 0; devSlot < activeSlotsQty && cont; devSlot++) {
         if (!waitForSlot(devSlot, rTimeSlot, rSlotAddDelay, cont))
             break;
-        donor.CmdNumReq(gCmdNumber);
-
-        readResponseInSlot(serialPort, cmdToStatusConverter[cmdType], donor, rTimeSlot + rSlotAddDelay, cont);
+        readResponseInSlot(serialPort, cmdToStatusConverter[cmdType], gCmdNumber);
     }
 }
 
 // Читаем ответ устройства в своём слоте, парсим и обновляем состояние
-void PBsetup::readResponseInSlot(QSerialPort& serialPort, RelayStatus rStatus, Saver& donor, int timeoutPerSlotMs, bool& cont) {
+void PBsetup::readResponseInSlot(QSerialPort& serialPort, RelayStatus rStatus, int gCmdNumber)
+{
     QByteArray readData;
     const QDateTime readStart = QDateTime::currentDateTime();
     SResponse sr;
-
-    while (readStart.msecsTo(QDateTime::currentDateTime()) < timeoutPerSlotMs && cont) {
-        QApplication::processEvents();
-
-        readData.append(serialPort.readAll());
-        pWin->Usb->emulAnswer = QString(readData);
-        if (readData.endsWith("\r\n") || readData.endsWith("\n\r")) {
-            int ParsingCode = pWin->Usb->parseAndLogResponse(pWin->Usb->emulAnswer, sr, -1);
-
-            if (ParsingCode == 1 && donor._ID() == sr.DeviceId) //если получили подтверждение
-                //считаем, что статус был изменен при условии, что идентификаторы совпадают
+    readData = serialPort.readLine();
+    pWin->Usb->emulAnswer = QString(readData.trimmed());
+    pWin->Usb->logResponse(pWin->Usb->emulAnswer);
+    if (!pWin->Usb->emulAnswer.isEmpty()) {
+        int ParsingCode = pWin->Usb->parseAndLogResponse(pWin->Usb->emulAnswer, sr, -1);
+        if (ParsingCode == 1) //если получили подтверждение
+            //считаем, что статус был изменен при условии, что идентификаторы совпадают
+        {
+            Saver* donor = nullptr;
+            for (int i = 0; i < 8; i++)
             {
-                donor.setLastOperationWithGoodAnswer(rStatus);
-                donor.setLastGoodAnswerTime(QDateTime::currentDateTime());
-                donor.setHasLastOperationGoodAnswer(true);
-            }
-            break; // Выход из цикла чтения по окончании ответа
-        }
+                donor = &pWin->pb[i];
+                if (donor->_ID().isEmpty())
+                    continue;
+                if (donor->_ID() == sr.DeviceId)
+                {
+                    donor->CmdNumReq(gCmdNumber);
+                     break;
+                }
 
-        if (wProcess->wasCancelled()) {
-            cont = false;
-            break;
+            }
+            if (donor != nullptr)
+            {
+                donor->setLastOperationWithGoodAnswer(rStatus);
+                donor->setLastGoodAnswerTime(QDateTime::currentDateTime());
+                donor->setHasLastOperationGoodAnswer(true);
+            }
         }
     }
 
@@ -298,8 +314,9 @@ void PBsetup::readResponseInSlot(QSerialPort& serialPort, RelayStatus rStatus, S
 }
 
 // Ожидаем наступления своего слота
-bool PBsetup::waitForSlot(int devSlot, int slotDelay, int slotAddDelay, bool& cont) {
-    const int waitBeforeSlot = devSlot * slotDelay + slotAddDelay;
+bool PBsetup::waitForSlot(int devSlot, int slotDelay, int slotAddDelay, bool& cont)
+{
+    int waitBeforeSlot = devSlot * slotDelay + slotAddDelay * (devSlot == 0);
     QDateTime slotStart = QDateTime::currentDateTime();
 
     while (slotStart.msecsTo(QDateTime::currentDateTime()) < waitBeforeSlot && cont) {
@@ -312,7 +329,8 @@ bool PBsetup::waitForSlot(int devSlot, int slotDelay, int slotAddDelay, bool& co
     return cont;
 }
 
-QString PBsetup::execCmd(QList <int> donorsNum, CmdTypes cmdType, RecieverTypes rcvType){
+QString PBsetup::execCmd(QList <int> donorsNum, CmdTypes cmdType, RecieverTypes rcvType)
+{
 
     int CmdResultLineNumber = -1,
         TableLine = -1;
@@ -351,9 +369,7 @@ QString PBsetup::execCmd(QList <int> donorsNum, CmdTypes cmdType, RecieverTypes 
         {
             int gCmdNumber = sendGroupCommands(serialPort, donorsNum, cmdType, rTimeSlot,
                                              gTries, gTBtwRepeats, gTAfterCmd_ms);
-            {
-               processDeviceSlots(serialPort, cmdType, gCmdNumber, donorsNum);
-            }
+            processDeviceSlots(serialPort, cmdType, gCmdNumber, donorsNum);
 
         }
 //        if (rcvType == MULTIPLE || rcvType == SINGLE)

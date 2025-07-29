@@ -56,6 +56,7 @@ private:
     void resizeEvent(QResizeEvent *event);
     void mousePressEvent(QMouseEvent *event);
     QWidget* parent;
+
     Window *pWin;//указатель на главное окно
     Processing* wProcess;
 
@@ -66,6 +67,8 @@ private:
                    LFCR;
 
     int calcGroupCmdNum(QList <int> donorsNum);
+    QList<QString> FindActiveSlotsId(CmdTypes cmdType, QList<int> donorsNum);
+    int CalculateActiveSlots(CmdTypes cmdType, QList<int> donorsNum);
     bool waitWithProgress(int ms, int& passed_ms, int total_ms, const QString& text);
     QString buildGroupCommand(int gCmdNumber0_255, CmdTypes cmdType, const QList<int>& donorsNum, QString& rbdlit,
                               int timeSlot, const QString& t1, const QString& t2);
@@ -73,10 +76,10 @@ private:
     int sendGroupCommands(QSerialPort& serialPort, const QList<int>&  donorsNum, CmdTypes cmdType, int timeSlot,
                            int gTries, double gTBtwRepeats, int gTAfterCmd_ms);
     // Обработка получения ответов на команду нового формата от всех ПБ из группы с учётом задержек
-    void processDeviceSlots(QSerialPort& serialPort, CmdTypes cmdType, int gCmdNumber, const QList<int>& donorsNum);
+    void processDeviceSlots(QSerialPort& serialPort, CmdTypes cmdType, int gCmdNumber, QList<int> donorsNum);
     // Чтение и парсинг данных ответа на команду нового формата от заданного ПБ с учётом заданной задержки
-    void readResponseInSlot(QSerialPort& serialPort, RelayStatus relayStatus, Saver& donor, int timeoutPerSlotMs, bool& cont);
-    //Ожидание3
+    void readResponseInSlot(QSerialPort& serialPort, RelayStatus relayStatus, int cmdNumber);
+    // Ожидаем наступления своего слота
     bool waitForSlot(int devSlot, int slotDelayMs, int slotAddDelayMs, bool& cont);
 
 #ifdef Dbg

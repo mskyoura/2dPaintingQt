@@ -170,7 +170,7 @@ void CSerialport::logRequest(QString cmd, CmdTypes cmdType, RecieverTypes rcvTyp
 
 QString CSerialport::stripFrame(const QString& raw)
 {
-    return raw.mid(1, raw.length() - 3); // remove ':' and trailing <LRC><CRLF>
+    return raw.mid(1, raw.length()); // remove ':' and trailing <LRC><CRLF>
 }
 
 QString CSerialport::extractMessage(const QString& frame)
@@ -192,6 +192,16 @@ QString CSerialport::formatRawBytes(const QString& src)
         else if (c == 0x0A) out += "<LF>";
     }
     return out;
+}
+
+void CSerialport::logResponse(const QString& raw)
+{
+    QDateTime now = QDateTime::currentDateTime();
+    pWin->SaveToLog("", "");
+    pWin->SaveToLog("№: ", QString::number(pWin->getLogFileBlockNumber()));
+    pWin->SaveToLog("Дата, время: ", now.toString("dd.MM.yy HH:mm:ss.zzz"));
+    pWin->SaveToLog("Детально: ", raw.isEmpty() ? "Нет ответа" : "Неверный ответ");
+    pWin->SaveToLog("Код: ", formatRawBytes(raw));
 }
 
 void CSerialport::logResponse(const QString& raw, int code, const SResponse& sr, int tryNum)
@@ -260,7 +270,7 @@ int CSerialport::parseAndLogResponse(const QString& rx, SResponse& sr, int tryNu
     const QString crlf = QString("\r\n");
     const QString lfcr = QString("\n\r");
 
-    if (!rx.startsWith(":") || !(rx.endsWith(crlf) || rx.endsWith(lfcr))) return -1;
+    if (!rx.startsWith(":")) return -1;
 
     QString frame = stripFrame(rx);
     QString msg   = extractMessage(frame);

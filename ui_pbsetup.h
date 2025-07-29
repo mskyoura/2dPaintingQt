@@ -26,7 +26,13 @@ public:
     {
         if (PBsetup->objectName().isEmpty())
             PBsetup->setObjectName(QStringLiteral("PBsetup"));
+        PBsetup->setWindowModality(Qt::NonModal);
         PBsetup->resize(400, 300);
+        QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(PBsetup->sizePolicy().hasHeightForWidth());
+        PBsetup->setSizePolicy(sizePolicy);
 
         retranslateUi(PBsetup);
 

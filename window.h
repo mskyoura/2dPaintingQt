@@ -101,8 +101,8 @@ public:
     Vismo vmMenu, vmGroups, vmGrComm, vmStatus;
 
     int Vismo_getActiveCnt();
-
     QList<Saver> pb;
+
 
     QBrush background;
     QBrush circleBrush;
