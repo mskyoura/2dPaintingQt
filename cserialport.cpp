@@ -194,10 +194,8 @@ QString CSerialport::formatRawBytes(const QString& src)
     return out;
 }
 
-void CSerialport::logResponse(const QString& raw, int code, const SResponse& sr, int tryNum)
+void CSerialport::logSingleResponse(const QString& singleRaw, int code, const SResponse& sr, int tryNum)
 {
-    if (!pWin->wAppsettings->getValueLogWriteOn()) return;
-
     QDateTime now = QDateTime::currentDateTime();
     pWin->SaveToLog("", "");
     pWin->SaveToLog("№: ", QString::number(pWin->getLogFileBlockNumber()));
@@ -217,11 +215,47 @@ void CSerialport::logResponse(const QString& raw, int code, const SResponse& sr,
         pWin->SaveToLog("Параметры: ", info);
         pWin->SaveToLog("ПБ: ", QString("ID ") + sr.DeviceId);
     } else {
-        pWin->SaveToLog("Детально: ", raw.isEmpty() ? "Нет ответа" : "Неверный ответ");
+        pWin->SaveToLog("Детально: ", singleRaw.isEmpty() ? "Нет ответа" : "Неверный ответ");
         pWin->SaveToLog("Параметры: ", QString("Попытка %1").arg(tryNum + 1));
     }
 
-    pWin->SaveToLog("Код: ", formatRawBytes(raw));
+    pWin->SaveToLog("Код: ", formatRawBytes(singleRaw));
+}
+
+void CSerialport::logResponses(const QString& raw, int code, const SResponse& sr, int tryNum)
+{
+	if (!pWin->wAppsettings->getValueLogWriteOn()) return;
+
+	// If empty, log once to preserve previous behavior
+	if (raw.isEmpty()) {
+		logSingleResponse(raw, code, sr, tryNum);
+		return;
+	}
+
+	// Split respecting both CRLF and LFCR as terminators; also handle trailing data without terminator
+	QString remaining = raw;
+	const QString crlf = QString("\r\n");
+	const QString lfcr = QString("\n\r");
+
+	int safety = 0; // prevent pathological loops
+	while (!remaining.isEmpty() && safety++ < 1000) {
+		int idx = remaining.indexOf(crlf);
+		int delimLen = 2;
+		if (idx < 0) {
+			idx = remaining.indexOf(lfcr);
+			if (idx >= 0) delimLen = 2;
+		}
+
+		if (idx < 0) {
+			// No delimiter found => treat whole as a single packet (possibly incomplete)
+			logSingleResponse(remaining, code, sr, tryNum);
+			break;
+		}
+
+		QString packet = remaining.left(idx + delimLen);
+		logSingleResponse(packet, code, sr, tryNum);
+		remaining = remaining.mid(idx + delimLen);
+	}
 }
 
 QString CSerialport::parseDeviceId(const QString& frame) {
@@ -288,11 +322,11 @@ int CSerialport::parseAndLogResponse(const QString& rx, SResponse& sr, int tryNu
         sr.Relay2 = (sr.StatusRelay & 0x2) > 0;
         sr.Relay1 = (sr.StatusRelay & 0x1) > 0;
 
-        logResponse(rx, 2, sr, tryNum);
+        logResponses(rx, 2, sr, tryNum);
         return 2;
     }
 
-    logResponse(rx, 0, sr, tryNum);
+    logResponses(rx, 0, sr, tryNum);
     return 0;
 }
 

@@ -36,7 +36,8 @@ class CSerialport
     QString extractMessage(const QString& frame);
     QString extractLRC(const QString& frame);
     QString formatRawBytes(const QString& src);
-    void logResponse(const QString& raw, int code, const SResponse& sr, int tryNum);
+    void logSingleResponse(const QString& raw, int code, const SResponse& sr, int tryNum);
+    void logResponses(const QString& raw, int code, const SResponse& sr, int tryNum);
     QString parseDeviceId(const QString& frame);
     QString parseVersion(const QString& frame);
     double parseVoltage(const QString& frame);
