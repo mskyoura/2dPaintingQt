@@ -198,30 +198,65 @@ void CSerialport::logResponse(const QString& raw, int code, const SResponse& sr,
 {
     if (!pWin->wAppsettings->getValueLogWriteOn()) return;
 
-    QDateTime now = QDateTime::currentDateTime();
-    pWin->SaveToLog("", "");
-    pWin->SaveToLog("№: ", QString::number(pWin->getLogFileBlockNumber()));
-    pWin->SaveToLog("Дата, время: ", now.toString("dd.MM.yy HH:mm:ss.zzz"));
+    // If multiple packets are concatenated, split by CRLF and LFCR
+    // We preserve delimiters to pass each packet intact to the formatter
+    auto logSingle = [&](const QString& singleRaw){
+        QDateTime now = QDateTime::currentDateTime();
+        pWin->SaveToLog("", "");
+        pWin->SaveToLog("№: ", QString::number(pWin->getLogFileBlockNumber()));
+        pWin->SaveToLog("Дата, время: ", now.toString("dd.MM.yy HH:mm:ss.zzz"));
 
-    if (code > 0) {
-        pWin->SaveToLog("Детально: ", "   Ответ");
-        QString info = (code == 2) ?
-            QString("v.%1, U=%2 В, Реле1=%3, Реле2=%4, № %5, Готов=%6")
-                .arg(sr.Version)
-                .arg(QString::number(sr.U, 'f', 2))
-                .arg(sr.Relay1 ? "вкл." : "выкл.")
-                .arg(sr.Relay2 ? "вкл." : "выкл.")
-                .arg(sr.CmdNumRsp)
-                .arg(sr.Input ? "1" : "0")
-            : "";
-        pWin->SaveToLog("Параметры: ", info);
-        pWin->SaveToLog("ПБ: ", QString("ID ") + sr.DeviceId);
-    } else {
-        pWin->SaveToLog("Детально: ", raw.isEmpty() ? "Нет ответа" : "Неверный ответ");
-        pWin->SaveToLog("Параметры: ", QString("Попытка %1").arg(tryNum + 1));
+        if (code > 0) {
+            pWin->SaveToLog("Детально: ", "   Ответ");
+            QString info = (code == 2) ?
+                QString("v.%1, U=%2 В, Реле1=%3, Реле2=%4, № %5, Готов=%6")
+                    .arg(sr.Version)
+                    .arg(QString::number(sr.U, 'f', 2))
+                    .arg(sr.Relay1 ? "вкл." : "выкл.")
+                    .arg(sr.Relay2 ? "вкл." : "выкл.")
+                    .arg(sr.CmdNumRsp)
+                    .arg(sr.Input ? "1" : "0")
+                : "";
+            pWin->SaveToLog("Параметры: ", info);
+            pWin->SaveToLog("ПБ: ", QString("ID ") + sr.DeviceId);
+        } else {
+            pWin->SaveToLog("Детально: ", singleRaw.isEmpty() ? "Нет ответа" : "Неверный ответ");
+            pWin->SaveToLog("Параметры: ", QString("Попытка %1").arg(tryNum + 1));
+        }
+
+        pWin->SaveToLog("Код: ", formatRawBytes(singleRaw));
+    };
+
+    // If empty, log once to preserve previous behavior
+    if (raw.isEmpty()) {
+        logSingle(raw);
+        return;
     }
 
-    pWin->SaveToLog("Код: ", formatRawBytes(raw));
+    // Split respecting both CRLF and LFCR as terminators; also handle trailing data without terminator
+    QString remaining = raw;
+    const QString crlf = QString("\r\n");
+    const QString lfcr = QString("\n\r");
+
+    int safety = 0; // prevent pathological loops
+    while (!remaining.isEmpty() && safety++ < 1000) {
+        int idx = remaining.indexOf(crlf);
+        int delimLen = 2;
+        if (idx < 0) {
+            idx = remaining.indexOf(lfcr);
+            if (idx >= 0) delimLen = 2;
+        }
+
+        if (idx < 0) {
+            // No delimiter found => treat whole as a single packet (possibly incomplete)
+            logSingle(remaining);
+            break;
+        }
+
+        QString packet = remaining.left(idx + delimLen);
+        logSingle(packet);
+        remaining = remaining.mid(idx + delimLen);
+    }
 }
 
 QString CSerialport::parseDeviceId(const QString& frame) {
