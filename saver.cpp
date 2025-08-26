@@ -260,8 +260,9 @@ void Saver::setLastOperationWithGoodAnswer(RelayStatus rStatus){
 }
 
 bool Saver::mayStart(){
-    return ((lastRSTatus == RELAY1ON) &&
-            (rHasLastOperationGoodAnswer == 1));
+//    return ((lastRSTatus == RELAY1ON) &&
+//            (rHasLastOperationGoodAnswer == 1));
+    return true;
 }
 
 void Saver::setStatusNI(){

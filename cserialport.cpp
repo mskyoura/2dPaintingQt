@@ -121,7 +121,7 @@ QString CSerialport::getT1(bool txt){
 }
 
 QString CSerialport::getT2(bool txt){
-    return QString::number(rT2,0,1) + (txt?" с":"");
+    return QString::number(rT2, 0,1) + (txt?" с":"");
 }
 
 int    CSerialport::_rUseRBdlit(){
@@ -194,16 +194,6 @@ QString CSerialport::formatRawBytes(const QString& src)
     return out;
 }
 
-void CSerialport::logResponse(const QString& raw)
-{
-    QDateTime now = QDateTime::currentDateTime();
-    pWin->SaveToLog("", "");
-    pWin->SaveToLog("№: ", QString::number(pWin->getLogFileBlockNumber()));
-    pWin->SaveToLog("Дата, время: ", now.toString("dd.MM.yy HH:mm:ss.zzz"));
-    pWin->SaveToLog("Детально: ", raw.isEmpty() ? "Нет ответа" : "Неверный ответ");
-    pWin->SaveToLog("Код: ", formatRawBytes(raw));
-}
-
 void CSerialport::logResponse(const QString& raw, int code, const SResponse& sr, int tryNum)
 {
     if (!pWin->wAppsettings->getValueLogWriteOn()) return;
@@ -223,7 +213,7 @@ void CSerialport::logResponse(const QString& raw, int code, const SResponse& sr,
                 .arg(sr.Relay2 ? "вкл." : "выкл.")
                 .arg(sr.CmdNumRsp)
                 .arg(sr.Input ? "1" : "0")
-            : "";
+            : "Подтверждение";
         pWin->SaveToLog("Параметры: ", info);
         pWin->SaveToLog("ПБ: ", QString("ID ") + sr.DeviceId);
     } else {
@@ -282,6 +272,7 @@ int CSerialport::parseAndLogResponse(const QString& rx, SResponse& sr, int tryNu
     if (func == "10")
     {
         sr.DeviceId = parseDeviceId(frame);
+        logResponse(rx, 1, sr, tryNum);
         return 1; // Write Acknowledgement
     }
 

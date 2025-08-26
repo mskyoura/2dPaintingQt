@@ -14,6 +14,7 @@
 #include <QDialog>
 #include <QtSerialPort/QSerialPort>
 #include <QDebug>
+#include <QDateTime>
 
 namespace Ui {
 class PBsetup;
@@ -62,6 +63,8 @@ private:
 
     bool isWriteDone;
     QSerialPort serialPort;
+    QDateTime lastSendTime;
+    int lastLatencyMs = -1;
 
     static QString CRLF,
                    LFCR;

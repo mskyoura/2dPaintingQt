@@ -115,7 +115,26 @@ bool PBsetup::waitWithProgress(int ms, int& passed_ms, int total_ms, const QStri
             return false;
     }
     passed_ms += ms;
+    QDateTime slotFinish = QDateTime::currentDateTime();
     return true;
+}
+
+// Ожидаем наступления своего слота
+bool PBsetup::waitForSlot(int devSlot, int slotDelay, int slotAddDelay, bool& cont)
+{
+    int waitBeforeSlot = devSlot * slotDelay + slotAddDelay * (devSlot == 0);
+    QDateTime slotStart = QDateTime::currentDateTime();
+
+    while (slotStart.msecsTo(QDateTime::currentDateTime()) < waitBeforeSlot && cont) {
+        QApplication::processEvents();
+        if (wProcess->wasCancelled()) {
+            cont = false;
+            return false;
+        }
+    }
+
+    QDateTime slotFinish = QDateTime::currentDateTime();
+    return cont;
 }
 
 QList<QString> PBsetup::FindActiveSlotsId(CmdTypes cmdType, QList<int> donorsNum)
@@ -202,6 +221,7 @@ bool PBsetup::sendCommand(QSerialPort& serialPort, const QString& frameCmd) {
         isWriteDone = true;
     });
 
+    lastSendTime = QDateTime::currentDateTime();
     qint64 bytesWritten = serialPort.write(writeData);
     if (bytesWritten == -1) return false;
 
@@ -277,9 +297,16 @@ void PBsetup::readResponseInSlot(QSerialPort& serialPort, RelayStatus rStatus, i
     QByteArray readData;
     const QDateTime readStart = QDateTime::currentDateTime();
     SResponse sr;
-    readData = serialPort.readLine();
+    readData = serialPort.readAll();
     pWin->Usb->emulAnswer = QString(readData.trimmed());
-    pWin->Usb->logResponse(pWin->Usb->emulAnswer);
+//    pWin->Usb->logResponse(pWin->Usb->emulAnswer);
+    if (lastSendTime.isValid()) {
+        lastLatencyMs = lastSendTime.msecsTo(QDateTime::currentDateTime());
+        // Optional: log latency
+        if (pWin->wAppsettings->getValueLogWriteOn()) {
+            pWin->SaveToLog("","Время между отправкой и получением: " + QString::number(lastLatencyMs) + " мс");
+        }
+    }
     if (!pWin->Usb->emulAnswer.isEmpty()) {
         int ParsingCode = pWin->Usb->parseAndLogResponse(pWin->Usb->emulAnswer, sr, -1);
         if (ParsingCode == 1) //если получили подтверждение
@@ -313,21 +340,7 @@ void PBsetup::readResponseInSlot(QSerialPort& serialPort, RelayStatus rStatus, i
     }
 }
 
-// Ожидаем наступления своего слота
-bool PBsetup::waitForSlot(int devSlot, int slotDelay, int slotAddDelay, bool& cont)
-{
-    int waitBeforeSlot = devSlot * slotDelay + slotAddDelay * (devSlot == 0);
-    QDateTime slotStart = QDateTime::currentDateTime();
 
-    while (slotStart.msecsTo(QDateTime::currentDateTime()) < waitBeforeSlot && cont) {
-        QApplication::processEvents();
-        if (wProcess->wasCancelled()) {
-            cont = false;
-            return false;
-        }
-    }
-    return cont;
-}
 
 QString PBsetup::execCmd(QList <int> donorsNum, CmdTypes cmdType, RecieverTypes rcvType)
 {

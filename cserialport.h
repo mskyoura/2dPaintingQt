@@ -85,8 +85,6 @@ public:
                     QString cmdArg, QString pb, int& TableLine);
     void logResponse(const QString& raw, int code, const SResponse& sr, int tryNum);
 
-    void logResponse(const QString& raw);
-
     int parseAndLogResponse(const QString& rx, SResponse& sr, int tryNum);
     QString bytesForShow(QString src);
 
