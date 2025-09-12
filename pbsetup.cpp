@@ -297,7 +297,7 @@ void PBsetup::readResponseInSlot(QSerialPort& serialPort, RelayStatus rStatus, i
     QByteArray readData;
     const QDateTime readStart = QDateTime::currentDateTime();
     SResponse sr;
-    readData = serialPort.readAll();
+    readData = serialPort.readLine();
     pWin->Usb->emulAnswer = QString(readData.trimmed());
 //    pWin->Usb->logResponse(pWin->Usb->emulAnswer);
     if (lastSendTime.isValid()) {
