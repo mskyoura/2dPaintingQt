@@ -75,9 +75,19 @@ private:
     bool waitWithProgress(int ms, int& passed_ms, int total_ms, const QString& text);
     QString buildGroupCommand(int gCmdNumber0_255, CmdTypes cmdType, const QList<int>& donorsNum, QString& rbdlit,
                               int timeSlot, const QString& t1, const QString& t2);
+    // Формирование одиночной команды для одного ПБ
+    QString buildSingleCommand(const QString& deviceId, CmdTypes cmdType, const QString& iCmdNum,
+                               const QString& rbdlit, const QString& t1, const QString& t2);
     bool sendCommand(QSerialPort& serialPort, const QString& frameCmd);
     int sendGroupCommands(QSerialPort& serialPort, const QList<int>&  donorsNum, CmdTypes cmdType, int timeSlot,
                            int gTries, double gTBtwRepeats, int gTAfterCmd_ms);
+    // Отправка одиночной команды по старой логике с повторами и ожиданием ответа
+    bool sendSingleCommand(QSerialPort& serialPort, int donorVmIndex, CmdTypes cmdType,
+                           int iTries, int iTAnswerWait, double iTBtwRepeats);
+    // Чтение и обработка ответа для одиночной команды в рамках таймаута
+    void readSingleResponse(QSerialPort& serialPort, CmdTypes cmdType, Saver& donor,
+                            int tryNum, int iTAnswerWait, bool& contCurrDev,
+                            bool& anyAttemptSucceeded);
     // Обработка получения ответов на команду нового формата от всех ПБ из группы с учётом задержек
     void processDeviceSlots(QSerialPort& serialPort, CmdTypes cmdType, int gCmdNumber, QList<int> donorsNum);
     // Чтение и парсинг данных ответа на команду нового формата от заданного ПБ с учётом заданной задержки

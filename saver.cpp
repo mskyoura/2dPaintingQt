@@ -253,6 +253,8 @@ void Saver::setLastOperationWithGoodAnswer(RelayStatus rStatus){
                 lastRSTatus = RELAY1OFF;
         break;
         case RELAY2ON:
+            if (rStatus == RELAY1ON)
+                lastRSTatus = RELAY1ON;
             if (rStatus == RELAY1OFF)
                 lastRSTatus = RELAY1OFF;
         break;
