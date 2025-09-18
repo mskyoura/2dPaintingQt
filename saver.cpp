@@ -233,38 +233,71 @@ QString Saver::getPressedButton() {
     return pressedButton;
 }
 
-void Saver::setLastOperationWithGoodAnswer(RelayStatus rStatus){
-    switch (lastRSTatus)
-    {
-        case UNKNOWN:
-            if (rStatus == RELAY1OFF)
-                lastRSTatus = RELAY1OFF;
-            if (rStatus == RELAY1ON)
-                lastRSTatus = RELAY1ON;
+void Saver::setLastOperationWithGoodAnswer(RelayStatus newStatus){
+    switch (lastRSTatus) {
+    case UNKNOWN:
+        if (newStatus == RELAY1OFF || newStatus == RELAY1ON) {
+            lastRSTatus = newStatus;
+        }
         break;
-        case RELAY1OFF:
-            if (rStatus == RELAY1ON)
-                lastRSTatus = RELAY1ON;
+    case RELAY1OFF:
+        // Из выключенного R1 можно перейти только в включенный R1
+        if (newStatus == RELAY1ON) {
+            lastRSTatus = RELAY1ON;
+        }
         break;
-        case RELAY1ON:
-            if (rStatus == RELAY2ON)
-                lastRSTatus = RELAY2ON;
-            if (rStatus == RELAY1OFF)
-                lastRSTatus = RELAY1OFF;
+    case RELAY1ON:
+        // Из включенного R1 разрешены переходы в R2ON или R1OFF (и повторное R1ON)
+        if (newStatus == RELAY2ON || newStatus == RELAY1OFF || newStatus == RELAY1ON) {
+            lastRSTatus = newStatus;
+        }
         break;
-        case RELAY2ON:
-            if (rStatus == RELAY1ON)
-                lastRSTatus = RELAY1ON;
-            if (rStatus == RELAY1OFF)
-                lastRSTatus = RELAY1OFF;
+    case RELAY2ON:
+        // После R2ON возможен возврат только к состояниям R1
+        if (newStatus == RELAY1ON || newStatus == RELAY1OFF) {
+            lastRSTatus = newStatus;
+        }
         break;
     }
 }
 
-bool Saver::mayStart(){
-//    return ((lastRSTatus == RELAY1ON) &&
-//            (rHasLastOperationGoodAnswer == 1));
+bool Saver::canExecute(CmdTypes cmdType) const
+{
+    // Запреты:
+    // 1) Переход в тот же самый статус (RELAY1OFF/RELAY1ON/RELAY2ON)
+    // 2) Переход RELAY1OFF -> RELAY2ON
+
+    // Сопоставим cmdType целевому статусу
+    RelayStatus target;
+    switch (cmdType) {
+    case _RELAY1OFF: target = RELAY1OFF; break;
+    case _RELAY1ON:  target = RELAY1ON;  break;
+    case _RELAY2ON:  target = RELAY2ON;  break;
+    default: return true; // на иные команды ограничения не распространяются
+    }
+
+    // 1) если текущий уже равен целевому — запрещаем
+    if (lastRSTatus == target)
+        return false;
+
+    // 2) запрет RELAY1OFF -> RELAY2ON
+    if (lastRSTatus == RELAY1OFF && target == RELAY2ON)
+        return false;
+
     return true;
+}
+
+bool Saver::mayStart(){
+    return ((lastRSTatus == RELAY1ON) &&
+            (rHasLastOperationGoodAnswer == 1));
+}
+
+void Saver::setLastWriteCommand(CmdTypes cmdType) {
+    lastWriteCommand = cmdType;
+}
+
+CmdTypes Saver::getLastWriteCommand() {
+    return lastWriteCommand;
 }
 
 void Saver::setStatusNI(){
@@ -277,6 +310,7 @@ void Saver::setStatusNI(){
 
     rCmdNumReq = -1;
     rCmdNumRsp = -1;
+    lastWriteCommand = _STATUS; // По умолчанию
 
     u       = "---";
     uClr    = clGray;

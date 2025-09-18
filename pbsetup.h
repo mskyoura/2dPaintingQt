@@ -88,12 +88,35 @@ private:
     void readSingleResponse(QSerialPort& serialPort, CmdTypes cmdType, Saver& donor,
                             int tryNum, int iTAnswerWait, bool& contCurrDev,
                             bool& anyAttemptSucceeded);
+    // Опрос serialPort.readAll() в цикле до получения непустой строки или истечения таймаута
+    QString readAllWithTimeout(QSerialPort& serialPort, int timeoutMs, bool& cont);
     // Обработка получения ответов на команду нового формата от всех ПБ из группы с учётом задержек
     void processDeviceSlots(QSerialPort& serialPort, CmdTypes cmdType, int gCmdNumber, QList<int> donorsNum);
-    // Чтение и парсинг данных ответа на команду нового формата от заданного ПБ с учётом заданной задержки
-    void readResponseInSlot(QSerialPort& serialPort, RelayStatus relayStatus, int cmdNumber);
-    // Ожидаем наступления своего слота
-    bool waitForSlot(int devSlot, int slotDelayMs, int slotAddDelayMs, bool& cont);
+    // Чтение и парсинг одной строки ответа (без CR/LF). Возвращает ID устройства-ответчика или пустую строку
+    QString readResponseInSlot(const QString& oneLine, RelayStatus relayStatus, int cmdNumber);
+    // Ожидаем окно ответов для всех слотов сразу: activeSlotsQty * slotDelayMs + slotAddDelayMs
+    bool waitForSlots(int activeSlotsQty, int slotDelayMs, int slotAddDelayMs, bool& cont);
+
+    // Планирование изменения статуса для одного ПБ через заданный интервал (не блокирует UI)
+    void scheduleStatusChangeForId(const QString& id, RelayStatus statusToSet, int delayMs);
+    // Определение необходимости и вычисление задержки смены статуса для указанного ПБ
+    int computeStatusChangeDelayMs(const QString& id, CmdTypes cmdType, RelayStatus statusToSet, 
+                                   int t1 = -1, int t2 = -1);
+
+    // Вспомогательные методы для улучшения читаемости
+    struct CommandParams {
+        QString rbdlit;
+        QString t1;
+        QString t2;
+    };
+    CommandParams prepareCommandParams();
+    CommandParams prepareSingleCommandParams(Saver& donor);
+    QString formatCommandArgs(CmdTypes cmdType, int cmdNumber, int tryNum, int totalTries);
+    QString formatSingleCommandArgs(CmdTypes cmdType, Saver& donor, const QString& cmdNum);
+    void logWaitTime(const QDateTime& start, int timeoutMs, const QString& methodName);
+    RelayStatus determineRelayStatus(int relay1, int relay2);
+    void scheduleStatusChanges(Saver& donor, CmdTypes lastWriteCmd);
+    Saver* findDonorByDeviceId(const QString& deviceId);
 
 #ifdef Dbg
         int R1status;

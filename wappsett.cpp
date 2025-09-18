@@ -223,9 +223,6 @@ bool wAppsett::isTextLong(QFont& textFont, QString  s, int maxwidth) {
 
     FontPainter->setFont(textFont);
 
-    bool bold = textFont.bold();
-    int sz = textFont.pixelSize();
-
     QFontMetrics fm(textFont);
     int width = fm.width(s);
 
@@ -343,6 +340,7 @@ void wAppsett::on_pushButton_5_clicked()
 }
 
 void wAppsett::showEvent(QShowEvent * event){
+    Q_UNUSED(event);
     int x = pWin->geometry().x();
     int y = pWin->geometry().y();
     int w = pWin->geometry().width();
@@ -355,11 +353,11 @@ void wAppsett::showEvent(QShowEvent * event){
 
 void wAppsett::on_launch_pwdEnbl_clicked(bool checked)
 {
-    if (ui->launch_pwdEnbl->isChecked()) {
-        ui->launch_pwdEnbl->setChecked(!ui->launch_pwdEnbl->isChecked());
+    if (checked) {
+        ui->launch_pwdEnbl->setChecked(!checked);
         pWin->admin->dialogAskPwd(QString("Отключить запрос пароля при запуске программы?"));
         if (pWin->admin->exec() == QDialog::Accepted){
-            ui->launch_pwdEnbl->setChecked(!ui->launch_pwdEnbl->isChecked());
+            ui->launch_pwdEnbl->setChecked(!checked);
         }
     }
 }
