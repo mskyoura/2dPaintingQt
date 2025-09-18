@@ -438,7 +438,8 @@ void PBsetup::processDeviceSlots(QSerialPort& serialPort, CmdTypes cmdType, int 
     }
 
     // Проверка необходимости смены статуса и планирование по каждому ПБ
-    for (const QString& id : activeIds) {
+    // Планируем смену статуса только для тех ПБ, которые реально прислали подтверждение
+    for (const QString& id : respondedIds) {
         // Relay1 -> OFF после rbDlit, если применимо
         int delayMsR1 = pWin->Usb->_rUseRBdlit() ? computeStatusChangeDelayMs(id, cmdType, RELAY1OFF) : 0;
         if (delayMsR1 > 0) {

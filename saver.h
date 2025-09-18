@@ -44,6 +44,8 @@ class Saver
     QString debugText;
     QString pressedButton;
 
+    // Track last relay write command for timer scheduling and logic
+    CmdTypes  lastWriteCommand;
 
 public:
     Saver(QString   _rID = "",
@@ -85,6 +87,7 @@ public:
     QString getBlink();
 
     bool mayStart();
+    bool canExecute(CmdTypes cmdType) const;
 
     bool blink();
     void setBlink(bool a);
@@ -118,6 +121,10 @@ public:
     int  getHasLastOperationGoodAnswer();
 
     void setStatusNI();
+
+    // Last write command accessors
+    void setLastWriteCommand(CmdTypes cmdType);
+    CmdTypes getLastWriteCommand();
 };
 
 #endif // SAVER_H
