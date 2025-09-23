@@ -45,7 +45,7 @@ class Saver
     QString pressedButton;
 
     // Track last relay write command for timer scheduling and logic
-    CmdTypes  lastWriteCommand;
+    CmdTypes  lastCommand;
 
 public:
     Saver(QString   _rID = "",
@@ -112,7 +112,7 @@ public:
     void setPolarity(int a);
     void setDst(QString a);
     void setLastGoodAnswerTime(QDateTime a);
-    void  setLastOperationWithGoodAnswer(RelayStatus rStatus);
+    void setLastOperationWithGoodAnswer(RelayStatus rStatus);
     void setCoil_StatusAtGoodAnswer(int a);
 
     void getU_coil(QString &_u, QColor &_uClr, QString &_coil, QColor &_coilClr);
@@ -123,8 +123,7 @@ public:
     void setStatusNI();
 
     // Last write command accessors
-    void setLastWriteCommand(CmdTypes cmdType);
-    CmdTypes getLastWriteCommand();
+    RelayStatus getLastStatus();
 };
 
 #endif // SAVER_H

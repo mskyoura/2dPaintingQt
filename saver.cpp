@@ -292,12 +292,8 @@ bool Saver::mayStart(){
             (rHasLastOperationGoodAnswer == 1));
 }
 
-void Saver::setLastWriteCommand(CmdTypes cmdType) {
-    lastWriteCommand = cmdType;
-}
-
-CmdTypes Saver::getLastWriteCommand() {
-    return lastWriteCommand;
+RelayStatus Saver::getLastStatus() {
+    return lastRSTatus;
 }
 
 void Saver::setStatusNI(){
@@ -310,7 +306,7 @@ void Saver::setStatusNI(){
 
     rCmdNumReq = -1;
     rCmdNumRsp = -1;
-    lastWriteCommand = _STATUS; // По умолчанию
+    lastCommand = _STATUS; // По умолчанию
 
     u       = "---";
     uClr    = clGray;
