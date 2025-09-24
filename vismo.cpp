@@ -597,40 +597,25 @@ void Vismo::Draw(QPainter *_painter, bool blinktoggle, int ActiveCntInGroup) {
     {
         Inside(true, i, blinktoggle,ActiveCntInGroup);
 
-        if (moType == 3) { // vmMenu
+        if (moType == 3) { // vmMenu (равные кнопки по ширине)
             QPen pen;
             pen.setColor(Qt::white);
             pen.setWidth(2);
             painter->setPen(pen);
 
-            textFont.setPixelSize(moTxtLineHeight*0.5);
+            textFont.setPixelSize(moTxtLineHeight*0.45);
             painter->setFont(textFont);
-            painter->setPen(Qt::white);
 
             const int len = 4;
             QString s[len] = {"Диагностика", "Настройки", "О программе", "ВЫХОД"};
-            QRect r = QRect(0,0,0,0);
-            int totalW=0,
-                tw=0;
 
-            int maxlenIndex = 0;
-            for (int i=1; i<len; i++)
-                if (s[i].length() > s[maxlenIndex].length())
-                    maxlenIndex = i;
-
-
+            int w = moWidth / len; // равномерное распределение
             for (int i=0; i<len; i++) {
-
-                if (i == len-1)
-                    painter->setBrush(QColor(255,0,0));
-                else
-                    painter->setBrush(QColor(163,163,163));
-
-                tw = 2.0 * QFontMetrics(textFont).width(s[maxlenIndex]);
-                r = QRect(moX + totalW, moY, tw, moTxtLineHeight);
+                QRect r(moX + i*w, moY, w, moTxtLineHeight);
+                painter->setBrush(i==len-1? QColor(255,0,0): QColor(163,163,163));
                 painter->drawRect(r);
+                painter->setPen(Qt::white);
                 painter->drawText(r, Qt::AlignCenter | Qt::AlignVCenter, s[i]);
-                totalW += tw;
                 menuRect[i] = r;
             }
         }
@@ -746,10 +731,10 @@ void Vismo::Draw(QPainter *_painter, bool blinktoggle, int ActiveCntInGroup) {
 
             QRect r = QRect(0,0,0,0);
 
-            int tw = 0.9 / ((double) PBgroups_len) * moWidth;//;3.0 * QFontMetrics(textFont).width(s[maxlenIndex]);
-
-            int d = (moWidth - ((double) PBgroups_len)*tw)/((double) PBgroups_len);
-            int totalW = 0.5 * d;
+            // Равные вкладки групп на всю ширину с узким разделителем
+            int tw = moWidth / PBgroups_len;
+            int d = 0; // без дополнительного зазора
+            int totalW = 0;
 
             int maxTextWidth = tw * 0.9;
 
@@ -783,7 +768,6 @@ void Vismo::Draw(QPainter *_painter, bool blinktoggle, int ActiveCntInGroup) {
 
                     painter->setBrush(QColor(Qt::black));
                     painter->setPen(PBgroups_clr[i]);
-                    //painter->drawRect(r);
                     painter->drawText(r, Qt::AlignCenter | Qt::AlignVCenter, PBgroups_names[i]);
                 }
 

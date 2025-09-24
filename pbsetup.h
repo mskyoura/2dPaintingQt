@@ -117,7 +117,8 @@ private:
     // Чтение подтверждений до получения от всех активных устройств или до истечения окна
     void readConfirmationsUntilAllOrTimeout(QSerialPort& serialPort, CmdTypes cmdType, int gCmdNumber,
                                             const QList<QString>& activeIds, int windowMs,
-                                            QSet<QString>& respondedIds, bool showProgress = false);
+                                            QSet<QString>& respondedIds, bool showProgress = false,
+                                            int tryNum = -1, const QDateTime* tryStart = nullptr);
     // Чтение и парсинг одной строки ответа (без CR/LF). Возвращает ID устройства-ответчика или пустую строку
     QString readResponseInSlot(const QString& oneLine, RelayStatus relayStatus, int cmdNumber);
     // Ожидаем окно ответов для всех слотов сразу: activeSlotsQty * slotDelayMs + slotAddDelayMs
@@ -160,6 +161,8 @@ private:
     // Unified accessors to donors
     Saver* donorByVmIndexPtr(int vmIndex);
     Saver* donorByPbIndexPtr(int pbIndex);
+    // Exception logging helper
+    void logException(const QString& where, const std::exception* e = nullptr);
     
     // Helper methods for execCmd refactoring
     bool initializeSerialPort();

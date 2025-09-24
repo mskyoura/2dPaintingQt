@@ -342,8 +342,8 @@ QString PBsetup::formatSingleCommandArgs(CmdTypes cmdType, Saver& donor, const Q
 void PBsetup::logWaitTime(const QDateTime& start, int timeoutMs, const QString& methodName) {
     if (pWin->wAppsettings->getValueLogWriteOn()) {
         int waitedMs = start.msecsTo(QDateTime::currentDateTime());
-        pWin->SaveToLog("", QString("Фактическое ожидание ответа в %1: %2 мс (таймаут: %3 мс)")
-                       .arg(methodName).arg(waitedMs).arg(timeoutMs));
+        pWin->SaveToLog("", QString("Фактическое ожидание ответа %1 мс (таймаут: %2 мс)")
+                       .arg(waitedMs).arg(timeoutMs));
     }
 }
 
@@ -352,6 +352,14 @@ RelayStatus PBsetup::determineRelayStatus(int relay1, int relay2) {
     if (relay1 == 1) return RELAY1ON;
     if (relay1 == 0) return RELAY1OFF;
     return UNKNOWN;
+}
+
+void PBsetup::logException(const QString& where, const std::exception* e)
+{
+    if (!pWin || !pWin->wAppsettings->getValueLogWriteOn()) return;
+    pWin->SaveToLog("", "");
+    pWin->SaveToLog("Детально: ", QString("Исключение в %1").arg(where));
+    if (e) pWin->SaveToLog("Параметры: ", QString::fromLatin1(e->what()));
 }
 
 CmdTypes PBsetup::relayStatusToCmdType(RelayStatus status) const
@@ -383,12 +391,13 @@ void PBsetup::scheduleStatusChanges(Saver& donor, CmdTypes lastWriteCmd) {
 }
 
 Saver* PBsetup::findDonorByDeviceId(const QString& deviceId) {
-    for (int i = 0; i < donorsSize(); ++i) {
-        Saver* donor = donorByPbIndexPtr(i);
+    if (deviceId.isEmpty()) return nullptr;
+    // Ищем среди всех визуальных устройств (всех групп)
+    for (int vmIndex = 0; vmIndex < MAX_VM_DEVICES; ++vmIndex) {
+        Saver* donor = donorByVmIndexPtr(vmIndex);
         if (!donor) continue;
-        if (!donor->_ID().isEmpty() && donor->_ID() == deviceId) {
-            return donor;
-        }
+        if (donor->_ID().isEmpty()) continue;
+        if (donor->_ID() == deviceId) return donor;
     }
     return nullptr;
 }
@@ -404,6 +413,7 @@ Saver* PBsetup::donorByVmIndexPtr(int vmIndex)
 {
     if (!pWin) return nullptr;
     if (vmIndex < 0 || vmIndex >= MAX_VM_DEVICES) return nullptr;
+    if (pWin->vm.size() <= vmIndex) return nullptr;
     int pbIndex = pWin->vm[vmIndex].getpbIndex();
     return donorByPbIndexPtr(pbIndex);
 }
@@ -473,7 +483,8 @@ int PBsetup::sendGroupCommands(QSerialPort& serialPort, const QList<int>& donors
 // Чтение подтверждений до получения от всех активных устройств или до истечения окна
 void PBsetup::readConfirmationsUntilAllOrTimeout(QSerialPort& serialPort, CmdTypes cmdType, int gCmdNumber,
                                                  const QList<QString>& activeIds, int windowMs,
-                                                 QSet<QString>& respondedIds, bool showProgress)
+                                                 QSet<QString>& respondedIds, bool showProgress,
+                                                 int tryNum, const QDateTime* tryStart)
 {
     bool cont = true;
     QDateTime start = QDateTime::currentDateTime();
@@ -499,7 +510,7 @@ void PBsetup::readConfirmationsUntilAllOrTimeout(QSerialPort& serialPort, CmdTyp
                 respondedIds.insert(devId);
                 if (respondedIds.size() >= activeIds.size())
                 {
-                    serialPort.clear();
+//                    serialPort.clear();
                     break;
                 }
             }
@@ -514,7 +525,31 @@ void PBsetup::readConfirmationsUntilAllOrTimeout(QSerialPort& serialPort, CmdTyp
         }
     }
     // Очистить буфер после завершения окна или получения всех подтверждений
-    serialPort.clear();
+//    serialPort.clear();
+
+    // Логирование отсутствия ответа для неответивших, как в старой логике
+    if (pWin->wAppsettings->getValueLogWriteOn()) {
+        int notAnswered = 0;
+        for (int i = 0; i < activeIds.size(); ++i) {
+            if (!respondedIds.contains(activeIds[i])) notAnswered++;
+        }
+        if (notAnswered > 0) {
+            SResponse sr;
+            // tryNum >=0 — номер попытки; если известен старт — выводим фактическое время окна
+            int elapsed = tryStart ? tryStart->msecsTo(QDateTime::currentDateTime()) : windowMs;
+            // Сначала пустая строка (разделитель) как в логике logRequest/logResponse
+            pWin->SaveToLog("", "");
+            pWin->SaveToLog("Детально: ", "Нет ответа (групповая)");
+            pWin->SaveToLog("Параметры: ", QString("Попытка %1, ожидали %2 мс")
+                                            .arg(tryNum >= 0 ? tryNum + 1 : 0)
+                                            .arg(elapsed));
+            pWin->SaveToLog("ПБ: ", QString("Не ответили: %1 из %2")
+                                        .arg(notAnswered)
+                                        .arg(activeIds.size()));
+            // Также прокинем в общий парсер для унификации структуры логов
+            pWin->Usb->parseAndLogResponse("", sr, tryNum >= 0 ? tryNum : 0);
+        }
+    }
 }
 
 // Считываем ответы, обновляем статусы
@@ -748,8 +783,8 @@ QString PBsetup::readAllWithTimeout(QSerialPort& serialPort, int timeoutMs, bool
     QByteArray readData;
     
     while (start.msecsTo(QDateTime::currentDateTime()) < timeoutMs && cont) {
-        QApplication::processEvents();
-        if (wProcess->wasCancelled()) {
+        if (QCoreApplication::instance()) QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
+        if (wProcess && wProcess->wasCancelled()) {
             cont = false;
             break;
         }
@@ -762,7 +797,7 @@ QString PBsetup::readAllWithTimeout(QSerialPort& serialPort, int timeoutMs, bool
                 QString ansEnd = response.right(2);
                 if ((ansEnd == CRLF) || (ansEnd == LFCR)) {
                     logWaitTime(start, timeoutMs, "readAllWithTimeout");
-                    serialPort.clear();
+//                    serialPort.clear();
                     return response;
                 }
             }
@@ -771,7 +806,7 @@ QString PBsetup::readAllWithTimeout(QSerialPort& serialPort, int timeoutMs, bool
     
     logWaitTime(start, timeoutMs, "readAllWithTimeout");
     // Очистить буфер после завершения чтения (даже если ответа нет)
-    serialPort.clear();
+//    serialPort.clear();
     return QString::fromLatin1(readData);
 }
 
@@ -779,6 +814,11 @@ QString PBsetup::readAllWithTimeout(QSerialPort& serialPort, int timeoutMs, bool
 bool PBsetup::readSingleResponse(QSerialPort& serialPort, CmdTypes cmdType, Saver& donor,
                             int tryNum, int answerWaitMs, bool& contCurrDev)
 {
+    // Дополнительные защиты от падений при гонках/закрытии
+    if (!contCurrDev) return false;
+    if (!pWin || !hasUsb()) return false;
+    if (!serialPort.isOpen()) return false;
+
     SResponse sr;
 
     // Опрашиваем serialPort.readAll() в цикле до получения непустой строки или истечения таймаута
@@ -789,28 +829,37 @@ bool PBsetup::readSingleResponse(QSerialPort& serialPort, CmdTypes cmdType, Save
     }
 
     if (!response.isEmpty()) {
-        if (!hasUsb()) return false;
-        pWin->Usb->emulAnswer = response.trimmed();
-        QDateTime now = QDateTime::currentDateTime();
-        int ParsingCode = pWin->Usb->parseAndLogResponse(pWin->Usb->emulAnswer, sr, -1);
-        if (ParsingCode == 2) {
-            donor.CmdNumRsp(sr.CmdNumRsp);
-            RelayStatus rStatus = determineRelayStatus(sr.Relay1, sr.Relay2);
-            donor.setStatus(rStatus);
-            donor.setHasLastOperationGoodAnswer(true);
-            donor.setLastGoodAnswerTime(now);
-            donor.setParams(sr.Input, sr.U, rStatus);
-            scheduleStatusChanges(donor, donor.getLastCommand());
-            donor.setLastCommand(_STATUS);
-            // Set last command based on actual relay status change for single write response
-            // Планируем смену статуса по таймеру после получения ответа на команду статуса
+        try {
+            pWin->Usb->emulAnswer = response.trimmed();
+            QDateTime now = QDateTime::currentDateTime();
+            int ParsingCode = pWin->Usb->parseAndLogResponse(pWin->Usb->emulAnswer, sr, -1);
+            if (ParsingCode == 2) {
+                donor.CmdNumRsp(sr.CmdNumRsp);
+                RelayStatus rStatus = determineRelayStatus(sr.Relay1, sr.Relay2);
+                donor.setStatus(rStatus);
+                donor.setHasLastOperationGoodAnswer(true);
+                donor.setLastGoodAnswerTime(now);
+                donor.setParams(sr.Input, sr.U, rStatus);
+                scheduleStatusChanges(donor, donor.getLastCommand());
+                donor.setLastCommand(_STATUS);
+                contCurrDev = false;
+            } else if (ParsingCode >= 0) {
+                donor.setLastCommand(cmdType);
+            }
+            return true;
+        } catch (const std::exception& ex) {
+            logException("readSingleResponse", &ex);
             contCurrDev = false;
-        } else if (ParsingCode >= 0)
-            donor.setLastCommand(cmdType);
-        return true;
+            return false;
+        } catch (...) {
+            logException("readSingleResponse");
+            // Безопасный выход при любых исключениях, чтобы не ронять процесс
+            contCurrDev = false;
+            return false;
+        }
     } else {
         // Логируем отсутствие ответа
-        if (hasUsb()) pWin->Usb->parseAndLogResponse("", sr, tryNum);
+        pWin->Usb->parseAndLogResponse("", sr, tryNum);
         donor.setLastCommand(_UNKNOWN);
         // Сброс статуса выполнения и счётчиков по старой логике
         donor.setHasLastOperationGoodAnswer(false);
@@ -963,7 +1012,7 @@ void PBsetup::executeGroupCommand(const QList<int>& donorsNum, CmdTypes cmdType)
             QString blocksText = pbList.isEmpty() ? QString("Группа ПБ") : QString("Блоки: ") + pbList.join(", ");
             wProcess->setText(humanAction + " " + blocksText);
         }
-        readConfirmationsUntilAllOrTimeout(serialPort, cmdType, groupCmdNumber, activeIds, windowMs, respondedIds, showProgress);
+        readConfirmationsUntilAllOrTimeout(serialPort, cmdType, groupCmdNumber, activeIds, windowMs, respondedIds, showProgress, tryNum, &tryStart);
 
         // Calculate elapsed time for this try (sending + reading window)
         int elapsedMs = tryStart.msecsTo(QDateTime::currentDateTime());
@@ -1058,8 +1107,8 @@ void PBsetup::executeMultipleCommand(const QList<int>& donorsNum, CmdTypes cmdTy
     for (int devNum = 0; devNum < donorsNum.size(); ++devNum) {
         int vmIndex = donorsNum[devNum];
         Saver* donor = donorByVmIndexPtr(vmIndex);
-        if (!donor || donor->_ID().isEmpty()) continue;
-        if (!validateRelay2Command(cmdType, *donor)) continue;
+        if (!donor || donor->_ID().isEmpty())
+            continue;
 
         setupSingleCommandProgress(cmdType, vmIndex);
 
