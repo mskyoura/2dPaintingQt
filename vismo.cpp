@@ -450,8 +450,10 @@ double Vismo::Inside(bool painting, int i, bool blinktoggle, int ActiveCntInGrou
             static QFile dbgf("d:\\debugText.txt");
             static bool dbgfReady = dbgf.open(QIODevice::WriteOnly);
             static QTextStream out(&dbgf);
-            out.setCodec("Windows-1251");
-            out << QDateTime::currentDateTime().toString("hh:mm:ss.zzz") << ": " << debugText << endl;
+            if (dbgfReady) {
+                out.setCodec("Windows-1251");
+                out << QDateTime::currentDateTime().toString("hh:mm:ss.zzz") << ": " << debugText << endl;
+            }
         }
         //-
 
@@ -685,7 +687,6 @@ void Vismo::Draw(QPainter *_painter, bool blinktoggle, int ActiveCntInGroup) {
             double kFontSize = 0.8;
             textFont.setPixelSize(moTxtLineHeight*kFontSize);
             textFont.setBold(true);
-            int tw = 0;
 
             int maxTextWidth = 0.9 * w;
 

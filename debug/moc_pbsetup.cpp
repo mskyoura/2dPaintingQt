@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_PBsetup_t {
-    QByteArrayData data[9];
-    char stringdata0[119];
+    QByteArrayData data[8];
+    char stringdata0[112];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -36,16 +36,14 @@ QT_MOC_LITERAL(1, 8, 19), // "on_PBsetup_rejected"
 QT_MOC_LITERAL(2, 28, 0), // ""
 QT_MOC_LITERAL(3, 29, 19), // "on_PBsetup_accepted"
 QT_MOC_LITERAL(4, 49, 19), // "on_PBsetup_finished"
-QT_MOC_LITERAL(5, 69, 6), // "result"
-QT_MOC_LITERAL(6, 76, 13), // "focusOutEvent"
-QT_MOC_LITERAL(7, 90, 12), // "QFocusEvent*"
-QT_MOC_LITERAL(8, 103, 15) // "on_BytesWritten"
+QT_MOC_LITERAL(5, 69, 13), // "focusOutEvent"
+QT_MOC_LITERAL(6, 83, 12), // "QFocusEvent*"
+QT_MOC_LITERAL(7, 96, 15) // "on_BytesWritten"
 
     },
     "PBsetup\0on_PBsetup_rejected\0\0"
     "on_PBsetup_accepted\0on_PBsetup_finished\0"
-    "result\0focusOutEvent\0QFocusEvent*\0"
-    "on_BytesWritten"
+    "focusOutEvent\0QFocusEvent*\0on_BytesWritten"
 };
 #undef QT_MOC_LITERAL
 
@@ -65,15 +63,15 @@ static const uint qt_meta_data_PBsetup[] = {
  // slots: name, argc, parameters, tag, flags
        1,    0,   39,    2, 0x08 /* Private */,
        3,    0,   40,    2, 0x08 /* Private */,
-       4,    1,   41,    2, 0x08 /* Private */,
-       6,    1,   44,    2, 0x08 /* Private */,
-       8,    0,   47,    2, 0x08 /* Private */,
+       4,    0,   41,    2, 0x08 /* Private */,
+       5,    1,   42,    2, 0x08 /* Private */,
+       7,    0,   45,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Int,    5,
-    QMetaType::Void, 0x80000000 | 7,    2,
+    QMetaType::Void,
+    QMetaType::Void, 0x80000000 | 6,    2,
     QMetaType::Void,
 
        0        // eod
@@ -87,7 +85,7 @@ void PBsetup::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         switch (_id) {
         case 0: _t->on_PBsetup_rejected(); break;
         case 1: _t->on_PBsetup_accepted(); break;
-        case 2: _t->on_PBsetup_finished((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 2: _t->on_PBsetup_finished(); break;
         case 3: _t->focusOutEvent((*reinterpret_cast< QFocusEvent*(*)>(_a[1]))); break;
         case 4: _t->on_BytesWritten(); break;
         default: ;

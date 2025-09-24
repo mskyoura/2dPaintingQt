@@ -213,7 +213,7 @@ void Saver::setParams(int Input, double U, RelayStatus rStatus)
     setU(U);
     lastRSTatus = rStatus;
 
-    setLastOperationWithGoodAnswer(rStatus);
+    setStatus(rStatus);
 
 }
 
@@ -233,7 +233,7 @@ QString Saver::getPressedButton() {
     return pressedButton;
 }
 
-void Saver::setLastOperationWithGoodAnswer(RelayStatus newStatus){
+void Saver::setStatus(RelayStatus newStatus){
     switch (lastRSTatus) {
     case UNKNOWN:
         if (newStatus == RELAY1OFF || newStatus == RELAY1ON) {
@@ -294,6 +294,16 @@ bool Saver::mayStart(){
 
 RelayStatus Saver::getLastStatus() {
     return lastRSTatus;
+}
+
+void Saver::setLastCommand(CmdTypes cmdType)
+{
+    lastCommand = cmdType;
+}
+
+CmdTypes Saver::getLastCommand() const
+{
+    return lastCommand;
 }
 
 void Saver::setStatusNI(){

@@ -45,7 +45,7 @@ private slots:
 
     void on_PBsetup_accepted();
 
-    void on_PBsetup_finished(int result);
+    void on_PBsetup_finished();
 
     void focusOutEvent(QFocusEvent *);
 
@@ -68,6 +68,13 @@ private:
 
     static QString CRLF,
                    LFCR;
+    
+    // Constants for device limits
+    static const int MAX_PB_GROUPS = 5;
+    static const int DEVICES_PER_GROUP = 8;
+    static const int MAX_VM_DEVICES = 40;
+    static const int MAX_PB_DEVICES = 8;
+    static const int MAX_SLOTS = 8;
 
     // Safety helpers
     bool hasUsb() const;
@@ -99,12 +106,10 @@ private:
         double iTBtwRepeats;
     };
     IndividualTimings loadIndividualTimings() const;
-    bool sendSingleCommand(QSerialPort& serialPort, int donorVmIndex, CmdTypes cmdType,
-                           const IndividualTimings& it);
+    bool sendSingleCommand(QSerialPort& serialPort, int donorVmIndex, CmdTypes cmdType);
     // Чтение и обработка ответа для одиночной команды в рамках таймаута
-    void readSingleResponse(QSerialPort& serialPort, CmdTypes cmdType, Saver& donor,
-                            int tryNum, int iTAnswerWait, bool& contCurrDev,
-                            bool& anyAttemptSucceeded);
+    bool readSingleResponse(QSerialPort& serialPort, CmdTypes cmdType, Saver& donor,
+                            int tryNum, int iTAnswerWait, bool& contCurrDev);
     // Опрос serialPort.readAll() в цикле до получения непустой строки или истечения таймаута
     QString readAllWithTimeout(QSerialPort& serialPort, int timeoutMs, bool& cont);
     // Обработка получения ответов на команду нового формата от всех ПБ из группы с учётом задержек
@@ -132,6 +137,10 @@ private:
     int computeStatusChangeDelayMs(Saver* donor, CmdTypes cmdType, RelayStatus statusToSet,
                                    int t1 = -1);
 
+    // Checks before scheduling status change
+    bool canScheduleStatusChange(Saver* donor, RelayStatus statusToSet) const;
+    bool canScheduleStatusForId(const QString& id, RelayStatus statusToSet) const;
+
     // Вспомогательные методы для улучшения читаемости
     struct CommandParams {
         QString rbdlit;
@@ -151,6 +160,29 @@ private:
     // Unified accessors to donors
     Saver* donorByVmIndexPtr(int vmIndex);
     Saver* donorByPbIndexPtr(int pbIndex);
+    
+    // Helper methods for execCmd refactoring
+    bool initializeSerialPort();
+    void setupProgressWindow();
+    void cleanupSerialPort();
+    void executeGroupCommand(const QList<int>& donorsNum, CmdTypes cmdType);
+    void executeSingleCommand(const QList<int>& donorsNum, CmdTypes cmdType);
+    bool validateRelay2Command(CmdTypes cmdType, Saver& donor);
+    void setupSingleCommandProgress(CmdTypes cmdType, int vmIndex);
+    bool executeSingleCommandWithRetries(QSerialPort& serialPort, int vmIndex, 
+                                        CmdTypes cmdType, const IndividualTimings& it, Saver& donor);
+    bool waitBetweenRetries(int tryNum, int totalTries, CmdTypes cmdType, int waitMs);
+    bool executeStatusCommandAfterSuccess(QSerialPort& serialPort, int vmIndex,
+                                         const IndividualTimings& it, Saver& donor);
+    
+    // Helper methods for mousePressEvent refactoring
+    QList<int> findActiveDonorsForCurrentVisual();
+    void executeCommandIfValidId(const QList<int>& donorsNum, CmdTypes cmdType, Saver& donor);
+    void executeRelay2CommandIfValid(const QList<int>& donorsNum, Saver& donor);
+    void openDeviceSettings(Saver& donor);
+    QList<int> collectUsedDeviceIds();
+    void setupAppSettingsDialog(Saver& donor, const QList<int>& usedIds);
+    void updateDonorFromSettings(Saver& donor, const QString& idBefore);
 
 #ifdef Dbg
         int R1status;

@@ -1,3 +1,12 @@
+/**
+ * @file pbsetup.cpp
+ * @brief Implementation of PBsetup class for device communication and control
+ * 
+ * This file contains the implementation of the PBsetup class which handles
+ * communication with programmable devices (ПБ) through serial port.
+ * It supports both group and individual command execution with retry logic.
+ */
+
 #include "pbsetup.h"
 #include "ui_pbsetup.h"
 
@@ -17,12 +26,19 @@
 #include <QTimer>
 #include <algorithm>
 
+// Constants for line endings
 QString PBsetup::CRLF = QString(char (0x0D)) + QString(char (0x0A));
 QString PBsetup::LFCR = QString(char (0x0A)) + QString(char (0x0D));
 
+// Command type to relay status mapping
 QMap<CmdTypes, RelayStatus> cmdToStatusConverter = QMap<CmdTypes, RelayStatus>(
 {{_RELAY1OFF, RELAY1OFF}, {_RELAY1ON, RELAY1ON}, {_RELAY2ON, RELAY2ON}});
 
+/**
+ * @brief Constructor for PBsetup dialog
+ * @param _parent Parent widget (should be Window instance)
+ * @throws 985 if parent is not a Window instance
+ */
 PBsetup::PBsetup(QWidget *_parent) :
     QDialog(_parent)
 {
@@ -65,9 +81,15 @@ void PBsetup::resizeEvent(QResizeEvent *event){
 
 void PBsetup::paint(QPainter *painter, QPaintEvent *event)
 {
+    Q_UNUSED(event); // Parameter not used in this implementation
     vmPersonal.Draw(painter, !pWin->blinktoggle);
 }
 
+/**
+ * @brief Calculate optimal group command number based on active devices
+ * @param donorsNum List of donor device indices
+ * @return Command number (0-255) with maximum distance to next command
+ */
 int PBsetup::calcGroupCmdNum(QList <int> donorsNum) {
     QList<int> commandNumbers;
     
@@ -191,6 +213,8 @@ QString PBsetup::buildGroupCommand(int gCmdNumber0_255, CmdTypes cmdType, const 
         case _RELAY2ON: cmdRq += "FFFF"; break;
         case _RELAY1ON: cmdRq += "01" + rbDlit; break;
         case _RELAY1OFF: cmdRq += "0000"; break;
+        case _STATUS: cmdRq += "0000"; break; // Status command doesn't modify relay1
+        default: cmdRq += "0000"; break; // Default case for safety
     }
     
     cmdRq += "0000"; // Задержка реле1
@@ -214,8 +238,8 @@ QString PBsetup::buildGroupCommand(int gCmdNumber0_255, CmdTypes cmdType, const 
             cmdRq += slot;
         }
         
-        // Дополняем до 8 слотов
-        for (int i = activeSlots.size(); i < 8; ++i) {
+        // Дополняем до максимального количества слотов
+        for (int i = activeSlots.size(); i < MAX_SLOTS; ++i) {
             cmdRq += "00";
         }
         
@@ -372,14 +396,14 @@ Saver* PBsetup::findDonorByDeviceId(const QString& deviceId) {
 Saver* PBsetup::donorByPbIndexPtr(int pbIndex)
 {
     if (!pWin) return nullptr;
-    if (pbIndex < 0 || pbIndex >= 8) return nullptr;
+    if (pbIndex < 0 || pbIndex >= MAX_PB_DEVICES) return nullptr;
     return &pWin->pb[pbIndex];
 }
 
 Saver* PBsetup::donorByVmIndexPtr(int vmIndex)
 {
     if (!pWin) return nullptr;
-    if (vmIndex < 0 || vmIndex >= 40) return nullptr;
+    if (vmIndex < 0 || vmIndex >= MAX_VM_DEVICES) return nullptr;
     int pbIndex = pWin->vm[vmIndex].getpbIndex();
     return donorByPbIndexPtr(pbIndex);
 }
@@ -521,19 +545,7 @@ void PBsetup::processDeviceSlots(QSerialPort& serialPort, CmdTypes cmdType, int 
     // Пометить не ответивших
     for (const QString& id : activeIds) {
         if (!respondedIds.contains(id)) {
-            Saver *donor = nullptr;
-            for (int i : donorsNum)
-            {
-                Saver* donor  = donorByPbIndexPtr(i);
-                if (!donor)
-                    continue;
-                else if (donor->_ID().isEmpty())
-                {
-                    donor = nullptr;
-                    continue;
-                }
-                else if (donor->_ID() == id) break;
-            }
+            Saver* donor = findDonorByDeviceId(id);
             if (donor) {
                 donor->setHasLastOperationGoodAnswer(false);
             }
@@ -543,8 +555,25 @@ void PBsetup::processDeviceSlots(QSerialPort& serialPort, CmdTypes cmdType, int 
     }
 }
 
+bool PBsetup::canScheduleStatusChange(Saver* donor, RelayStatus statusToSet) const
+{
+    if (!donor) return false;
+    // Restrict RELAY1OFF -> RELAY1ON
+    if (donor->getLastStatus() == RELAY1OFF && statusToSet == RELAY1ON)
+        return false;
+    return true;
+}
+
+bool PBsetup::canScheduleStatusForId(const QString& id, RelayStatus statusToSet) const
+{
+    Saver* donor = const_cast<PBsetup*>(this)->findDonorByDeviceId(id);
+    return canScheduleStatusChange(donor, statusToSet);
+}
+
 void PBsetup::scheduleStatusChangeForId(const QString& id, const QList<int>& donorsNum, RelayStatus statusToSet, int delayMs)
 {
+    if (!canScheduleStatusForId(id, statusToSet))
+        return;
     QTimer* timer = new QTimer(this);
     timer->setSingleShot(true);
     connect(timer, &QTimer::timeout, this, [this, id, donorsNum, statusToSet, timer]() {
@@ -553,7 +582,8 @@ void PBsetup::scheduleStatusChangeForId(const QString& id, const QList<int>& don
             if (!donor) continue;
             if (donor->_ID().isEmpty()) continue;
             if (donor->_ID() == id) {
-                donor->setLastOperationWithGoodAnswer(statusToSet);
+                if (!canScheduleStatusChange(donor, statusToSet)) break;
+                donor->setStatus(statusToSet);
                 donor->setHasLastOperationGoodAnswer(true);
                 donor->setLastGoodAnswerTime(QDateTime::currentDateTime());
                 break;
@@ -566,10 +596,12 @@ void PBsetup::scheduleStatusChangeForId(const QString& id, const QList<int>& don
 
 void PBsetup::scheduleStatusChangeForId(const QString& id, RelayStatus statusToSet, int delayMs)
 {
+    if (!canScheduleStatusForId(id, statusToSet))
+        return;
     // Fallback: iterate over all known PB slots when donors list is not available
     QList<int> vmIndexes;
-    // Collect VM indexes by scanning groups (0..39) safely
-    for (int i = 0; i < 40; ++i) {
+    // Collect VM indexes by scanning groups safely
+    for (int i = 0; i < MAX_VM_DEVICES; ++i) {
         vmIndexes.append(i);
     }
     scheduleStatusChangeForId(id, vmIndexes, statusToSet, delayMs);
@@ -581,14 +613,14 @@ int PBsetup::computeStatusChangeDelayMs(Saver* donor, CmdTypes cmdType, RelaySta
     // Логика вычисления задержки вынесена сюда, чтобы легко расширять по требованиям
     switch (cmdType) {
     case _RELAY1ON:
-        if (statusToSet == RELAY1OFF && donor->getLastStatus() == RELAY1ON) {
+        if (statusToSet == RELAY1OFF && donor && donor->getLastStatus() == RELAY1ON) {
             int use = pWin->Usb->_rUseRBdlit();
             int rb = pWin->Usb->_rRBdlit();
             if (use != 0 && rb > 0) return rb * 1000;
         }
         break;
     case _RELAY2ON:
-        if (statusToSet == RELAY1ON && donor->getLastStatus() == RELAY2ON) {
+        if (statusToSet == RELAY1ON && donor && donor->getLastStatus() == RELAY2ON) {
             // Для индивидуальных команд используем t1 конкретного ПБ, для групповых - общий
             int delayT1 = (t1 >= 0) ? t1 : (donor ? donor->_T1() : pWin->Usb->_T1());
             if (delayT1 > 0) return delayT1 * 1000;
@@ -623,7 +655,7 @@ QString PBsetup::readResponseInSlot(const QString& oneLine, RelayStatus rStatus,
         Saver* donor = findDonorByDeviceId(sr.DeviceId);
         if (donor != nullptr) {
             donor->CmdNumReq(gCmdNumber);
-            donor->setLastOperationWithGoodAnswer(rStatus);
+            donor->setStatus(rStatus);
             donor->setLastGoodAnswerTime(QDateTime::currentDateTime());
             donor->setHasLastOperationGoodAnswer(true);
             return sr.DeviceId;
@@ -670,8 +702,7 @@ void PBsetup::resetExecutionStatusForIds(const QList<QString>& activeIds)
 // duplicate removed (moved earlier near other helpers)
 
 // Отправка одиночной команды по старой логике с повторами и ожиданием ответа
-bool PBsetup::sendSingleCommand(QSerialPort& serialPort, int donorVmIndex, CmdTypes cmdType,
-                           const IndividualTimings& it) {
+bool PBsetup::sendSingleCommand(QSerialPort& serialPort, int donorVmIndex, CmdTypes cmdType) {
     Saver* donor = donorByVmIndexPtr(donorVmIndex);
     if (!donor) return false;
     if (donor->_ID().isEmpty()) return false;
@@ -740,9 +771,8 @@ QString PBsetup::readAllWithTimeout(QSerialPort& serialPort, int timeoutMs, bool
 }
 
 // Чтение и обработка ответа для одиночной команды в рамках таймаута
-void PBsetup::readSingleResponse(QSerialPort& serialPort, CmdTypes cmdType, Saver& donor,
-                            int tryNum, int answerWaitMs, bool& contCurrDev,
-                            bool& anyAttemptSucceeded)
+bool PBsetup::readSingleResponse(QSerialPort& serialPort, CmdTypes cmdType, Saver& donor,
+                            int tryNum, int answerWaitMs, bool& contCurrDev)
 {
     SResponse sr;
 
@@ -750,49 +780,38 @@ void PBsetup::readSingleResponse(QSerialPort& serialPort, CmdTypes cmdType, Save
     QString response = readAllWithTimeout(serialPort, answerWaitMs, contCurrDev);
     
     if (!contCurrDev) {
-        return;
+        return false;
     }
 
     if (!response.isEmpty()) {
-        if (!hasUsb()) return;
+        if (!hasUsb()) return false;
         pWin->Usb->emulAnswer = response.trimmed();
         QDateTime now = QDateTime::currentDateTime();
         int ParsingCode = pWin->Usb->parseAndLogResponse(pWin->Usb->emulAnswer, sr, -1);
         if (ParsingCode == 2) {
             donor.CmdNumRsp(sr.CmdNumRsp);
             RelayStatus rStatus = determineRelayStatus(sr.Relay1, sr.Relay2);
-            donor.setLastOperationWithGoodAnswer(rStatus);
+            donor.setStatus(rStatus);
             donor.setHasLastOperationGoodAnswer(true);
             donor.setLastGoodAnswerTime(now);
             donor.setParams(sr.Input, sr.U, rStatus);
-            scheduleStatusChanges(donor, cmdType);
+            scheduleStatusChanges(donor, donor.getLastCommand());
+            donor.setLastCommand(_STATUS);
             // Set last command based on actual relay status change for single write response
             // Планируем смену статуса по таймеру после получения ответа на команду статуса
-            anyAttemptSucceeded = true;
             contCurrDev = false;
-        } /*else if (ParsingCode >= 0) {
-            donor.CmdNumRsp(sr.CmdNumRsp);
-            int rq = donor.CmdNumReq();
-            int rs = donor.CmdNumRsp();
-            if (rq == rs || cmdType == _STATUS) {
-                RelayStatus rStatus = determineRelayStatus(sr.Relay1, sr.Relay2);             
-                donor.setLastOperationWithGoodAnswer(rStatus);
-                donor.setLastGoodAnswerTime(now);
-                donor.setHasLastOperationGoodAnswer(true);
-                donor.setParams(sr.Input, sr.U, rStatus);
-            }
-        }*/
-
-            
-            anyAttemptSucceeded = true;
-            contCurrDev = false;
+        } else if (ParsingCode >= 0)
+            donor.setLastCommand(cmdType);
+        return true;
     } else {
         // Логируем отсутствие ответа
         if (hasUsb()) pWin->Usb->parseAndLogResponse("", sr, tryNum);
+        donor.setLastCommand(_UNKNOWN);
         // Сброс статуса выполнения и счётчиков по старой логике
         donor.setHasLastOperationGoodAnswer(false);
         donor.CmdNumRsp(-1);
     }
+    return false;
 }
 
 PBsetup::GroupTimings PBsetup::loadGroupTimings() const {
@@ -805,7 +824,7 @@ PBsetup::GroupTimings PBsetup::loadGroupTimings() const {
         gt.gTAfterCmd_ms = pWin->Usb->_gTBtwGrInd();
         return gt;
     }
-
+    return gt;
 }
 
 PBsetup::IndividualTimings PBsetup::loadIndividualTimings() const {
@@ -817,209 +836,320 @@ PBsetup::IndividualTimings PBsetup::loadIndividualTimings() const {
         it.iTBtwRepeats = pWin->Usb->_iTBtwRepeats() * 1000;
         return it;
     }
-
+    return it;
 }
 
-QString PBsetup::execCmd(QList <int> donorsNum, CmdTypes cmdType, RecieverTypes rcvType)
+/**
+ * @brief Execute command on specified devices
+ * @param donorsNum List of donor device indices
+ * @param cmdType Type of command to execute
+ * @param rcvType Receiver type (GROUP or SINGLE)
+ * @return Response string from USB communication
+ */
+QString PBsetup::execCmd(QList<int> donorsNum, CmdTypes cmdType, RecieverTypes rcvType)
 {
     if (!hasUsb()) return QString();
+    
     pWin->Usb->emulAnswer = "";
+    
     try {
-
-        QString portname = pWin->wAppsettings->comPortName(1);
-
-        if (!pWin->Usb->initSerialPort(serialPort, portname))
+        if (!initializeSerialPort()) {
             return pWin->Usb->emulAnswer;
-
-        connect(&serialPort, SIGNAL(bytesWritten(qint64)), SLOT(on_BytesWritten));
-
-        wProcess->setWindowTitle("Отправка команды");
-        wProcess->setProgress(0);
-        wProcess->setModal(true);
-        //Для широковещательной
-        if (rcvType == GROUP)
-        {
-            //групповые
-            GroupTimings gt = loadGroupTimings();
-            // Предварительно вычисляем активные ID (возможность отправки)
-            QList<QString> activeIds = FindActiveSlotsId(cmdType, donorsNum);
-            if (activeIds.isEmpty()) {
-                // Невозможность отправки: никого не трогаем
-            } else {
-                int gCmdNumber = sendGroupCommands(serialPort, donorsNum, cmdType, gt);
-                if (gCmdNumber >= 0) {
-                    processDeviceSlots(serialPort, cmdType, gCmdNumber, donorsNum);
-                } else {
-                    // Неудачная отправка: пометить именно эти активные ID как неуспешные
-                    resetExecutionStatusForIds(activeIds);
-                }
-            }
-
         }
-        else if (rcvType == SINGLE)
-        {
-            IndividualTimings it = loadIndividualTimings();
-
-            // Выбираем только одного донора и отправляем команду
-            for (int devNum = 0; devNum < donorsNum.size(); ++devNum) {
-                int vmIndex = donorsNum[devNum];
-                Saver* donor = donorByVmIndexPtr(vmIndex);
-                if (!donor) continue;
-                if (donor->_ID().isEmpty()) continue;
-
-                // Проверка возможности выполнения команды _RELAY2ON
-                if (cmdType == _RELAY2ON && !donor->mayStart()) {
-                    pWin->warn->showWarning(QString("Команда \"") + "Запустить Реле2" +
-                            "\" возможна только\nв состоянии \"" + "Реле1 включено" + "\".");
-                    continue;
-                }
-
-                if (!wProcess->isVisible())
-                    wProcess->show();
-                wProcess->setText(pWin->cmdFullName(cmdType, SINGLE) + " " + pWin->getPBdescription(vmIndex));
-
-                // Отправляем команду записи реле
-                // Многоразовое чтение ответа: до iTries раз
-                for (int tryNum = 0; tryNum < it.iTries; ++tryNum) {
-                    if (tryNum > 0) {
-                        int waitMs = static_cast<int>(it.iTBtwRepeats);
-                        int dummyPassed = 0;
-                        QString waitText = QString("Ожидание перед повтором %1 из %2 для индивидуальной команды %3")
-                                          .arg(tryNum + 1).arg(it.iTries).arg(pWin->cmdFullName(cmdType, SINGLE));
-                        if (!waitWithProgress(waitMs, dummyPassed, waitMs, waitText)) break;
-                    }
-
-                    bool sent = sendSingleCommand(serialPort, vmIndex, cmdType, it);
-                    if (!sent) continue;
-
-                    bool contCurrDev = true;
-                    bool anyAttemptSucceeded = false;
-                    readSingleResponse(serialPort, cmdType, *donor, tryNum, it.iTAnswerWait, contCurrDev, anyAttemptSucceeded);
-                    if (anyAttemptSucceeded) {
-                        // После успешного ответа — выполняем статус с теми же параметрами
-                        for (int sTry = 0; sTry < it.iTries; ++sTry) {
-                            if (sTry > 0) {
-                                int waitMs = static_cast<int>(it.iTBtwRepeats);
-                                int dummyPassed2 = 0;
-                                QString waitText2 = QString("Ожидание перед повтором %1 из %2 для индивидуальной команды %3")
-                                                   .arg(sTry + 1).arg(it.iTries).arg(pWin->cmdFullName(_STATUS, SINGLE));
-                                if (!waitWithProgress(waitMs, dummyPassed2, waitMs, waitText2)) break;
-                            }
-                            bool statusSent = sendSingleCommand(serialPort, vmIndex, _STATUS, it);
-                            if (!statusSent) continue;
-                            bool cont2 = true;
-                            bool ok2 = false;
-                            readSingleResponse(serialPort, _STATUS, *donor, sTry, it.iTAnswerWait, cont2, ok2);
-                            if (ok2) break;
-                        }
-                        break;
-                    }
-                }
-                break; // только один донор
-            }
+        
+        setupProgressWindow();
+        
+        if (rcvType == GROUP) {
+            executeGroupCommand(donorsNum, cmdType);
+        } else if (rcvType == SINGLE) {
+            executeSingleCommand(donorsNum, cmdType);
         }
-
+        
         wProcess->hide();
-
     }
     catch (...) {
         pWin->warn->showWarning("Возникла ошибка при работе с COM-портом.");
     }
-
-    try {
-        //if (dbgfReady) dbgf.close();
-        serialPort.close();
-    }
-    catch (...) {
-        ;
-    }
-
+    
+    cleanupSerialPort();
     return pWin->Usb->emulAnswer;
 }
 
-void PBsetup::mousePressEvent(QMouseEvent *event){
+// Helper methods for execCmd refactoring
 
+/**
+ * @brief Initialize serial port connection
+ * @return true if initialization successful, false otherwise
+ */
+bool PBsetup::initializeSerialPort()
+{
+    QString portname = pWin->wAppsettings->comPortName(1);
+    if (!pWin->Usb->initSerialPort(serialPort, portname)) {
+        return false;
+    }
+    
+    connect(&serialPort, SIGNAL(bytesWritten(qint64)), SLOT(on_BytesWritten));
+    return true;
+}
+
+void PBsetup::setupProgressWindow()
+{
+    wProcess->setWindowTitle("Отправка команды");
+    wProcess->setProgress(0);
+    wProcess->setModal(true);
+}
+
+void PBsetup::cleanupSerialPort()
+{
+    try {
+        serialPort.close();
+    }
+    catch (...) {
+        // Ignore cleanup errors
+    }
+}
+
+void PBsetup::executeGroupCommand(const QList<int>& donorsNum, CmdTypes cmdType)
+{
+    GroupTimings gt = loadGroupTimings();
+    QList<QString> activeIds = FindActiveSlotsId(cmdType, donorsNum);
+    
+    if (activeIds.isEmpty()) {
+        return; // No active devices to send command to
+    }
+    
+    int gCmdNumber = sendGroupCommands(serialPort, donorsNum, cmdType, gt);
+    if (gCmdNumber >= 0) {
+        processDeviceSlots(serialPort, cmdType, gCmdNumber, donorsNum);
+    } else {
+        resetExecutionStatusForIds(activeIds);
+    }
+}
+
+void PBsetup::executeSingleCommand(const QList<int>& donorsNum, CmdTypes cmdType)
+{
+    IndividualTimings it = loadIndividualTimings();
+    
+    for (int devNum = 0; devNum < donorsNum.size(); ++devNum) {
+        int vmIndex = donorsNum[devNum];
+        Saver* donor = donorByVmIndexPtr(vmIndex);
+        
+        if (!donor || donor->_ID().isEmpty()) {
+            continue;
+        }
+        
+        if (!validateRelay2Command(cmdType, *donor)) {
+            continue;
+        }
+        
+        setupSingleCommandProgress(cmdType, vmIndex);
+        
+        if (executeSingleCommandWithRetries(serialPort, vmIndex, cmdType, it, *donor)) {
+            break; // Success, exit loop
+        }
+    }
+}
+
+bool PBsetup::validateRelay2Command(CmdTypes cmdType, Saver& donor)
+{
+    if (cmdType == _RELAY2ON && !donor.mayStart()) {
+        pWin->warn->showWarning(QString("Команда \"") + "Запустить Реле2" +
+                "\" возможна только\nв состоянии \"" + "Реле1 включено" + "\".");
+        return false;
+    }
+    return true;
+}
+
+void PBsetup::setupSingleCommandProgress(CmdTypes cmdType, int vmIndex)
+{
+    if (!wProcess->isVisible()) {
+        wProcess->show();
+    }
+    wProcess->setText(pWin->cmdFullName(cmdType, SINGLE) + " " + pWin->getPBdescription(vmIndex));
+}
+
+bool PBsetup::executeSingleCommandWithRetries(QSerialPort& serialPort, int vmIndex, 
+                                             CmdTypes cmdType, const IndividualTimings& it, Saver& donor)
+{
+    for (int tryNum = 0; tryNum < it.iTries; ++tryNum) {
+        if (tryNum > 0) {
+            if (!waitBetweenRetries(tryNum, it.iTries, cmdType, it.iTBtwRepeats)) {
+                break;
+            }
+        }
+        
+        if (!sendSingleCommand(serialPort, vmIndex, cmdType)) {
+            continue;
+        }
+        
+        bool contCurrDev = true;
+        bool anyAttemptSucceeded = readSingleResponse(serialPort, cmdType, donor, tryNum, it.iTAnswerWait, contCurrDev);
+        if (anyAttemptSucceeded && cmdType == _STATUS)
+            return true;
+       else if (anyAttemptSucceeded)
+            break;
+    }
+    if (cmdType != _STATUS)
+        return executeStatusCommandAfterSuccess(serialPort, vmIndex, it, donor);
+    return false;
+}
+
+bool PBsetup::waitBetweenRetries(int tryNum, int totalTries, CmdTypes cmdType, int waitMs)
+{
+    int dummyPassed = 0;
+    QString waitText = QString("Ожидание перед повтором %1 из %2 для индивидуальной команды %3")
+                      .arg(tryNum + 1).arg(totalTries).arg(pWin->cmdFullName(cmdType, SINGLE));
+    return waitWithProgress(waitMs, dummyPassed, waitMs, waitText);
+}
+
+bool PBsetup::executeStatusCommandAfterSuccess(QSerialPort& serialPort, int vmIndex,
+                                              const IndividualTimings& it, Saver& donor)
+{
+    for (int sTry = 0; sTry < it.iTries; ++sTry) {
+        if (sTry > 0) {
+            if (!waitBetweenRetries(sTry, it.iTries, _STATUS, it.iTBtwRepeats)) {
+                return false;
+            }
+        }
+        
+        if (!sendSingleCommand(serialPort, vmIndex, _STATUS)) {
+            continue;
+        }
+        
+        bool cont2 = true;
+        if (readSingleResponse(serialPort, _STATUS, donor, sTry, it.iTAnswerWait, cont2))
+            return true;
+    }
+    return false;
+}
+
+void PBsetup::mousePressEvent(QMouseEvent *event)
+{
     Saver& donor = pWin->pb[vmPersonal.getpbIndex()];
+    QList<int> donorsNum = findActiveDonorsForCurrentVisual();
+    
+    int clickAction = vmPersonal.PersonalRemoteClickDispatch(event->pos());
+    
+    switch (clickAction) {
+    case 0: // Status command
+        executeCommandIfValidId(donorsNum, _STATUS, donor);
+        break;
+    case 1: // Relay1 OFF
+        executeCommandIfValidId(donorsNum, _RELAY1OFF, donor);
+        break;
+    case 2: // Relay1 ON
+        executeCommandIfValidId(donorsNum, _RELAY1ON, donor);
+        break;
+    case 3: // Relay2 ON
+        executeRelay2CommandIfValid(donorsNum, donor);
+        break;
+    case 4: // Settings
+        openDeviceSettings(donor);
+        break;
+    }
+}
 
-    QList <int> donorsNum;
-
-    for (int i=Vismo::activePBGroup*8; i<Vismo::activePBGroup*8 + 8; i++)
-        if (pWin->vm[i].isActive() && (pWin->vm[i].GetVisualNumber() == vmPersonal.GetVisualNumber())){
+// Helper methods for mousePressEvent refactoring
+QList<int> PBsetup::findActiveDonorsForCurrentVisual()
+{
+    QList<int> donorsNum;
+    int startIndex = Vismo::activePBGroup * DEVICES_PER_GROUP;
+    int endIndex = startIndex + DEVICES_PER_GROUP;
+    
+    for (int i = startIndex; i < endIndex; i++) {
+        if (pWin->vm[i].isActive() && (pWin->vm[i].GetVisualNumber() == vmPersonal.GetVisualNumber())) {
             donorsNum << i;
             break;
         }
+    }
+    return donorsNum;
+}
 
-    switch (vmPersonal.PersonalRemoteClickDispatch(event->pos())) {
-    case 0:
-        if (donor._ID()>0)
-            execCmd(donorsNum, _STATUS, SINGLE);
-        else
-            pWin->warn->showWarning("Задайте ID в настройках ПБ.");
-        break;
-    case 1:
-        if (donor._ID()>0)
-            execCmd(donorsNum, _RELAY1OFF, SINGLE);
-        else
-            pWin->warn->showWarning("Задайте ID в настройках ПБ.");
-        break;
-    case 2:
-        if (donor._ID()>0)
-            execCmd(donorsNum, _RELAY1ON, SINGLE);
-        else
-            pWin->warn->showWarning("Задайте ID в настройках ПБ.");
-        break;
-    case 3:
-        if (donor._ID()>0) {
-            if (donor.mayStart())
-                execCmd(donorsNum, _RELAY2ON, SINGLE);
-            else
-                pWin->warn->showWarning(QString("Команда \"") + "Запустить Реле2" +
-                        "\" возможна только\nв состоянии \"" + "Реле1 включено" + "\".");
+void PBsetup::executeCommandIfValidId(const QList<int>& donorsNum, CmdTypes cmdType, Saver& donor)
+{
+    if (donor._ID() > 0) {
+        execCmd(donorsNum, cmdType, SINGLE);
+    } else {
+        pWin->warn->showWarning("Задайте ID в настройках ПБ.");
+    }
+}
+
+void PBsetup::executeRelay2CommandIfValid(const QList<int>& donorsNum, Saver& donor)
+{
+    if (donor._ID() > 0) {
+        if (donor.mayStart()) {
+            execCmd(donorsNum, _RELAY2ON, SINGLE);
+        } else {
+            pWin->warn->showWarning(QString("Команда \"") + "Запустить Реле2" +
+                    "\" возможна только\nв состоянии \"" + "Реле1 включено" + "\".");
         }
-        else
-            pWin->warn->showWarning("Задайте ID в настройках ПБ.");
-        break;
-    case 4:
-        {
+    } else {
+        pWin->warn->showWarning("Задайте ID в настройках ПБ.");
+    }
+}
 
-            QString IDbefore = donor._ID();
+void PBsetup::openDeviceSettings(Saver& donor)
+{
+    QString idBefore = donor._ID();
+    QList<int> usedIds = collectUsedDeviceIds();
+    
+    setupAppSettingsDialog(donor, usedIds);
+    
+    if (pWin->appset->exec() == QDialog::Accepted) {
+        updateDonorFromSettings(donor, idBefore);
+    }
+    
+    show();
+    setFocus();
+}
 
-            QList <int> usedIDs;
-
-            for (int PBgroup=0; PBgroup<5; PBgroup++)
-                if (PBgroup != pWin->vm[0].activePBGroup)
-                for (int i=PBgroup*8; i<PBgroup*8 + 8; i++) {
-                    if (pWin->vm[i].isActive())
-                        if (pWin->pb[pWin->vm[i].getpbIndex()]._ID() != "") {
-                            bool ok = false;
-                            int _int = pWin->pb[pWin->vm[i].getpbIndex()]._ID().toInt(&ok,10);
-                            if (ok)
-                                usedIDs << _int;
+QList<int> PBsetup::collectUsedDeviceIds()
+{
+    QList<int> usedIds;
+    
+    for (int pbGroup = 0; pbGroup < MAX_PB_GROUPS; pbGroup++) {
+        if (pbGroup != pWin->vm[0].activePBGroup) {
+            int startIndex = pbGroup * DEVICES_PER_GROUP;
+            int endIndex = startIndex + DEVICES_PER_GROUP;
+            
+            for (int i = startIndex; i < endIndex; i++) {
+                if (pWin->vm[i].isActive()) {
+                    QString deviceId = pWin->pb[pWin->vm[i].getpbIndex()]._ID();
+                    if (!deviceId.isEmpty()) {
+                        bool ok = false;
+                        int idInt = deviceId.toInt(&ok, 10);
+                        if (ok) {
+                            usedIds << idInt;
                         }
+                    }
                 }
-
-
-            pWin->appset->set(donor._ID(),donor.getDst(), donor._T1(),donor._T2(),donor._U1(),donor._U2(),donor._Polarity(), usedIDs);
-
-            pWin->appset->setWindowModality(Qt::ApplicationModal);
-            pWin->appset->setWindowTitle(QString("Настройки ПБ") + QString::number(vmPersonal.GetVisualNumber()));
-
-            if (pWin->appset->exec() == QDialog::Accepted) {
-                donor.setID      (pWin->appset->ID);
-                donor.setDst     (pWin->appset->Dst);
-                donor.setT1      (pWin->appset->T1);
-                donor.setT2      (pWin->appset->T2);
-                donor.setU1      (pWin->appset->U1);
-                donor.setU2      (pWin->appset->U2);
-                donor.setPolarity(pWin->appset->Polarity);
-
-                if (IDbefore != pWin->appset->ID)
-                    donor.setStatusNI();
             }
         }
-        show();
-        setFocus();
-        break;
+    }
+    return usedIds;
+}
+
+void PBsetup::setupAppSettingsDialog(Saver& donor, const QList<int>& usedIds)
+{
+    pWin->appset->set(donor._ID(), donor.getDst(), donor._T1(), donor._T2(), 
+                     donor._U1(), donor._U2(), donor._Polarity(), usedIds);
+    
+    pWin->appset->setWindowModality(Qt::ApplicationModal);
+    pWin->appset->setWindowTitle(QString("Настройки ПБ") + QString::number(vmPersonal.GetVisualNumber()));
+}
+
+void PBsetup::updateDonorFromSettings(Saver& donor, const QString& idBefore)
+{
+    donor.setID(pWin->appset->ID);
+    donor.setDst(pWin->appset->Dst);
+    donor.setT1(pWin->appset->T1);
+    donor.setT2(pWin->appset->T2);
+    donor.setU1(pWin->appset->U1);
+    donor.setU2(pWin->appset->U2);
+    donor.setPolarity(pWin->appset->Polarity);
+    
+    if (idBefore != pWin->appset->ID) {
+        donor.setStatusNI();
     }
 }
 
@@ -1033,7 +1163,7 @@ void PBsetup::on_PBsetup_accepted()
     pWin->setCtrlsEnabled(true);
 }
 
-void PBsetup::on_PBsetup_finished(int result)
+void PBsetup::on_PBsetup_finished()
 {
     pWin->setCtrlsEnabled(true);
 }

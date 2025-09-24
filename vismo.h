@@ -120,6 +120,7 @@ public:
             return mo07;
         else if (i==2)
             return getpbIndex();
+        return 0; // default for unsupported indices
     }
 
     int moWidth;        //ширина виджета
