@@ -212,9 +212,15 @@ int Window::getLogFileBlockNumber(){
 
 void Window::keyPressEvent(QKeyEvent *event){
 
-#ifdef QT_DEBUG
-
     int key = event->key();
+
+    // F11: toggle fullscreen if no modal dialogs visible
+    if (key == Qt::Key_F11) {
+        if (!isAnyModalVisible()) toggleFullscreen();
+        return;
+    }
+
+#ifdef QT_DEBUG
 
     if (key == '+') {
 
@@ -242,6 +248,28 @@ void Window::keyPressEvent(QKeyEvent *event){
         emit close();
 
 #endif
+}
+
+void Window::toggleFullscreen()
+{
+    if (isFullScreen()) {
+        showNormal();
+    } else {
+        showFullScreen();
+    }
+    upd();
+}
+
+bool Window::isAnyModalVisible() const
+{
+    return (wAppsettings && wAppsettings->isVisible()) ||
+           (wLogtable    && wLogtable->isVisible())    ||
+           (wAboutprog   && wAboutprog->isVisible())   ||
+           (pbs          && pbs->isVisible())          ||
+           (admin        && admin->isVisible())        ||
+           (appset       && appset->isVisible())       ||
+           (warn         && warn->isVisible())         ||
+           (confirm      && confirm->isVisible());
 }
 
 void Window::closeEvent(QCloseEvent* event) {
@@ -651,14 +679,17 @@ void Window::paint(QPainter *painter, QPaintEvent *event)
     vmGroups.Draw(painter);
 
 
-    double kshift = 0.94;
-    vmGrComm.setGeom((1-kshift)*0.5*Wrect, Hrect - 5*hTxtLines,
+    double kshift = isFullScreen() ? 0.98 : 0.94; // slightly wider in fullscreen
+    double grTop = isFullScreen() ? (Hrect - 4.0*hTxtLines) : (Hrect - 5*hTxtLines);
+    vmGrComm.setGeom((1-kshift)*0.5*Wrect, grTop,
                   Wrect*kshift, hTxtLines, hCmdLines, PBmodulesCellSpace, PBmodulesRButton);
     vmGrComm.Draw(painter);
 
-    vmStatus.setGeom(0, Hrect - hTxtLines,
-                  Wrect, hTxtLines, hCmdLines, PBmodulesCellSpace, PBmodulesRButton);
-    vmStatus.Draw(painter);
+    if (!isFullScreen()) {
+        vmStatus.setGeom(0, Hrect - hTxtLines,
+                      Wrect, hTxtLines, hCmdLines, PBmodulesCellSpace, PBmodulesRButton);
+        vmStatus.Draw(painter);
+    }
 
     if (shadowed) {
         painter->fillRect(event->rect(), QColor( 0, 0, 0, 100));

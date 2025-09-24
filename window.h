@@ -175,6 +175,8 @@ private:
 protected:
     void resizeEvent(QResizeEvent *event);
     void mousePressEvent(QMouseEvent *event);
+    void toggleFullscreen();
+    bool isAnyModalVisible() const;
 };
 
 #endif

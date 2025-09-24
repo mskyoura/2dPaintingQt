@@ -653,13 +653,19 @@ void Vismo::Draw(QPainter *_painter, bool blinktoggle, int ActiveCntInGroup) {
             pen.setWidth(2);
             painter->setBrush(QColor(38,38,38));
             painter->setPen(pen);
-            painter->drawRect(moX, moY, moWidth, 3.5*moTxtLineHeight);
+            // Calculate dynamic heights to better fill vertical space
+            double titleH = moTxtLineHeight;             // header height
+            double topPad = 0.4 * moTxtLineHeight;       // space above buttons
+            double btnH   = 1.0 * moCmdLineHeight;       // button height (increased from 0.75)
+            double bottomPad = 0.4 * moTxtLineHeight;    // space below buttons
+            double frameH = titleH + topPad + btnH + bottomPad;
+            painter->drawRect(moX, moY, moWidth, frameH);
 
             textFont.setPixelSize(moTxtLineHeight*0.6);
             textFont.setBold(false);
             painter->setFont(textFont);
 
-            QRect r = QRect(moX, moY, moWidth, moTxtLineHeight);
+            QRect r = QRect(moX, moY, moWidth, titleH);
             painter->drawText(r, Qt::AlignCenter | Qt::AlignVCenter, "Групповые команды");
 
             double kws = 0.05;//зазор м. кнопками в долях от ширины кнопки
@@ -681,7 +687,7 @@ void Vismo::Draw(QPainter *_painter, bool blinktoggle, int ActiveCntInGroup) {
             s = PBcommands[0];
             FitFontSize(maxTextWidth,s,kFontSize,textFont);
             painter->setBrush(PScolor);
-            r = QRect(totalW, moY + moTxtLineHeight*1.5, w, 0.75*moCmdLineHeight);
+            r = QRect(totalW, moY + titleH + topPad, w, btnH);
             painter->drawRect(r);
             painter->drawText(r, Qt::AlignCenter | Qt::AlignVCenter, s);
             totalW += (kws+kws+1.0)*w;
@@ -690,7 +696,7 @@ void Vismo::Draw(QPainter *_painter, bool blinktoggle, int ActiveCntInGroup) {
             s = PBcommands[1];
             FitFontSize(maxTextWidth,s,kFontSize,textFont);
             painter->setBrush(ZBcolor);
-            r = QRect(totalW, moY + moTxtLineHeight*1.5, w, 0.75*moCmdLineHeight);
+            r = QRect(totalW, moY + titleH + topPad, w, btnH);
             painter->drawRect(r);
             painter->drawText(r, Qt::AlignCenter | Qt::AlignVCenter, s);
             totalW += (kws+kws+1.0)*w;
@@ -699,7 +705,7 @@ void Vismo::Draw(QPainter *_painter, bool blinktoggle, int ActiveCntInGroup) {
             s = PBcommands[2];
             FitFontSize(maxTextWidth,s,kFontSize,textFont);
             painter->setBrush(RBcolor);
-            r = QRect(totalW, moY + moTxtLineHeight*1.5, w, 0.75*moCmdLineHeight);
+            r = QRect(totalW, moY + titleH + topPad, w, btnH);
             painter->drawRect(r);
             painter->drawText(r, Qt::AlignCenter | Qt::AlignVCenter, s);
             totalW += (kws+kws+1.0)*w;
@@ -708,7 +714,7 @@ void Vismo::Draw(QPainter *_painter, bool blinktoggle, int ActiveCntInGroup) {
             s = PBcommands[3];
             FitFontSize(maxTextWidth,s,kFontSize,textFont);
             painter->setBrush(PKcolor);
-            r = QRect(totalW, moY + moTxtLineHeight*1.5, w, 0.75*moCmdLineHeight);
+            r = QRect(totalW, moY + titleH + topPad, w, btnH);
             painter->drawRect(r);
             painter->drawText(r, Qt::AlignCenter | Qt::AlignVCenter, s);
             totalW += (kws+kws+1.0)*w;
