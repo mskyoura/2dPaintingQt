@@ -550,7 +550,7 @@ void Window::mousePressEvent(QMouseEvent *event){
                 else if (action == 6)
                     pbs->execCmd(devIndexes, _RELAY1ON, GROUP);
                 else if (action == 7)
-                    pbs->execCmd(devIndexes, _RELAY2ON, Usb->_rTimeSlot() > 0 ? GROUP : MULTIPLE);
+                    pbs->execCmd(devIndexes, _RELAY2ON, GROUP);
             }
 
             caught = true;

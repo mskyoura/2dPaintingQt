@@ -473,7 +473,7 @@ int PBsetup::sendGroupCommands(QSerialPort& serialPort, const QList<int>& donors
 // Чтение подтверждений до получения от всех активных устройств или до истечения окна
 void PBsetup::readConfirmationsUntilAllOrTimeout(QSerialPort& serialPort, CmdTypes cmdType, int gCmdNumber,
                                                  const QList<QString>& activeIds, int windowMs,
-                                                 QSet<QString>& respondedIds)
+                                                 QSet<QString>& respondedIds, bool showProgress)
 {
     bool cont = true;
     QDateTime start = QDateTime::currentDateTime();
@@ -502,6 +502,10 @@ void PBsetup::readConfirmationsUntilAllOrTimeout(QSerialPort& serialPort, CmdTyp
                     break;
                 }
             }
+        }
+        if (showProgress) {
+            double pct = 100.0 * start.msecsTo(QDateTime::currentDateTime()) / qMax(1, windowMs);
+            wProcess->setProgress(pct > 100 ? 100 : pct);
         }
         if (!parts.isEmpty()) {
             QString last = parts.last();
@@ -863,6 +867,8 @@ QString PBsetup::execCmd(QList<int> donorsNum, CmdTypes cmdType, RecieverTypes r
             executeGroupCommand(donorsNum, cmdType);
         } else if (rcvType == SINGLE) {
             executeSingleCommand(donorsNum, cmdType);
+        } else if (rcvType == MULTIPLE) {
+            executeMultipleCommand(donorsNum, cmdType);
         }
         
         wProcess->hide();
@@ -913,16 +919,106 @@ void PBsetup::executeGroupCommand(const QList<int>& donorsNum, CmdTypes cmdType)
 {
     GroupTimings gt = loadGroupTimings();
     QList<QString> activeIds = FindActiveSlotsId(cmdType, donorsNum);
-    
+
     if (activeIds.isEmpty()) {
         return; // No active devices to send command to
     }
-    
-    int gCmdNumber = sendGroupCommands(serialPort, donorsNum, cmdType, gt);
-    if (gCmdNumber >= 0) {
-        processDeviceSlots(serialPort, cmdType, gCmdNumber, donorsNum);
-    } else {
-        resetExecutionStatusForIds(activeIds);
+
+    int groupCmdNumber = calcGroupCmdNum(donorsNum);
+    auto params = prepareCommandParams();
+    int tableLine = -1;
+
+    QSet<QString> respondedIds; // accumulate across tries
+    int activeSlotsQty = CalculateActiveSlots(cmdType, donorsNum);
+    int windowMs = activeSlotsQty * gt.timeSlot + pWin->Usb->_rSlotAddDelay();
+
+    for (int tryNum = 0; tryNum < gt.gTries; ++tryNum) {
+        QDateTime tryStart = QDateTime::currentDateTime();
+        // Build and send group command frame
+        QString cmdRq = buildGroupCommand(groupCmdNumber, cmdType, donorsNum, params.rbdlit, gt.timeSlot, params.t1, params.t2);
+        if (cmdRq.isEmpty() || !sendCommand(serialPort, cmdRq)) {
+            resetExecutionStatusForIds(activeIds);
+            return;
+        }
+
+        // Log the request
+        if (pWin->wAppsettings->getValueLogWriteOn()) {
+            QString cmdArgs = formatCommandArgs(cmdType, groupCmdNumber, tryNum, gt.gTries);
+            pWin->Usb->logRequest(cmdRq, cmdType, GROUP, cmdArgs, "Группа ПБ", tableLine);
+        }
+
+        // Read confirmations for the window and accumulate responded IDs
+        bool showProgress = (gt.gTries == 1);
+        if (showProgress && !wProcess->isVisible()) wProcess->show();
+        if (showProgress) {
+            QString humanAction = (cmdType == _RELAY2ON) ? "Запустить Реле" :
+                                  (cmdType == _RELAY1OFF) ? "Выключить Реле" :
+                                  (cmdType == _RELAY1ON) ? "Включить Реле" :
+                                  pWin->cmdFullName(cmdType, GROUP);
+            QStringList pbList;
+            for (const QString& id : activeIds) {
+                pbList << (QString("ПБ(") + id + ")");
+            }
+            QString blocksText = pbList.isEmpty() ? QString("Группа ПБ") : QString("Блоки: ") + pbList.join(", ");
+            wProcess->setText(humanAction + " " + blocksText);
+        }
+        readConfirmationsUntilAllOrTimeout(serialPort, cmdType, groupCmdNumber, activeIds, windowMs, respondedIds, showProgress);
+
+        // Calculate elapsed time for this try (sending + reading window)
+        int elapsedMs = tryStart.msecsTo(QDateTime::currentDateTime());
+        if (pWin->wAppsettings->getValueLogWriteOn()) {
+            pWin->SaveToLog("","Время попытки " + QString::number(tryNum+1) + ": " + QString::number(elapsedMs) + " мс");
+        }
+
+        // If all responded, stop early
+        if (respondedIds.size() >= activeIds.size()) {
+            break;
+        }
+
+        // Wait between repeats if more tries remain
+        if (tryNum + 1 < gt.gTries) {
+            int dummyPassed = 0;
+            QString humanAction = (cmdType == _RELAY2ON) ? "Запустить Реле" :
+                                  (cmdType == _RELAY1OFF) ? "Выключить Реле" :
+                                  (cmdType == _RELAY1ON) ? "Включить Реле" :
+                                  pWin->cmdFullName(cmdType, GROUP);
+            QStringList pbList;
+            for (const QString& id : activeIds) pbList << (QString("ПБ(") + id + ")");
+            QString blocksText = pbList.isEmpty() ? QString("Группа ПБ") : QString("Блоки: ") + pbList.join(", ");
+            QString progressText = QString("%1 %2 — попытка %3 из %4")
+                                  .arg(humanAction)
+                                  .arg(blocksText)
+                                  .arg(tryNum + 2)
+                                  .arg(gt.gTries);
+            if (!waitWithProgress(int(gt.gTBtwRepeats), dummyPassed, int(gt.gTBtwRepeats), progressText)) {
+                break;
+            }
+        }
+    }
+
+    // Schedule status changes only for devices that actually confirmed
+    for (const QString& id : respondedIds) {
+        int delayMsR1 = pWin->Usb->_rUseRBdlit() ? computeStatusChangeDelayMs(findDonorByDeviceId(id), cmdType, RELAY1OFF) : 0;
+        if (delayMsR1 > 0) {
+            scheduleStatusChangeForId(id, donorsNum, RELAY1OFF, delayMsR1);
+        }
+        int t1 = hasUsb() ? pWin->Usb->_T1() : -1;
+        int delayMsR2 = computeStatusChangeDelayMs(findDonorByDeviceId(id), cmdType, RELAY1ON, t1);
+        if (delayMsR2 > 0) {
+            scheduleStatusChangeForId(id, donorsNum, RELAY1ON, delayMsR2);
+        }
+    }
+
+    // Mark non-responders
+    for (const QString& id : activeIds) {
+        if (!respondedIds.contains(id)) {
+            Saver* donor = findDonorByDeviceId(id);
+            if (donor) {
+                donor->setHasLastOperationGoodAnswer(false);
+            }
+            SResponse sr;
+            pWin->Usb->parseAndLogResponse("", sr, 0);
+        }
     }
 }
 
@@ -950,6 +1046,29 @@ void PBsetup::executeSingleCommand(const QList<int>& donorsNum, CmdTypes cmdType
     }
 }
 
+void PBsetup::executeMultipleCommand(const QList<int>& donorsNum, CmdTypes cmdType)
+{
+    // Only support _STATUS and _RELAY2ON as requested
+    if (cmdType != _STATUS) {
+        return;
+    }
+    IndividualTimings it = loadIndividualTimings();
+    
+    for (int devNum = 0; devNum < donorsNum.size(); ++devNum) {
+        int vmIndex = donorsNum[devNum];
+        Saver* donor = donorByVmIndexPtr(vmIndex);
+        if (!donor || donor->_ID().isEmpty()) continue;
+        if (!validateRelay2Command(cmdType, *donor)) continue;
+
+        setupSingleCommandProgress(cmdType, vmIndex);
+
+        // Try writes/status with retries for each device
+        if (executeSingleCommandWithRetries(serialPort, vmIndex, cmdType, it, *donor)) {
+            // For write commands, follow up with status to confirm, already handled inside
+        }
+    }
+}
+
 bool PBsetup::validateRelay2Command(CmdTypes cmdType, Saver& donor)
 {
     if (cmdType == _RELAY2ON && !donor.mayStart()) {
@@ -965,7 +1084,23 @@ void PBsetup::setupSingleCommandProgress(CmdTypes cmdType, int vmIndex)
     if (!wProcess->isVisible()) {
         wProcess->show();
     }
-    wProcess->setText(pWin->cmdFullName(cmdType, SINGLE) + " " + pWin->getPBdescription(vmIndex));
+    QString text;
+    switch (cmdType) {
+    case _RELAY2ON:
+        text = "Запустить Реле ";
+        break;
+    case _RELAY1OFF:
+        text = "Выключить Реле ";
+        break;
+    case _RELAY1ON:
+        text = "Включить Реле ";
+        break;
+    default:
+        text = pWin->cmdFullName(cmdType, SINGLE) + " ";
+        break;
+    }
+    // pWin->getPBdescription(vmIndex) обычно возвращает строку вида "ПБ <номер>"
+    wProcess->setText(text + pWin->getPBdescription(vmIndex));
 }
 
 bool PBsetup::executeSingleCommandWithRetries(QSerialPort& serialPort, int vmIndex, 

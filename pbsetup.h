@@ -117,7 +117,7 @@ private:
     // Чтение подтверждений до получения от всех активных устройств или до истечения окна
     void readConfirmationsUntilAllOrTimeout(QSerialPort& serialPort, CmdTypes cmdType, int gCmdNumber,
                                             const QList<QString>& activeIds, int windowMs,
-                                            QSet<QString>& respondedIds);
+                                            QSet<QString>& respondedIds, bool showProgress = false);
     // Чтение и парсинг одной строки ответа (без CR/LF). Возвращает ID устройства-ответчика или пустую строку
     QString readResponseInSlot(const QString& oneLine, RelayStatus relayStatus, int cmdNumber);
     // Ожидаем окно ответов для всех слотов сразу: activeSlotsQty * slotDelayMs + slotAddDelayMs
@@ -167,6 +167,7 @@ private:
     void cleanupSerialPort();
     void executeGroupCommand(const QList<int>& donorsNum, CmdTypes cmdType);
     void executeSingleCommand(const QList<int>& donorsNum, CmdTypes cmdType);
+    void executeMultipleCommand(const QList<int>& donorsNum, CmdTypes cmdType);
     bool validateRelay2Command(CmdTypes cmdType, Saver& donor);
     void setupSingleCommandProgress(CmdTypes cmdType, int vmIndex);
     bool executeSingleCommandWithRetries(QSerialPort& serialPort, int vmIndex, 
