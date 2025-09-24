@@ -54,6 +54,10 @@ void CSerialport::setgTBtwGrInd(int _gTBtwGrInd){
     gTBtwGrInd = _gTBtwGrInd;
 }
 
+void CSerialport::setSendTimeoutMs(int ms){
+    sendTimeoutMs = ms;
+}
+
 void CSerialport::setrRBdlit(int _rRBdlit){
     rRBdlit = _rRBdlit;
 }
@@ -110,6 +114,10 @@ double CSerialport::_gTBtwRepeats(){
 
 int    CSerialport::_gTBtwGrInd(){
     return gTBtwGrInd;
+}
+
+int    CSerialport::_sendTimeoutMs(){
+    return sendTimeoutMs;
 }
 
 int    CSerialport::_rRBdlit(){

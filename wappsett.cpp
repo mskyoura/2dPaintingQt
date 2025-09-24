@@ -74,6 +74,7 @@ void wAppsett::setE(int _e1, int _e2, double _e3, int _e4, double _e5,
     ui->e10->setText(QString::number(_e10));
     ui->e11->setText(QString::number(_e11, 0,1));
     ui->e12->setText(QString::number(_e12));
+    ui->e13->setText(QString::number(pWin->Usb->_sendTimeoutMs()));
 
     //важно проинициализировать до установки текста
     NamesFonts = _fonts;
@@ -125,6 +126,7 @@ void wAppsett::getE(int& _e1, int& _e2, double& _e3, int& _e4, double& _e5, int&
     _e10 = E10;
     _e11 = E11;
     _e12 = E12;
+    if (e13Accepted) pWin->Usb->setSendTimeoutMs(E13);
 
     names [ 0] = ui->statSh0->text()==""? names[ 0]:ui->statSh0->text();
     names [ 1] = ui->statLn0->text()==""? names[ 1]:ui->statLn0->text();
@@ -207,6 +209,11 @@ void wAppsett::on_e7_textChanged(const QString &arg1)
 void wAppsett::on_e9_textChanged(const QString &arg1)
 {
     pWin->TestInRange(0, 255, E9, arg1, ui->e9, e9Accepted);
+}
+
+void wAppsett::on_e13_textChanged(const QString &arg1)
+{
+    pWin->TestInRange(10, 5000, E13, arg1, ui->e13, e13Accepted);
 }
 
 

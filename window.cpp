@@ -493,6 +493,7 @@ void Window::mousePressEvent(QMouseEvent *event){
                     Usb->setT1(e10);
                     Usb->setT2(e11);
                     Usb->setrSlotAddDelay(e12);
+                    // send timeout is stored live from wappsett via setSendTimeoutMs(E13)
 
                     int indNames = 0;
 
@@ -787,6 +788,10 @@ int Window::saveSettings(QString fn){
                     xmlWriter.writeCharacters(QString::number(Usb->_gTBtwGrInd()));
                     xmlWriter.writeEndElement();
 
+                    xmlWriter.writeStartElement("sendTimeoutMs");
+                    xmlWriter.writeCharacters(QString::number(Usb->_sendTimeoutMs()));
+                    xmlWriter.writeEndElement();
+
                     xmlWriter.writeStartElement("rRBdlit");
                     xmlWriter.writeCharacters(QString::number(Usb->_rRBdlit()));
                     xmlWriter.writeEndElement();
@@ -983,6 +988,10 @@ int Window::readSettings(QString fn){
                     xmlReader.readNext();
                     int ri = xmlReader.text().toInt(&ok);
                     if (ok) Usb->setgTBtwGrInd(ri);
+                } else if (xmlReader.name() == "sendTimeoutMs") {
+                    xmlReader.readNext();
+                    int ri = xmlReader.text().toInt(&ok);
+                    if (ok) Usb->setSendTimeoutMs(ri);
                 } else if (xmlReader.name() == "rRBdlit") {
                     xmlReader.readNext();
                     int ri = xmlReader.text().toInt(&ok);

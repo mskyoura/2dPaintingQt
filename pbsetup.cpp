@@ -421,7 +421,7 @@ bool PBsetup::sendCommand(QSerialPort& serialPort, const QString& frameCmd) {
     qint64 bytesWritten = serialPort.write(writeData);
     if (bytesWritten == -1) return false;
 
-    int timeout_ms = 500;
+    int timeout_ms = hasUsb() ? pWin->Usb->_sendTimeoutMs() : 500;
     QDateTime start = QDateTime::currentDateTime();
 
     while (!isWriteDone && start.msecsTo(QDateTime::currentDateTime()) < timeout_ms) {
@@ -484,6 +484,7 @@ void PBsetup::readConfirmationsUntilAllOrTimeout(QSerialPort& serialPort, CmdTyp
 
         QByteArray chunk = serialPort.readAll();
         if (chunk.isEmpty()) continue;
+
 
         QString s = tail + QString::fromLatin1(chunk);
         tail.clear();

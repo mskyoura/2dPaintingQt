@@ -21,6 +21,7 @@ class CSerialport
     int     gNRepeat;     //групп.
     double  gTBtwRepeats;
     int     gTBtwGrInd;
+    int     sendTimeoutMs = 500; // таймаут отправки команды (мс)
     int     rRBdlit;     //ограничение на время разблокировки
     int     rUseRBdlit;  //использовать ли ограничение на время разблокировки
     int     rTimeSlot;
@@ -52,6 +53,7 @@ public:
     void setgNRepeat(int _gNRepeat);
     void setgTBtwRepeats(double _gTBtwRepeats);
     void setgTBtwGrInd(int _gTBtwGrInd);
+    void setSendTimeoutMs(int ms);
     void setrRBdlit(int _rRBdlit);
     void setrUseRBdlit(int _rUseRBdlit);
     void setrTimeSlot(int _rTimeSlot);
@@ -70,6 +72,7 @@ public:
     int    _gNRepeat();
     double _gTBtwRepeats();
     int    _gTBtwGrInd();
+    int    _sendTimeoutMs();
     int    _rRBdlit();
     int    _rUseRBdlit();
     int     _rTimeSlot();

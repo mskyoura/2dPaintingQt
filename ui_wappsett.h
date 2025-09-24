@@ -103,6 +103,9 @@ public:
     QLabel *label_25;
     QSpacerItem *verticalSpacer_3;
     QSpacerItem *horizontalSpacer_4;
+    QLabel *label_sendtimeout;
+    QLineEdit *e13;
+    QLabel *label_sendtimeout_units;
     QLabel *label_15;
     QHBoxLayout *horizontalLayout_4;
     QLineEdit *e1;
@@ -569,11 +572,29 @@ public:
 
         verticalSpacer_3 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-        gridLayout_3->addItem(verticalSpacer_3, 21, 2, 1, 1);
+        gridLayout_3->addItem(verticalSpacer_3, 23, 2, 1, 1);
 
         horizontalSpacer_4 = new QSpacerItem(20, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
 
         gridLayout_3->addItem(horizontalSpacer_4, 3, 0, 1, 1);
+
+        label_sendtimeout = new QLabel(gridLayoutWidget_3);
+        label_sendtimeout->setObjectName(QStringLiteral("label_sendtimeout"));
+        label_sendtimeout->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+
+        gridLayout_3->addWidget(label_sendtimeout, 8, 1, 1, 1);
+
+        e13 = new QLineEdit(gridLayoutWidget_3);
+        e13->setObjectName(QStringLiteral("e13"));
+        e13->setMaximumSize(QSize(120, 16777215));
+        e13->setFont(font);
+
+        gridLayout_3->addWidget(e13, 8, 2, 1, 1);
+
+        label_sendtimeout_units = new QLabel(gridLayoutWidget_3);
+        label_sendtimeout_units->setObjectName(QStringLiteral("label_sendtimeout_units"));
+
+        gridLayout_3->addWidget(label_sendtimeout_units, 8, 3, 1, 1);
 
         label_15 = new QLabel(gridLayoutWidget_3);
         label_15->setObjectName(QStringLiteral("label_15"));
@@ -1085,6 +1106,8 @@ public:
         label_24->setText(QApplication::translate("wAppsett", "\320\227\320\260\320\264\320\265\321\200\320\266\320\272\320\260 \320\262\320\272\320\273\321\216\321\207\320\265\320\275\320\270\321\217 \321\200\320\265\320\273\320\265 \320\237\320\243\320\241\320\232 (0..120):", Q_NULLPTR));
         label_26->setText(QApplication::translate("wAppsett", "c", Q_NULLPTR));
         label_25->setText(QApplication::translate("wAppsett", "\320\222\321\200\320\265\320\274\321\217 \320\262\320\272\320\273\321\216\321\207\320\265\320\275\320\270\321\217 \321\200\320\265\320\273\320\265 \320\237\320\243\320\241\320\232 (0..255):", Q_NULLPTR));
+        label_sendtimeout->setText(QApplication::translate("wAppsett", "\320\242\320\260\320\271\320\274\320\260\321\203\321\202 \320\276\321\202\320\277\321\200\320\260\320\262\320\272\320\270 \320\272\320\276\320\274\320\260\320\275\320\264\321\213 (\320\274\321\201):", Q_NULLPTR));
+        label_sendtimeout_units->setText(QApplication::translate("wAppsett", "\320\274\321\201", Q_NULLPTR));
         label_15->setText(QApplication::translate("wAppsett", "\320\222\321\200\320\265\320\274\321\217 \320\274\320\265\320\266\320\264\321\203 \320\263\321\200\321\203\320\277\320\277\320\276\320\262\320\276\320\271 \320\270 \320\270\320\275\320\264\320\270\320\262\320\270\320\264\321\203\320\260\320\273\321\214\320\275\320\276\320\271 \320\272\320\276\320\274\320\260\320\275\320\264\320\260\320\274\320\270 (10...1000):", Q_NULLPTR));
         label_12->setText(QApplication::translate("wAppsett", "\320\274\321\201", Q_NULLPTR));
         label_11->setText(QApplication::translate("wAppsett", "\320\237\320\260\321\200\320\260\320\274\320\265\321\202\321\200\321\213 \320\263\321\200\321\203\320\277\320\277\320\276\320\262\321\213\321\205 \320\272\320\276\320\274\320\260\320\275\320\264:", Q_NULLPTR));
