@@ -907,38 +907,7 @@ color: rgb(255, 255, 255);</string>
            </property>
           </spacer>
          </item>
-         <item row="8" column="1">
-          <widget class="QLabel" name="label_sendtimeout">
-           <property name="text">
-            <string>Таймаут отправки команды (мс):</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="2">
-          <widget class="QLineEdit" name="e13">
-           <property name="maximumSize">
-            <size>
-             <width>120</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>16</pointsize>
-            </font>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="3">
-          <widget class="QLabel" name="label_sendtimeout_units">
-           <property name="text">
-            <string>мс</string>
-           </property>
-          </widget>
-         </item>
+      <!-- send timeout controls removed: now read-only from settings.ini -->
          <item row="11" column="1">
           <widget class="QLabel" name="label_15">
            <property name="text">

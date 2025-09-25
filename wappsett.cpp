@@ -127,7 +127,7 @@ void wAppsett::setE(int _e1, int _e2, double _e3, int _e4, double _e5,
     ui->e10->setText(QString::number(_e10));
     ui->e11->setText(QString::number(_e11, 0,1));
     ui->e12->setText(QString::number(_e12));
-    ui->e13->setText(QString::number(pWin->Usb->_sendTimeoutMs()));
+    // send timeout now read from settings.ini only; UI removed
 
     //важно проинициализировать до установки текста
     NamesFonts = _fonts;
@@ -179,7 +179,7 @@ void wAppsett::getE(int& _e1, int& _e2, double& _e3, int& _e4, double& _e5, int&
     _e10 = E10;
     _e11 = E11;
     _e12 = E12;
-    if (e13Accepted) pWin->Usb->setSendTimeoutMs(E13);
+    // send timeout is not edited in UI anymore
 
     names [ 0] = ui->statSh0->text()==""? names[ 0]:ui->statSh0->text();
     names [ 1] = ui->statLn0->text()==""? names[ 1]:ui->statLn0->text();
@@ -264,10 +264,7 @@ void wAppsett::on_e9_textChanged(const QString &arg1)
     pWin->TestInRange(0, 255, E9, arg1, ui->e9, e9Accepted);
 }
 
-void wAppsett::on_e13_textChanged(const QString &arg1)
-{
-    pWin->TestInRange(10, 5000, E13, arg1, ui->e13, e13Accepted);
-}
+// e13 (send timeout) removed from UI; read from settings.ini at startup
 
 
 void wAppsett::on_checkUseRBdlit_clicked(bool checked)
@@ -531,8 +528,8 @@ void wAppsett::applyFontScale(double scale)
     QWidget* cmds[] = { ui->label, ui->label_5, ui->label_7, ui->label_6, ui->label_9, ui->label_11,
                         ui->label_15, ui->label_21, ui->label_25, ui->label_24, ui->label_27,
                         ui->label_12, ui->label_13, ui->label_14, ui->label_16, ui->label_19, ui->label_20,
-                        ui->label_22, ui->label_23, ui->label_sendtimeout, ui->label_sendtimeout_units,
-                        ui->e1, ui->e2, ui->e3, ui->e4, ui->e5, ui->e6, ui->e7, ui->e9, ui->e10, ui->e11, ui->e12, ui->e13 };
+                        ui->label_22, ui->label_23,
+                        ui->e1, ui->e2, ui->e3, ui->e4, ui->e5, ui->e6, ui->e7, ui->e9, ui->e10, ui->e11, ui->e12 };
     for (QWidget* w : cmds) scaleWidgetFont(w);
 
     // Names tab

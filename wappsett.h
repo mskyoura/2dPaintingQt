@@ -81,7 +81,6 @@ private slots:
     void on_pushButton_clicked();
 
     void on_e7_textChanged(const QString &arg1);
-    void on_e13_textChanged(const QString &arg1);
 
     void on_checkUseRBdlit_clicked(bool checked);
 
@@ -136,10 +135,9 @@ private:
          e9Accepted,
          e10Accepted,
          e11Accepted,
-         e12Accepted,
-         e13Accepted;
+         e12Accepted;
 
-    int E1, E2, E4, E6, E7, E8, E9, E10, E12, E13;
+    int E1, E2, E4, E6, E7, E8, E9, E10, E12;
     double E11;
 
     QList <QFont> NamesFonts;
