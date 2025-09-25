@@ -84,6 +84,7 @@ wAppsett::wAppsett(QWidget *parent) :
 //    connect(ui->comboBox, SIGNAL(currentIndexChanged()), SLOT(comportChange()));
 
     e8Accepted = 1;
+    extraStatusAfterGroup = false;
 
     fillComboBox();
 
@@ -541,7 +542,7 @@ void wAppsett::applyFontScale(double scale)
     for (QWidget* w : names) scaleWidgetFont(w);
 
     // Additional tab
-    QWidget* add[] = { ui->cStartIndicator, ui->label_10, ui->textEdit };
+    QWidget* add[] = { ui->cStartIndicator, ui->extraStatusAfterGroupCheck, ui->label_10, ui->textEdit };
     for (QWidget* w : add) scaleWidgetFont(w);
 }
 
@@ -792,4 +793,20 @@ void wAppsett::on_e11_textChanged(const QString &arg1)
 void wAppsett::on_e12_textChanged(const QString &arg1)
 {
     pWin->TestInRange(0.0, 1000, E12, arg1, ui->e12, e12Accepted);
+}
+
+bool wAppsett::getExtraStatusAfterGroup() const
+{
+    return extraStatusAfterGroup;
+}
+
+void wAppsett::setExtraStatusAfterGroup(bool b)
+{
+    extraStatusAfterGroup = b;
+    ui->extraStatusAfterGroupCheck->setChecked(b);
+}
+
+void wAppsett::on_extraStatusAfterGroupCheck_clicked(bool checked)
+{
+    extraStatusAfterGroup = checked;
 }

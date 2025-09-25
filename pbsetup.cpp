@@ -25,6 +25,7 @@
 #include <QSet>
 #include <QTimer>
 #include <QLayout>
+#include <QThread>
 #include <algorithm>
 
 // Constants for line endings
@@ -393,6 +394,30 @@ void PBsetup::scheduleStatusChanges(Saver& donor, CmdTypes lastWriteCmd) {
         scheduleStatusChangeForId(deviceId, RELAY1ON, delayMsR2);
 }
 
+void PBsetup::scheduleStatusChanges(Saver& donor, RelayStatus lastStatus, CmdTypes lastWriteCommand) {
+    // Only schedule status changes if the command is not _STATUS
+    if (lastWriteCommand == _STATUS) return;
+    
+    // Mirror the logic using current status instead of last write cmd
+    QString deviceId = donor._ID();
+    if (deviceId.isEmpty()) return;
+
+    // If status indicates RELAY1ON, we may need to schedule RELAY1OFF after rbDlit
+    if (lastStatus == RELAY1ON) {
+        int delayMsR1 = pWin->Usb && pWin->Usb->_rUseRBdlit() ?
+                        computeStatusChangeDelayMs(&donor, _RELAY1ON, RELAY1OFF) : 0;
+        if (delayMsR1 > 0)
+            scheduleStatusChangeForId(deviceId, RELAY1OFF, delayMsR1);
+    }
+
+    // If status indicates RELAY2ON, we may need to schedule RELAY1ON after T1
+    if (lastStatus == RELAY2ON) {
+        int delayMsR2 = computeStatusChangeDelayMs(&donor, _RELAY2ON, RELAY1ON, donor._T1());
+        if (delayMsR2)
+            scheduleStatusChangeForId(deviceId, RELAY1ON, delayMsR2);
+    }
+}
+
 Saver* PBsetup::findDonorByDeviceId(const QString& deviceId) {
     if (deviceId.isEmpty()) return nullptr;
     // Ищем среди всех визуальных устройств (всех групп)
@@ -513,7 +538,7 @@ void PBsetup::readConfirmationsUntilAllOrTimeout(QSerialPort& serialPort, CmdTyp
                 respondedIds.insert(devId);
                 if (respondedIds.size() >= activeIds.size())
                 {
-//                    serialPort.clear();
+                    serialPort.clear();
                     break;
                 }
             }
@@ -527,8 +552,8 @@ void PBsetup::readConfirmationsUntilAllOrTimeout(QSerialPort& serialPort, CmdTyp
             if (!last.isEmpty()) tail = last;
         }
     }
-    // Очистить буфер после завершения окна или получения всех подтверждений
-//    serialPort.clear();
+     //Очистить буфер после завершения окна или получения всех подтверждений
+    serialPort.clear();
 
     // Логирование отсутствия ответа для неответивших, как в старой логике
     if (pWin->wAppsettings->getValueLogWriteOn()) {
@@ -800,7 +825,7 @@ QString PBsetup::readAllWithTimeout(QSerialPort& serialPort, int timeoutMs, bool
                 QString ansEnd = response.right(2);
                 if ((ansEnd == CRLF) || (ansEnd == LFCR)) {
                     logWaitTime(start, timeoutMs, "readAllWithTimeout");
-//                    serialPort.clear();
+                    serialPort.clear();
                     return response;
                 }
             }
@@ -808,8 +833,8 @@ QString PBsetup::readAllWithTimeout(QSerialPort& serialPort, int timeoutMs, bool
     }
     
     logWaitTime(start, timeoutMs, "readAllWithTimeout");
-    // Очистить буфер после завершения чтения (даже если ответа нет)
-//    serialPort.clear();
+//     Очистить буфер после завершения чтения (даже если ответа нет)
+    serialPort.clear();
     return QString::fromLatin1(readData);
 }
 
@@ -843,7 +868,7 @@ bool PBsetup::readSingleResponse(QSerialPort& serialPort, CmdTypes cmdType, Save
                 donor.setHasLastOperationGoodAnswer(true);
                 donor.setLastGoodAnswerTime(now);
                 donor.setParams(sr.Input, sr.U, rStatus);
-                scheduleStatusChanges(donor, donor.getLastCommand());
+                scheduleStatusChanges(donor, donor.getLastStatus(), donor.getLastCommand());
                 donor.setLastCommand(_STATUS);
                 contCurrDev = false;
             } else if (ParsingCode >= 0) {
@@ -881,6 +906,11 @@ PBsetup::GroupTimings PBsetup::loadGroupTimings() const {
         gt.gTAfterCmd_ms = pWin->Usb->_gTBtwGrInd();
         return gt;
     }
+    // Fallback values if USB is not available
+    gt.timeSlot      = 100;
+    gt.gTries        = 2;
+    gt.gTBtwRepeats  = 1000;
+    gt.gTAfterCmd_ms = 100;
     return gt;
 }
 
@@ -893,6 +923,10 @@ PBsetup::IndividualTimings PBsetup::loadIndividualTimings() const {
         it.iTBtwRepeats = pWin->Usb->_iTBtwRepeats() * 1000;
         return it;
     }
+    // Fallback values if USB is not available
+    it.iTries       = 2;
+    it.iTAnswerWait = 500;
+    it.iTBtwRepeats = 500;
     return it;
 }
 
@@ -1063,16 +1097,49 @@ void PBsetup::executeGroupCommand(const QList<int>& donorsNum, CmdTypes cmdType)
     }
 
     // Mark non-responders
+    QList<int> nonResponderVmIdx;
     for (const QString& id : activeIds) {
         if (!respondedIds.contains(id)) {
             Saver* donor = findDonorByDeviceId(id);
             if (donor) {
                 donor->setHasLastOperationGoodAnswer(false);
+                // Collect vm index for MULTIPLE _STATUS if feature flag enabled
+                for (int i = 0; i < MAX_VM_DEVICES && i < (pWin ? pWin->vm.size() : 0); ++i) {
+                    Saver* d = donorByVmIndexPtr(i);
+                    if (d && d == donor) { nonResponderVmIdx << i; break; }
+                }
             }
             SResponse sr;
             pWin->Usb->parseAndLogResponse("", sr, 0);
         }
     }
+
+    // If enabled, send MULTIPLE _STATUS to non-responders using individual timings
+    if (!nonResponderVmIdx.isEmpty() && isExtraStatusAfterGroupEnabled()) {
+        // Add delay between group command and individual status commands to avoid response conflicts
+        QThread::msleep(pWin->Usb->_gTBtwGrInd());
+        
+        // Clear serial buffer before sending status commands to avoid reading old responses
+        if (serialPort.isOpen()) {
+            serialPort.clear();
+            // Additional flush to ensure buffer is completely empty
+            serialPort.flush();
+        }
+        
+        executeMultipleCommand(nonResponderVmIdx, _STATUS);
+    }
+}
+
+bool PBsetup::isExtraStatusAfterGroupEnabled() const
+{
+    if (!pWin || !pWin->wAppsettings) return false;
+    // Read checkbox directly from UI if present; defaults to unchecked
+    // The Window is responsible for loading settings.ini and reflecting to UI
+    QWidget* w = pWin->wAppsettings->findChild<QWidget*>("extraStatusAfterGroupCheck");
+    if (!w) return false;
+    // Check if widget has "checked" property (works for QCheckBox)
+    QVariant checked = w->property("checked");
+    return checked.isValid() ? checked.toBool() : false;
 }
 
 void PBsetup::executeSingleCommand(const QList<int>& donorsNum, CmdTypes cmdType)
@@ -1105,6 +1172,13 @@ void PBsetup::executeMultipleCommand(const QList<int>& donorsNum, CmdTypes cmdTy
     if (cmdType != _STATUS) {
         return;
     }
+    
+    // Clear serial buffer before starting individual commands to ensure clean state
+    if (serialPort.isOpen()) {
+        serialPort.clear();
+        serialPort.flush();
+    }
+    
     IndividualTimings it = loadIndividualTimings();
     
     for (int devNum = 0; devNum < donorsNum.size(); ++devNum) {
@@ -1171,7 +1245,12 @@ bool PBsetup::executeSingleCommandWithRetries(QSerialPort& serialPort, int vmInd
         }
         
         bool contCurrDev = true;
-        bool anyAttemptSucceeded = readSingleResponse(serialPort, cmdType, donor, tryNum, it.iTAnswerWait, contCurrDev);
+        // Validate iTAnswerWait to prevent unreasonable values
+        int answerWaitMs = it.iTAnswerWait;
+        if (answerWaitMs <= 0 || answerWaitMs > 30000) { // Max 30 seconds
+            answerWaitMs = 500; // Default fallback
+        }
+        bool anyAttemptSucceeded = readSingleResponse(serialPort, cmdType, donor, tryNum, answerWaitMs, contCurrDev);
         if (anyAttemptSucceeded && cmdType == _STATUS)
             return true;
        else if (anyAttemptSucceeded)

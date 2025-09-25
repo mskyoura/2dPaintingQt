@@ -53,6 +53,8 @@ public:
     bool getValueLogWriteOn();
     void setValueLogWriteOn(bool);
 
+    bool getExtraStatusAfterGroup() const;
+    void setExtraStatusAfterGroup(bool);
 
     QPainter* painter;
 
@@ -114,6 +116,8 @@ private slots:
 
     void on_e12_textChanged(const QString &arg1);
 
+    void on_extraStatusAfterGroupCheck_clicked(bool checked);
+
 private:
 
     QPainter* FontPainter;
@@ -160,6 +164,7 @@ private:
     bool isTextLong(QFont& textFont, QString  s, int maxwidth);
 
     bool ValueLogWriteOn;
+    bool extraStatusAfterGroup;
 
     // layout scaling helpers
     void applyCompactLayout();

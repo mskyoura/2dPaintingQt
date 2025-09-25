@@ -186,7 +186,7 @@ color: rgb(255, 255, 255);</string>
        </font>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -907,7 +907,6 @@ color: rgb(255, 255, 255);</string>
            </property>
           </spacer>
          </item>
-      <!-- send timeout controls removed: now read-only from settings.ini -->
          <item row="11" column="1">
           <widget class="QLabel" name="label_15">
            <property name="text">
@@ -1817,6 +1816,71 @@ color: rgb(255, 255, 255);</string>
           </spacer>
          </item>
          <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_extraStatus">
+           <item>
+            <spacer name="horizontalSpacer_extraStatus_left">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="extraStatusAfterGroupCheck">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Отправлять дополнительную команду статуса, если подтверждение на команду записи не пришло</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_extraStatus_right">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="verticalSpacer_extraStatus">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
           <layout class="QHBoxLayout" name="horizontalLayout_6">
            <property name="bottomMargin">
             <number>0</number>
@@ -1952,6 +2016,7 @@ color: rgb(255, 255, 255);</string>
   <tabstop>e6</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>cStartIndicator</tabstop>
+  <tabstop>extraStatusAfterGroupCheck</tabstop>
   <tabstop>comboBox</tabstop>
  </tabstops>
  <resources/>

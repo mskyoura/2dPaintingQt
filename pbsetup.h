@@ -22,6 +22,7 @@ class PBsetup;
 
 class Widget;
 class Window;
+class QCheckBox;
 class Processing;
 
 
@@ -157,6 +158,10 @@ private:
     // Converter: RelayStatus -> CmdTypes
     CmdTypes relayStatusToCmdType(RelayStatus status) const;
     void scheduleStatusChanges(Saver& donor, CmdTypes lastWriteCmd);
+    // Overload for scheduling status changes based on RelayStatus
+    void scheduleStatusChanges(Saver& donor, RelayStatus lastStatus, CmdTypes lastWriteCommand);
+    // Read feature flag from settings.ini: send extra _STATUS after group for non-responders
+    bool isExtraStatusAfterGroupEnabled() const;
     Saver* findDonorByDeviceId(const QString& deviceId);
     // Unified accessors to donors
     Saver* donorByVmIndexPtr(int vmIndex);
