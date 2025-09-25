@@ -43,6 +43,10 @@
 #include <QTextCodec>
 #include <QApplication>
 #include <QDesktopServices>
+#include <QScreen>
+#include <QGuiApplication>
+#include <QWindow>
+#include <QDesktopWidget>
 #include <QDir>
 #include "window.h"
 #include "pbsetup.h"
@@ -57,6 +61,24 @@
 #include <QHeaderView>
 
 #include "cserialport.h"
+
+// Centralized layout constants for adaptive dialog sizing
+namespace {
+    // Settings dialog preferred minimum width and maximum height
+    const int SETTINGS_MIN_WIDTH = 1000;   // px
+    const int SETTINGS_MAX_HEIGHT = 750;  // px
+
+    // Generic dialog margins from screen safe area
+    const int DIALOG_MARGIN_LR = 10;      // left/right
+    const int DIALOG_MARGIN_TB = 10;      // top/bottom
+
+    // Extra top/bottom margin specifically for the Settings dialog
+    const int SETTINGS_MARGIN_TB = 20;   // px
+
+    // Baseline minimums for generic dialogs when computing target size
+    const int DIALOG_BASE_MIN_WIDTH  = 1024; // px
+    const int DIALOG_BASE_MIN_HEIGHT = 768;  // px
+}
 
 QString Window::settingsFn = "";
 
@@ -96,6 +118,14 @@ Window::Window(QString _exe, QRect desktop)
     pbs->setWindowFlags (pbs->windowFlags()                   & ~Qt::WindowContextHelpButtonHint);
     admin->setWindowFlags (admin->windowFlags()               & ~Qt::WindowContextHelpButtonHint);
     appset->setWindowFlags (appset->windowFlags()             & ~Qt::WindowContextHelpButtonHint);
+
+    // Adaptive initial sizing for dialogs relative to current screen
+    applyAdaptiveDialogSizing(wAppsettings);
+    applyAdaptiveDialogSizing(wLogtable);
+    applyAdaptiveDialogSizing(wAboutprog, 0.6, 0.6);
+    applyAdaptiveDialogSizing(pbs, 0.7, 0.8);
+    applyAdaptiveDialogSizing(admin, 0.6, 0.7);
+    applyAdaptiveDialogSizing(appset, 0.6, 0.7);
 
     for (int PBgroup=0; PBgroup<5; PBgroup++)
         for (int i=PBgroup*8; i<PBgroup*8 + 8; i++) {
@@ -149,6 +179,85 @@ Window::Window(QString _exe, QRect desktop)
 //    }
 
     setCtrlsEnabled(true);
+}
+void Window::applyAdaptiveDialogSizing(QDialog* dlg, double wRatio, double hRatio)
+{
+    if (!dlg) return;
+    // Detect available geometry cross-Qt4/Qt5
+    QRect avail;
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    {
+        QScreen* screen = nullptr;
+        if (this->windowHandle() && this->windowHandle()->screen())
+            screen = this->windowHandle()->screen();
+        else if (dlg->windowHandle() && dlg->windowHandle()->screen())
+            screen = dlg->windowHandle()->screen();
+        else
+            screen = QGuiApplication::primaryScreen();
+        if (!screen) return;
+        avail = screen->availableGeometry();
+    }
+#else
+    {
+        QDesktopWidget* dw = QApplication::desktop();
+        int scrNum = dw->screenNumber(this);
+        if (scrNum < 0) scrNum = dw->primaryScreen();
+        avail = dw->availableGeometry(scrNum);
+    }
+#endif
+    // leave a margin so borders/titlebar never clip; for settings dialog increase top/bottom
+    bool isSettingsDlg = (dlg == wAppsettings);
+    bool isPbSetupDlg  = (dlg == pbs);
+    bool isAdminDlg    = (dlg == admin);
+    bool isAboutDlg    = (dlg == wAboutprog);
+    const int marginLR = DIALOG_MARGIN_LR;
+    const int marginTB = isSettingsDlg ? SETTINGS_MARGIN_TB : DIALOG_MARGIN_TB; // larger top/bottom for wAppsett
+    QRect safe = avail.adjusted(marginLR, marginTB, -marginLR, -marginTB);
+
+    int baseW = qMax(dlg->sizeHint().width(), dlg->minimumSizeHint().width());
+    int baseH = qMax(dlg->sizeHint().height(), dlg->minimumSizeHint().height());
+
+    int targetW = qMax(int(safe.width()  * wRatio),  qMax(DIALOG_BASE_MIN_WIDTH,  baseW));
+    int targetH = qMax(int(safe.height() * hRatio), qMax(DIALOG_BASE_MIN_HEIGHT, baseH));
+    if (isAdminDlg) {
+        targetW = qMin(450, safe.width());
+        targetH = qMin(200, safe.height());
+    }
+    if (isAboutDlg) {
+        targetW = qMin(700, safe.width());
+        targetH = qMin(460, safe.height());
+    }
+    // No special width clamp for PB setup; keep default sizing
+    if (isSettingsDlg) {
+        targetH = qMin(SETTINGS_MAX_HEIGHT, safe.height()); // cap height for settings dialog
+    }
+    int w = qMin(targetW, safe.width());
+    int h = qMin(targetH, safe.height());
+
+    // Final clamp to safe rect
+    w = qMin(w, safe.width());
+    h = qMin(h, safe.height());
+
+    dlg->setMaximumSize(QSize(safe.width(), isSettingsDlg ? qMin(SETTINGS_MAX_HEIGHT, safe.height()) : (isAdminDlg || isAboutDlg ? targetH : safe.height())));
+    dlg->setMinimumSize((isAdminDlg || isAboutDlg) ? QSize(targetW, targetH)
+                                   : QSize(qMin(qMax(baseW, isSettingsDlg ? SETTINGS_MIN_WIDTH : 320), safe.width()),
+                                           qMin(qMax(baseH, 300), h)));
+    if (isAdminDlg || isAboutDlg) {
+        dlg->setFixedSize(targetW, targetH);
+    }
+    // Do not fix width for PB setup dialog
+    dlg->resize(w, h);
+    int x = safe.x() + (safe.width()  - w)/2;
+    int y = safe.y() + (safe.height() - h)/2;
+    dlg->move(x, y);
+
+    // Final safety clamp considering window frame/title sizes
+    QRect fr = dlg->frameGeometry();
+    if (fr.bottom() > avail.bottom())
+        dlg->move(fr.x(), qMax(avail.top()+marginTB/2, dlg->y() - (fr.bottom() - avail.bottom()) - 10));
+    fr = dlg->frameGeometry();
+    if (fr.top() < avail.top())
+        dlg->move(fr.x(), avail.top() + 10);
 }
 
 QString Window::resetLog(QString fname) {
@@ -497,6 +606,7 @@ void Window::mousePressEvent(QMouseEvent *event){
             wAppsettings->setStartIndicatorFading(Saver::_isStartIndicatorFading());
 
             wAppsettings->setFocusOnDefaultBtn();
+            applyAdaptiveDialogSizing(wAppsettings);
 
             wAppsettings->setCheckLogWriteOn(wAppsettings->getValueLogWriteOn());
 
@@ -549,6 +659,7 @@ void Window::mousePressEvent(QMouseEvent *event){
             }
             caught = true;
         } else if (action == 2) {//О программе
+            applyAdaptiveDialogSizing(wAboutprog, 0.6, 0.6);
             if (wAboutprog->exec() == QDialog::Accepted) {
 
             }

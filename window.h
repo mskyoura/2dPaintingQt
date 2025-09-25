@@ -177,6 +177,7 @@ protected:
     void mousePressEvent(QMouseEvent *event);
     void toggleFullscreen();
     bool isAnyModalVisible() const;
+    void applyAdaptiveDialogSizing(QDialog* dlg, double wRatio = 0.88, double hRatio = 0.88);
 };
 
 #endif

@@ -24,6 +24,7 @@
 #include <QRegularExpression>
 #include <QSet>
 #include <QTimer>
+#include <QLayout>
 #include <algorithm>
 
 // Constants for line endings
@@ -50,6 +51,8 @@ PBsetup::PBsetup(QWidget *_parent) :
 
     ui = new Ui::PBsetup;
     ui->setupUi(this);
+
+    // keep original margins (revert tightening)
 
     wgt = new Widget(this);
 
@@ -225,7 +228,7 @@ QString PBsetup::buildGroupCommand(int gCmdNumber0_255, CmdTypes cmdType, const 
     } else {
         cmdRq += "FFFFFFFF";
     }
-    
+
     cmdRq += "FFFFFFFF"; // Реле3 игнорируем
 
     // Добавление адресов устройств для нового формата
@@ -308,10 +311,10 @@ PBsetup::CommandParams PBsetup::prepareSingleCommandParams(Saver& donor) {
 
 QString PBsetup::formatCommandArgs(CmdTypes cmdType, int cmdNumber, int tryNum, int totalTries) {
     switch (cmdType) {
-        case _RELAY1ON:
-        case _RELAY1OFF:
+            case _RELAY1ON:
+            case _RELAY1OFF:
             return QString("№ %1, попытка %2 из %3").arg(cmdNumber).arg(tryNum + 1).arg(totalTries);
-        case _RELAY2ON:
+            case _RELAY2ON:
             return QString("№ %1, %2 с, %3 с, попытка %4 из %5")
                    .arg(cmdNumber).arg(pWin->Usb->_T1()).arg(pWin->Usb->_T2())
                    .arg(tryNum + 1).arg(totalTries);
@@ -340,7 +343,7 @@ QString PBsetup::formatSingleCommandArgs(CmdTypes cmdType, Saver& donor, const Q
 }
 
 void PBsetup::logWaitTime(const QDateTime& start, int timeoutMs, const QString& methodName) {
-    if (pWin->wAppsettings->getValueLogWriteOn()) {
+        if (pWin->wAppsettings->getValueLogWriteOn()) {
         int waitedMs = start.msecsTo(QDateTime::currentDateTime());
         pWin->SaveToLog("", QString("Фактическое ожидание ответа %1 мс (таймаут: %2 мс)")
                        .arg(waitedMs).arg(timeoutMs));
@@ -1255,7 +1258,7 @@ void PBsetup::executeCommandIfValidId(const QList<int>& donorsNum, CmdTypes cmdT
     if (donor._ID() > 0) {
         execCmd(donorsNum, cmdType, SINGLE);
     } else {
-        pWin->warn->showWarning("Задайте ID в настройках ПБ.");
+            pWin->warn->showWarning("Задайте ID в настройках ПБ.");
     }
 }
 
@@ -1263,13 +1266,13 @@ void PBsetup::executeRelay2CommandIfValid(const QList<int>& donorsNum, Saver& do
 {
     if (donor._ID() > 0) {
         if (donor.mayStart()) {
-            execCmd(donorsNum, _RELAY2ON, SINGLE);
+                execCmd(donorsNum, _RELAY2ON, SINGLE);
         } else {
-            pWin->warn->showWarning(QString("Команда \"") + "Запустить Реле2" +
-                    "\" возможна только\nв состоянии \"" + "Реле1 включено" + "\".");
+                pWin->warn->showWarning(QString("Команда \"") + "Запустить Реле2" +
+                        "\" возможна только\nв состоянии \"" + "Реле1 включено" + "\".");
         }
     } else {
-        pWin->warn->showWarning("Задайте ID в настройках ПБ.");
+            pWin->warn->showWarning("Задайте ID в настройках ПБ.");
     }
 }
 
@@ -1318,9 +1321,25 @@ void PBsetup::setupAppSettingsDialog(Saver& donor, const QList<int>& usedIds)
 {
     pWin->appset->set(donor._ID(), donor.getDst(), donor._T1(), donor._T2(), 
                      donor._U1(), donor._U2(), donor._Polarity(), usedIds);
-    
-    pWin->appset->setWindowModality(Qt::ApplicationModal);
-    pWin->appset->setWindowTitle(QString("Настройки ПБ") + QString::number(vmPersonal.GetVisualNumber()));
+
+            pWin->appset->setWindowModality(Qt::ApplicationModal);
+            pWin->appset->setWindowTitle(QString("Настройки ПБ") + QString::number(vmPersonal.GetVisualNumber()));
+
+    // Enforce compact size and top-aligned content for the Appset dialog
+    pWin->appset->setMinimumSize(800, 400);
+    pWin->appset->setMaximumSize(800, 400);
+    pWin->appset->resize(800, 400);
+    if (pWin->appset->layout()) {
+        pWin->appset->layout()->setAlignment(Qt::AlignTop);
+        pWin->appset->layout()->setContentsMargins(8, 8, 8, 8);
+        pWin->appset->layout()->setSpacing(6);
+    }
+    foreach (QLayout* lay, pWin->appset->findChildren<QLayout*>()) {
+        if (!lay) continue;
+        lay->setAlignment(Qt::AlignTop);
+        lay->setContentsMargins(8, 4, 8, 4);
+        lay->setSpacing(6);
+    }
 }
 
 void PBsetup::updateDonorFromSettings(Saver& donor, const QString& idBefore)
@@ -1331,10 +1350,10 @@ void PBsetup::updateDonorFromSettings(Saver& donor, const QString& idBefore)
     donor.setT2(pWin->appset->T2);
     donor.setU1(pWin->appset->U1);
     donor.setU2(pWin->appset->U2);
-    donor.setPolarity(pWin->appset->Polarity);
-    
+                donor.setPolarity(pWin->appset->Polarity);
+
     if (idBefore != pWin->appset->ID) {
-        donor.setStatusNI();
+                    donor.setStatusNI();
     }
 }
 

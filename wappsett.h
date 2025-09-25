@@ -5,8 +5,11 @@
 #include "window.h"
 #include "colors.h"
 #include <QPainter>
+#include <QList>
 
 class Window;
+class QGraphicsView;
+class QGraphicsProxyWidget;
 
 namespace Ui {
 class wAppsett;
@@ -152,12 +155,25 @@ private:
     void comportChange();
 
     void showEvent(QShowEvent * event);
+    void resizeEvent(QResizeEvent* event);
 
     void fillComboBox();
 
     bool isTextLong(QFont& textFont, QString  s, int maxwidth);
 
     bool ValueLogWriteOn;
+
+    // layout scaling helpers
+    void applyCompactLayout();
+    void applyFontScale(double scale);
+    void applyProportionalLayoutScale(double scale);
+
+    // viewbox-like scaling storage
+    QList<QGraphicsView*> scaledViews;
+    QList<QGraphicsProxyWidget*> scaledProxies;
+    void wrapPageInViewBox(QWidget* page);
+    void rescaleViewBoxes();
+    void fallbackToNativeIfBlank();
 };
 
 #endif // WAPPSETT_H

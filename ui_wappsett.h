@@ -179,14 +179,14 @@ public:
         if (wAppsett->objectName().isEmpty())
             wAppsett->setObjectName(QStringLiteral("wAppsett"));
         wAppsett->resize(1761, 760);
-        QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
+        QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
         sizePolicy.setHeightForWidth(wAppsett->sizePolicy().hasHeightForWidth());
         wAppsett->setSizePolicy(sizePolicy);
         gridLayoutWidget_2 = new QWidget(wAppsett);
         gridLayoutWidget_2->setObjectName(QStringLiteral("gridLayoutWidget_2"));
-        gridLayoutWidget_2->setGeometry(QRect(0, 10, 1234, 763));
+        gridLayoutWidget_2->setGeometry(QRect(0, 10, 1234, 794));
         gridLayout_2 = new QGridLayout(gridLayoutWidget_2);
         gridLayout_2->setObjectName(QStringLiteral("gridLayout_2"));
         gridLayout_2->setContentsMargins(0, 0, 0, 0);
@@ -245,7 +245,9 @@ public:
 
         tabWidget = new QTabWidget(gridLayoutWidget_2);
         tabWidget->setObjectName(QStringLiteral("tabWidget"));
-        tabWidget->setMinimumSize(QSize(1200, 685));
+        sizePolicy.setHeightForWidth(tabWidget->sizePolicy().hasHeightForWidth());
+        tabWidget->setSizePolicy(sizePolicy);
+        tabWidget->setMinimumSize(QSize(1200, 720));
         tabWidget->setFont(font);
         tab = new QWidget();
         tab->setObjectName(QStringLiteral("tab"));
@@ -375,7 +377,7 @@ public:
         tab_2->setObjectName(QStringLiteral("tab_2"));
         gridLayoutWidget_3 = new QWidget(tab_2);
         gridLayoutWidget_3->setObjectName(QStringLiteral("gridLayoutWidget_3"));
-        gridLayoutWidget_3->setGeometry(QRect(-10, 20, 731, 611));
+        gridLayoutWidget_3->setGeometry(QRect(-10, 20, 804, 611));
         gridLayout_3 = new QGridLayout(gridLayoutWidget_3);
         gridLayout_3->setObjectName(QStringLiteral("gridLayout_3"));
         gridLayout_3->setHorizontalSpacing(7);
@@ -625,6 +627,11 @@ public:
 
         label_11 = new QLabel(gridLayoutWidget_3);
         label_11->setObjectName(QStringLiteral("label_11"));
+        QSizePolicy sizePolicy4(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        sizePolicy4.setHorizontalStretch(0);
+        sizePolicy4.setVerticalStretch(1);
+        sizePolicy4.setHeightForWidth(label_11->sizePolicy().hasHeightForWidth());
+        label_11->setSizePolicy(sizePolicy4);
         QFont font1;
         font1.setBold(true);
         font1.setWeight(75);
@@ -675,11 +682,11 @@ public:
         gridLayout_5->setContentsMargins(0, 0, 0, 0);
         eg3 = new QLineEdit(gridLayoutWidget_5);
         eg3->setObjectName(QStringLiteral("eg3"));
-        QSizePolicy sizePolicy4(QSizePolicy::Maximum, QSizePolicy::Fixed);
-        sizePolicy4.setHorizontalStretch(0);
-        sizePolicy4.setVerticalStretch(0);
-        sizePolicy4.setHeightForWidth(eg3->sizePolicy().hasHeightForWidth());
-        eg3->setSizePolicy(sizePolicy4);
+        QSizePolicy sizePolicy5(QSizePolicy::Maximum, QSizePolicy::Fixed);
+        sizePolicy5.setHorizontalStretch(0);
+        sizePolicy5.setVerticalStretch(0);
+        sizePolicy5.setHeightForWidth(eg3->sizePolicy().hasHeightForWidth());
+        eg3->setSizePolicy(sizePolicy5);
         eg3->setMinimumSize(QSize(800, 0));
         eg3->setMaximumSize(QSize(16777215, 16777215));
         eg3->setFont(font);
@@ -690,11 +697,11 @@ public:
         horizontalLayout_14->setObjectName(QStringLiteral("horizontalLayout_14"));
         label_55 = new QLabel(gridLayoutWidget_5);
         label_55->setObjectName(QStringLiteral("label_55"));
-        QSizePolicy sizePolicy5(QSizePolicy::Minimum, QSizePolicy::Preferred);
-        sizePolicy5.setHorizontalStretch(0);
-        sizePolicy5.setVerticalStretch(0);
-        sizePolicy5.setHeightForWidth(label_55->sizePolicy().hasHeightForWidth());
-        label_55->setSizePolicy(sizePolicy5);
+        QSizePolicy sizePolicy6(QSizePolicy::Minimum, QSizePolicy::Preferred);
+        sizePolicy6.setHorizontalStretch(0);
+        sizePolicy6.setVerticalStretch(0);
+        sizePolicy6.setHeightForWidth(label_55->sizePolicy().hasHeightForWidth());
+        label_55->setSizePolicy(sizePolicy6);
         label_55->setFont(font1);
 
         horizontalLayout_14->addWidget(label_55);
@@ -706,8 +713,8 @@ public:
         horizontalLayout_17->setObjectName(QStringLiteral("horizontalLayout_17"));
         label_61 = new QLabel(gridLayoutWidget_5);
         label_61->setObjectName(QStringLiteral("label_61"));
-        sizePolicy5.setHeightForWidth(label_61->sizePolicy().hasHeightForWidth());
-        label_61->setSizePolicy(sizePolicy5);
+        sizePolicy6.setHeightForWidth(label_61->sizePolicy().hasHeightForWidth());
+        label_61->setSizePolicy(sizePolicy6);
         QFont font2;
         font2.setBold(false);
         font2.setItalic(true);
@@ -723,8 +730,8 @@ public:
         horizontalLayout_12->setObjectName(QStringLiteral("horizontalLayout_12"));
         statLn2 = new QLineEdit(gridLayoutWidget_5);
         statLn2->setObjectName(QStringLiteral("statLn2"));
-        sizePolicy4.setHeightForWidth(statLn2->sizePolicy().hasHeightForWidth());
-        statLn2->setSizePolicy(sizePolicy4);
+        sizePolicy5.setHeightForWidth(statLn2->sizePolicy().hasHeightForWidth());
+        statLn2->setSizePolicy(sizePolicy5);
         statLn2->setMinimumSize(QSize(500, 0));
         statLn2->setMaximumSize(QSize(16777215, 16777215));
         statLn2->setFont(font);
@@ -746,11 +753,11 @@ public:
 
         lab_cmd1 = new QLabel(gridLayoutWidget_5);
         lab_cmd1->setObjectName(QStringLiteral("lab_cmd1"));
-        QSizePolicy sizePolicy6(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
-        sizePolicy6.setHorizontalStretch(0);
-        sizePolicy6.setVerticalStretch(0);
-        sizePolicy6.setHeightForWidth(lab_cmd1->sizePolicy().hasHeightForWidth());
-        lab_cmd1->setSizePolicy(sizePolicy6);
+        QSizePolicy sizePolicy7(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+        sizePolicy7.setHorizontalStretch(0);
+        sizePolicy7.setVerticalStretch(0);
+        sizePolicy7.setHeightForWidth(lab_cmd1->sizePolicy().hasHeightForWidth());
+        lab_cmd1->setSizePolicy(sizePolicy7);
         lab_cmd1->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
         gridLayout_5->addWidget(lab_cmd1, 10, 0, 1, 1);
@@ -759,8 +766,8 @@ public:
         horizontalLayout_9->setObjectName(QStringLiteral("horizontalLayout_9"));
         statLn0 = new QLineEdit(gridLayoutWidget_5);
         statLn0->setObjectName(QStringLiteral("statLn0"));
-        sizePolicy4.setHeightForWidth(statLn0->sizePolicy().hasHeightForWidth());
-        statLn0->setSizePolicy(sizePolicy4);
+        sizePolicy5.setHeightForWidth(statLn0->sizePolicy().hasHeightForWidth());
+        statLn0->setSizePolicy(sizePolicy5);
         statLn0->setMinimumSize(QSize(500, 0));
         statLn0->setMaximumSize(QSize(16777215, 16777215));
         statLn0->setFont(font);
@@ -769,8 +776,8 @@ public:
 
         statSh0 = new QLineEdit(gridLayoutWidget_5);
         statSh0->setObjectName(QStringLiteral("statSh0"));
-        sizePolicy4.setHeightForWidth(statSh0->sizePolicy().hasHeightForWidth());
-        statSh0->setSizePolicy(sizePolicy4);
+        sizePolicy5.setHeightForWidth(statSh0->sizePolicy().hasHeightForWidth());
+        statSh0->setSizePolicy(sizePolicy5);
         statSh0->setMinimumSize(QSize(294, 0));
         statSh0->setMaximumSize(QSize(16777215, 16777215));
         statSh0->setFont(font);
@@ -782,8 +789,8 @@ public:
 
         cmd0 = new QLineEdit(gridLayoutWidget_5);
         cmd0->setObjectName(QStringLiteral("cmd0"));
-        sizePolicy4.setHeightForWidth(cmd0->sizePolicy().hasHeightForWidth());
-        cmd0->setSizePolicy(sizePolicy4);
+        sizePolicy5.setHeightForWidth(cmd0->sizePolicy().hasHeightForWidth());
+        cmd0->setSizePolicy(sizePolicy5);
         cmd0->setMinimumSize(QSize(800, 0));
         cmd0->setMaximumSize(QSize(16777215, 16777215));
         cmd0->setFont(font);
@@ -792,16 +799,16 @@ public:
 
         stat0 = new QLabel(gridLayoutWidget_5);
         stat0->setObjectName(QStringLiteral("stat0"));
-        sizePolicy6.setHeightForWidth(stat0->sizePolicy().hasHeightForWidth());
-        stat0->setSizePolicy(sizePolicy6);
+        sizePolicy7.setHeightForWidth(stat0->sizePolicy().hasHeightForWidth());
+        stat0->setSizePolicy(sizePolicy7);
         stat0->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
         gridLayout_5->addWidget(stat0, 9, 0, 1, 1);
 
         lab_cmd0 = new QLabel(gridLayoutWidget_5);
         lab_cmd0->setObjectName(QStringLiteral("lab_cmd0"));
-        sizePolicy6.setHeightForWidth(lab_cmd0->sizePolicy().hasHeightForWidth());
-        lab_cmd0->setSizePolicy(sizePolicy6);
+        sizePolicy7.setHeightForWidth(lab_cmd0->sizePolicy().hasHeightForWidth());
+        lab_cmd0->setSizePolicy(sizePolicy7);
         lab_cmd0->setMinimumSize(QSize(0, 0));
         lab_cmd0->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
@@ -809,8 +816,8 @@ public:
 
         stat1 = new QLabel(gridLayoutWidget_5);
         stat1->setObjectName(QStringLiteral("stat1"));
-        sizePolicy6.setHeightForWidth(stat1->sizePolicy().hasHeightForWidth());
-        stat1->setSizePolicy(sizePolicy6);
+        sizePolicy7.setHeightForWidth(stat1->sizePolicy().hasHeightForWidth());
+        stat1->setSizePolicy(sizePolicy7);
         stat1->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
         gridLayout_5->addWidget(stat1, 11, 0, 1, 1);
@@ -823,8 +830,8 @@ public:
         horizontalLayout_13->setObjectName(QStringLiteral("horizontalLayout_13"));
         label_47 = new QLabel(gridLayoutWidget_5);
         label_47->setObjectName(QStringLiteral("label_47"));
-        sizePolicy5.setHeightForWidth(label_47->sizePolicy().hasHeightForWidth());
-        label_47->setSizePolicy(sizePolicy5);
+        sizePolicy6.setHeightForWidth(label_47->sizePolicy().hasHeightForWidth());
+        label_47->setSizePolicy(sizePolicy6);
         label_47->setFont(font1);
 
         horizontalLayout_13->addWidget(label_47);
@@ -834,8 +841,8 @@ public:
 
         cmd2 = new QLineEdit(gridLayoutWidget_5);
         cmd2->setObjectName(QStringLiteral("cmd2"));
-        sizePolicy4.setHeightForWidth(cmd2->sizePolicy().hasHeightForWidth());
-        cmd2->setSizePolicy(sizePolicy4);
+        sizePolicy5.setHeightForWidth(cmd2->sizePolicy().hasHeightForWidth());
+        cmd2->setSizePolicy(sizePolicy5);
         cmd2->setMinimumSize(QSize(800, 0));
         cmd2->setMaximumSize(QSize(16777215, 16777215));
         cmd2->setFont(font);
@@ -844,16 +851,16 @@ public:
 
         stat2 = new QLabel(gridLayoutWidget_5);
         stat2->setObjectName(QStringLiteral("stat2"));
-        sizePolicy6.setHeightForWidth(stat2->sizePolicy().hasHeightForWidth());
-        stat2->setSizePolicy(sizePolicy6);
+        sizePolicy7.setHeightForWidth(stat2->sizePolicy().hasHeightForWidth());
+        stat2->setSizePolicy(sizePolicy7);
         stat2->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
         gridLayout_5->addWidget(stat2, 13, 0, 1, 1);
 
         lab_cmd2 = new QLabel(gridLayoutWidget_5);
         lab_cmd2->setObjectName(QStringLiteral("lab_cmd2"));
-        sizePolicy6.setHeightForWidth(lab_cmd2->sizePolicy().hasHeightForWidth());
-        lab_cmd2->setSizePolicy(sizePolicy6);
+        sizePolicy7.setHeightForWidth(lab_cmd2->sizePolicy().hasHeightForWidth());
+        lab_cmd2->setSizePolicy(sizePolicy7);
         lab_cmd2->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
         gridLayout_5->addWidget(lab_cmd2, 12, 0, 1, 1);
@@ -862,8 +869,8 @@ public:
         horizontalLayout_10->setObjectName(QStringLiteral("horizontalLayout_10"));
         statLn1 = new QLineEdit(gridLayoutWidget_5);
         statLn1->setObjectName(QStringLiteral("statLn1"));
-        sizePolicy4.setHeightForWidth(statLn1->sizePolicy().hasHeightForWidth());
-        statLn1->setSizePolicy(sizePolicy4);
+        sizePolicy5.setHeightForWidth(statLn1->sizePolicy().hasHeightForWidth());
+        statLn1->setSizePolicy(sizePolicy5);
         statLn1->setMinimumSize(QSize(500, 0));
         statLn1->setMaximumSize(QSize(16777215, 16777215));
         statLn1->setFont(font);
@@ -872,8 +879,8 @@ public:
 
         statSh1 = new QLineEdit(gridLayoutWidget_5);
         statSh1->setObjectName(QStringLiteral("statSh1"));
-        sizePolicy4.setHeightForWidth(statSh1->sizePolicy().hasHeightForWidth());
-        statSh1->setSizePolicy(sizePolicy4);
+        sizePolicy5.setHeightForWidth(statSh1->sizePolicy().hasHeightForWidth());
+        statSh1->setSizePolicy(sizePolicy5);
         statSh1->setMinimumSize(QSize(294, 0));
         statSh1->setMaximumSize(QSize(16777215, 16777215));
         statSh1->setFont(font);
@@ -885,8 +892,8 @@ public:
 
         cmd1 = new QLineEdit(gridLayoutWidget_5);
         cmd1->setObjectName(QStringLiteral("cmd1"));
-        sizePolicy4.setHeightForWidth(cmd1->sizePolicy().hasHeightForWidth());
-        cmd1->setSizePolicy(sizePolicy4);
+        sizePolicy5.setHeightForWidth(cmd1->sizePolicy().hasHeightForWidth());
+        cmd1->setSizePolicy(sizePolicy5);
         cmd1->setMinimumSize(QSize(800, 0));
         cmd1->setMaximumSize(QSize(16777215, 16777215));
         cmd1->setFont(font);
@@ -895,24 +902,24 @@ public:
 
         lab_eg2 = new QLabel(gridLayoutWidget_5);
         lab_eg2->setObjectName(QStringLiteral("lab_eg2"));
-        sizePolicy6.setHeightForWidth(lab_eg2->sizePolicy().hasHeightForWidth());
-        lab_eg2->setSizePolicy(sizePolicy6);
+        sizePolicy7.setHeightForWidth(lab_eg2->sizePolicy().hasHeightForWidth());
+        lab_eg2->setSizePolicy(sizePolicy7);
         lab_eg2->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
         gridLayout_5->addWidget(lab_eg2, 3, 0, 1, 1);
 
         lab_eg0 = new QLabel(gridLayoutWidget_5);
         lab_eg0->setObjectName(QStringLiteral("lab_eg0"));
-        sizePolicy6.setHeightForWidth(lab_eg0->sizePolicy().hasHeightForWidth());
-        lab_eg0->setSizePolicy(sizePolicy6);
+        sizePolicy7.setHeightForWidth(lab_eg0->sizePolicy().hasHeightForWidth());
+        lab_eg0->setSizePolicy(sizePolicy7);
         lab_eg0->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
         gridLayout_5->addWidget(lab_eg0, 1, 0, 1, 1);
 
         eg0 = new QLineEdit(gridLayoutWidget_5);
         eg0->setObjectName(QStringLiteral("eg0"));
-        sizePolicy4.setHeightForWidth(eg0->sizePolicy().hasHeightForWidth());
-        eg0->setSizePolicy(sizePolicy4);
+        sizePolicy5.setHeightForWidth(eg0->sizePolicy().hasHeightForWidth());
+        eg0->setSizePolicy(sizePolicy5);
         eg0->setMinimumSize(QSize(800, 0));
         eg0->setMaximumSize(QSize(16777215, 16777215));
         eg0->setFont(font);
@@ -921,8 +928,8 @@ public:
 
         eg1 = new QLineEdit(gridLayoutWidget_5);
         eg1->setObjectName(QStringLiteral("eg1"));
-        sizePolicy4.setHeightForWidth(eg1->sizePolicy().hasHeightForWidth());
-        eg1->setSizePolicy(sizePolicy4);
+        sizePolicy5.setHeightForWidth(eg1->sizePolicy().hasHeightForWidth());
+        eg1->setSizePolicy(sizePolicy5);
         eg1->setMinimumSize(QSize(800, 0));
         eg1->setMaximumSize(QSize(16777215, 16777215));
         eg1->setFont(font);
@@ -931,24 +938,24 @@ public:
 
         lab_eg1 = new QLabel(gridLayoutWidget_5);
         lab_eg1->setObjectName(QStringLiteral("lab_eg1"));
-        sizePolicy6.setHeightForWidth(lab_eg1->sizePolicy().hasHeightForWidth());
-        lab_eg1->setSizePolicy(sizePolicy6);
+        sizePolicy7.setHeightForWidth(lab_eg1->sizePolicy().hasHeightForWidth());
+        lab_eg1->setSizePolicy(sizePolicy7);
         lab_eg1->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
         gridLayout_5->addWidget(lab_eg1, 2, 0, 1, 1);
 
         lab_eg3 = new QLabel(gridLayoutWidget_5);
         lab_eg3->setObjectName(QStringLiteral("lab_eg3"));
-        sizePolicy6.setHeightForWidth(lab_eg3->sizePolicy().hasHeightForWidth());
-        lab_eg3->setSizePolicy(sizePolicy6);
+        sizePolicy7.setHeightForWidth(lab_eg3->sizePolicy().hasHeightForWidth());
+        lab_eg3->setSizePolicy(sizePolicy7);
         lab_eg3->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
         gridLayout_5->addWidget(lab_eg3, 4, 0, 1, 1);
 
         eg2 = new QLineEdit(gridLayoutWidget_5);
         eg2->setObjectName(QStringLiteral("eg2"));
-        sizePolicy4.setHeightForWidth(eg2->sizePolicy().hasHeightForWidth());
-        eg2->setSizePolicy(sizePolicy4);
+        sizePolicy5.setHeightForWidth(eg2->sizePolicy().hasHeightForWidth());
+        eg2->setSizePolicy(sizePolicy5);
         eg2->setMinimumSize(QSize(800, 0));
         eg2->setMaximumSize(QSize(16777215, 16777215));
         eg2->setFont(font);
@@ -957,16 +964,16 @@ public:
 
         lab_eg4 = new QLabel(gridLayoutWidget_5);
         lab_eg4->setObjectName(QStringLiteral("lab_eg4"));
-        sizePolicy6.setHeightForWidth(lab_eg4->sizePolicy().hasHeightForWidth());
-        lab_eg4->setSizePolicy(sizePolicy6);
+        sizePolicy7.setHeightForWidth(lab_eg4->sizePolicy().hasHeightForWidth());
+        lab_eg4->setSizePolicy(sizePolicy7);
         lab_eg4->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
         gridLayout_5->addWidget(lab_eg4, 6, 0, 1, 1);
 
         eg4 = new QLineEdit(gridLayoutWidget_5);
         eg4->setObjectName(QStringLiteral("eg4"));
-        sizePolicy4.setHeightForWidth(eg4->sizePolicy().hasHeightForWidth());
-        eg4->setSizePolicy(sizePolicy4);
+        sizePolicy5.setHeightForWidth(eg4->sizePolicy().hasHeightForWidth());
+        eg4->setSizePolicy(sizePolicy5);
         eg4->setMinimumSize(QSize(800, 0));
         eg4->setMaximumSize(QSize(16777215, 16777215));
         eg4->setFont(font);

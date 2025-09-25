@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -25,7 +25,7 @@
      <x>0</x>
      <y>10</y>
      <width>1234</width>
-     <height>763</height>
+     <height>794</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
@@ -168,10 +168,16 @@ color: rgb(255, 255, 255);</string>
     </item>
     <item row="0" column="0" colspan="4">
      <widget class="QTabWidget" name="tabWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="minimumSize">
        <size>
         <width>1200</width>
-        <height>685</height>
+        <height>720</height>
        </size>
       </property>
       <property name="font">
@@ -494,7 +500,7 @@ color: rgb(255, 255, 255);</string>
          <rect>
           <x>-10</x>
           <y>20</y>
-          <width>731</width>
+          <width>804</width>
           <height>611</height>
          </rect>
         </property>
@@ -901,7 +907,6 @@ color: rgb(255, 255, 255);</string>
            </property>
           </spacer>
          </item>
-         <!-- Send command timeout setting -->
          <item row="8" column="1">
           <widget class="QLabel" name="label_sendtimeout">
            <property name="text">
@@ -990,6 +995,12 @@ color: rgb(255, 255, 255);</string>
          </item>
          <item row="7" column="1" colspan="3">
           <widget class="QLabel" name="label_11">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>1</verstretch>
+            </sizepolicy>
+           </property>
            <property name="font">
             <font>
              <weight>75</weight>
