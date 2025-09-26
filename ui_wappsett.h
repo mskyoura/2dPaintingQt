@@ -165,6 +165,11 @@ public:
     QCheckBox *extraStatusAfterGroupCheck;
     QSpacerItem *horizontalSpacer_extraStatus_right;
     QSpacerItem *verticalSpacer_extraStatus;
+    QHBoxLayout *horizontalLayout_legacyGroup;
+    QSpacerItem *horizontalSpacer_legacyGroup_left;
+    QCheckBox *legacyGroupCommandsCheck;
+    QSpacerItem *horizontalSpacer_legacyGroup_right;
+    QSpacerItem *verticalSpacer_legacyGroup;
     QHBoxLayout *horizontalLayout_6;
     QSpacerItem *horizontalSpacer_17;
     QLabel *label_10;
@@ -1025,6 +1030,30 @@ public:
 
         verticalLayout->addItem(verticalSpacer_extraStatus);
 
+        horizontalLayout_legacyGroup = new QHBoxLayout();
+        horizontalLayout_legacyGroup->setObjectName(QStringLiteral("horizontalLayout_legacyGroup"));
+        horizontalSpacer_legacyGroup_left = new QSpacerItem(20, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
+
+        horizontalLayout_legacyGroup->addItem(horizontalSpacer_legacyGroup_left);
+
+        legacyGroupCommandsCheck = new QCheckBox(verticalLayoutWidget);
+        legacyGroupCommandsCheck->setObjectName(QStringLiteral("legacyGroupCommandsCheck"));
+        sizePolicy2.setHeightForWidth(legacyGroupCommandsCheck->sizePolicy().hasHeightForWidth());
+        legacyGroupCommandsCheck->setSizePolicy(sizePolicy2);
+
+        horizontalLayout_legacyGroup->addWidget(legacyGroupCommandsCheck);
+
+        horizontalSpacer_legacyGroup_right = new QSpacerItem(20, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
+
+        horizontalLayout_legacyGroup->addItem(horizontalSpacer_legacyGroup_right);
+
+
+        verticalLayout->addLayout(horizontalLayout_legacyGroup);
+
+        verticalSpacer_legacyGroup = new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Fixed);
+
+        verticalLayout->addItem(verticalSpacer_legacyGroup);
+
         horizontalLayout_6 = new QHBoxLayout();
         horizontalLayout_6->setObjectName(QStringLiteral("horizontalLayout_6"));
         horizontalLayout_6->setContentsMargins(-1, -1, -1, 0);
@@ -1082,7 +1111,8 @@ public:
         QWidget::setTabOrder(e6, tabWidget);
         QWidget::setTabOrder(tabWidget, cStartIndicator);
         QWidget::setTabOrder(cStartIndicator, extraStatusAfterGroupCheck);
-        QWidget::setTabOrder(extraStatusAfterGroupCheck, comboBox);
+        QWidget::setTabOrder(extraStatusAfterGroupCheck, legacyGroupCommandsCheck);
+        QWidget::setTabOrder(legacyGroupCommandsCheck, comboBox);
 
         retranslateUi(wAppsett);
 
@@ -1148,6 +1178,7 @@ public:
         tabWidget->setTabText(tabWidget->indexOf(tab_7), QApplication::translate("wAppsett", "\320\235\320\260\320\267\320\262\320\260\320\275\320\270\321\217", Q_NULLPTR));
         cStartIndicator->setText(QApplication::translate("wAppsett", "\320\236\321\202\320\272\320\273\321\216\321\207\320\260\321\202\321\214 \320\270\320\275\320\264\320\270\320\272\320\260\321\206\320\270\321\216 \"\320\240\320\265\320\273\320\2652 \320\262\320\272\320\273\321\216\321\207\320\265\320\275\320\276\" \320\262 \321\201\320\276\320\276\321\202\320\262\320\265\321\202\321\201\321\202\320\262\320\270\320\270 \321\201 \320\275\320\260\321\201\321\202\321\200\320\276\320\271\320\272\320\260\320\274\320\270 \320\237\320\221", Q_NULLPTR));
         extraStatusAfterGroupCheck->setText(QApplication::translate("wAppsett", "\320\236\321\202\320\277\321\200\320\260\320\262\320\273\321\217\321\202\321\214 \320\264\320\276\320\277\320\276\320\273\320\275\320\270\321\202\320\265\320\273\321\214\320\275\321\203\321\216 \320\272\320\276\320\274\320\260\320\275\320\264\321\203 \321\201\321\202\320\260\321\202\321\203\321\201\320\260, \320\265\321\201\320\273\320\270 \320\277\320\276\320\264\321\202\320\262\320\265\321\200\320\266\320\264\320\265\320\275\320\270\320\265 \320\275\320\260 \320\272\320\276\320\274\320\260\320\275\320\264\321\203 \320\267\320\260\320\277\320\270\321\201\320\270 \320\275\320\265 \320\277\321\200\320\270\321\210\320\273\320\276", Q_NULLPTR));
+        legacyGroupCommandsCheck->setText(QApplication::translate("wAppsett", "\320\236\321\202\320\277\321\200\320\260\320\262\320\272\320\260 \320\263\321\200\321\203\320\277\320\277\320\276\320\262\321\213\321\205 \320\272\320\276\320\274\320\260\320\275\320\264 \321\201\321\202\320\260\321\200\320\276\320\263\320\276 \321\204\320\276\321\200\320\274\320\260\321\202\320\260", Q_NULLPTR));
         label_10->setText(QApplication::translate("wAppsett", "\320\224\320\276\320\277\320\276\320\273\320\275\320\270\321\202\320\265\320\273\321\214\320\275\321\213\320\271 \321\202\320\265\320\272\321\201\321\202 \320\262 \320\276\320\272\320\275\320\265 \"\320\236 \320\277\321\200\320\276\320\263\321\200\320\260\320\274\320\274\320\265\":", Q_NULLPTR));
         tabWidget->setTabText(tabWidget->indexOf(tab_3), QApplication::translate("wAppsett", "\320\224\320\276\320\277\320\276\320\273\320\275\320\270\321\202\320\265\320\273\321\214\320\275\321\213\320\265", Q_NULLPTR));
     } // retranslateUi

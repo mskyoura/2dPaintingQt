@@ -85,6 +85,7 @@ wAppsett::wAppsett(QWidget *parent) :
 
     e8Accepted = 1;
     extraStatusAfterGroup = false;
+    legacyGroupCommands = false;
 
     fillComboBox();
 
@@ -542,7 +543,7 @@ void wAppsett::applyFontScale(double scale)
     for (QWidget* w : names) scaleWidgetFont(w);
 
     // Additional tab
-    QWidget* add[] = { ui->cStartIndicator, ui->extraStatusAfterGroupCheck, ui->label_10, ui->textEdit };
+    QWidget* add[] = { ui->cStartIndicator, ui->extraStatusAfterGroupCheck, ui->legacyGroupCommandsCheck, ui->label_10, ui->textEdit };
     for (QWidget* w : add) scaleWidgetFont(w);
 }
 
@@ -809,4 +810,48 @@ void wAppsett::setExtraStatusAfterGroup(bool b)
 void wAppsett::on_extraStatusAfterGroupCheck_clicked(bool checked)
 {
     extraStatusAfterGroup = checked;
+}
+
+bool wAppsett::getLegacyGroupCommands() const
+{
+    return legacyGroupCommands;
+}
+
+void wAppsett::setLegacyGroupCommands(bool b)
+{
+    legacyGroupCommands = b;
+    ui->legacyGroupCommandsCheck->setChecked(b);
+    applyLegacyBlockState();
+}
+
+void wAppsett::on_legacyGroupCommandsCheck_clicked(bool checked)
+{
+    legacyGroupCommands = checked;
+    applyLegacyBlockState();
+}
+
+void wAppsett::applyLegacyBlockState()
+{
+    if (!ui) return;
+    // When legacy group commands are enabled, block editing of:
+    // - extraStatusAfterGroupCheck
+    // - rTimeSlot (ui->e9)
+    // - rSlotAddDelay (ui->e12)
+    // - T1 (ui->e10)
+    // - T2 (ui->e11)
+    bool block = legacyGroupCommands;
+
+    if (ui->extraStatusAfterGroupCheck)
+        ui->extraStatusAfterGroupCheck->setEnabled(!block);
+
+    if (ui->e9)  ui->e9->setEnabled(!block);
+    if (ui->e12) ui->e12->setEnabled(!block);
+    if (ui->e10) ui->e10->setEnabled(!block);
+    if (ui->e11) ui->e11->setEnabled(!block);
+
+    // Also visually indicate disabled state by adjusting labels if available
+    // (labels optional; ignore if not present)
+    QList<QWidget*> labels;
+    labels << ui->label_21 << ui->label_24 << ui->label_25 << ui->label_27; // time slot, add delay, T1, T2
+    for (QWidget* l : labels) if (l) l->setEnabled(!block);
 }

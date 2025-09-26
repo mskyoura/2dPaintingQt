@@ -153,7 +153,7 @@ private:
     CommandParams prepareSingleCommandParams(Saver& donor);
     QString formatCommandArgs(CmdTypes cmdType, int cmdNumber, int tryNum, int totalTries);
     QString formatSingleCommandArgs(CmdTypes cmdType, Saver& donor, const QString& cmdNum);
-    void logWaitTime(const QDateTime& start, int timeoutMs, const QString& methodName);
+    void logWaitTime(const QDateTime& start, int timeoutMs);
     RelayStatus determineRelayStatus(int relay1, int relay2);
     // Converter: RelayStatus -> CmdTypes
     CmdTypes relayStatusToCmdType(RelayStatus status) const;
@@ -162,6 +162,7 @@ private:
     void scheduleStatusChanges(Saver& donor, RelayStatus lastStatus, CmdTypes lastWriteCommand);
     // Read feature flag from settings.ini: send extra _STATUS after group for non-responders
     bool isExtraStatusAfterGroupEnabled() const;
+    bool isLegacyGroupCommandsEnabled() const;
     Saver* findDonorByDeviceId(const QString& deviceId);
     // Unified accessors to donors
     Saver* donorByVmIndexPtr(int vmIndex);
@@ -174,6 +175,9 @@ private:
     void setupProgressWindow();
     void cleanupSerialPort();
     void executeGroupCommand(const QList<int>& donorsNum, CmdTypes cmdType);
+    void executeLegacyCommand(const QList<int>& donorsNum, CmdTypes cmdType);
+    void executeLegacyGroupCommand(const QList<int>& donorsNum, CmdTypes cmdType);
+    void executeLegacyStatusCommandWithFailureHandling(const QList<int>& donorsNum);
     void executeSingleCommand(const QList<int>& donorsNum, CmdTypes cmdType);
     void executeMultipleCommand(const QList<int>& donorsNum, CmdTypes cmdType);
     bool validateRelay2Command(CmdTypes cmdType, Saver& donor);

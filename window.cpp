@@ -974,6 +974,10 @@ int Window::saveSettings(QString fn){
                     xmlWriter.writeCharacters(QString::number(wAppsettings->getExtraStatusAfterGroup()));
                     xmlWriter.writeEndElement();
 
+                    xmlWriter.writeStartElement("legacyGroupCommands");
+                    xmlWriter.writeCharacters(QString::number(wAppsettings->getLegacyGroupCommands()));
+                    xmlWriter.writeEndElement();
+
                     xmlWriter.writeStartElement("PBgroupnumber");
                     xmlWriter.writeCharacters(QString::number(Vismo::activePBGroup));
                     xmlWriter.writeEndElement();
@@ -1193,6 +1197,10 @@ int Window::readSettings(QString fn){
                     xmlReader.readNext();
                     int ri = xmlReader.text().toInt(&ok);
                     if (ok) wAppsettings->setExtraStatusAfterGroup(ri==1);
+                } else if (xmlReader.name() == "legacyGroupCommands") {
+                    xmlReader.readNext();
+                    int ri = xmlReader.text().toInt(&ok);
+                    if (ok) wAppsettings->setLegacyGroupCommands(ri==1);
                 } else if (xmlReader.name() == "PBgroupnumber") {
                     xmlReader.readNext();
                     int ri = xmlReader.text().toInt(&ok);

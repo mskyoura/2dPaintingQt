@@ -56,6 +56,9 @@ public:
     bool getExtraStatusAfterGroup() const;
     void setExtraStatusAfterGroup(bool);
 
+    bool getLegacyGroupCommands() const;
+    void setLegacyGroupCommands(bool);
+
     QPainter* painter;
 
 private slots:
@@ -118,6 +121,8 @@ private slots:
 
     void on_extraStatusAfterGroupCheck_clicked(bool checked);
 
+    void on_legacyGroupCommandsCheck_clicked(bool checked);
+
 private:
 
     QPainter* FontPainter;
@@ -165,6 +170,9 @@ private:
 
     bool ValueLogWriteOn;
     bool extraStatusAfterGroup;
+    bool legacyGroupCommands;
+
+    void applyLegacyBlockState();
 
     // layout scaling helpers
     void applyCompactLayout();

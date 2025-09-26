@@ -1881,6 +1881,71 @@ color: rgb(255, 255, 255);</string>
           </spacer>
          </item>
          <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_legacyGroup">
+           <item>
+            <spacer name="horizontalSpacer_legacyGroup_left">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="legacyGroupCommandsCheck">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Отправка групповых команд старого формата</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_legacyGroup_right">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="verticalSpacer_legacyGroup">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
           <layout class="QHBoxLayout" name="horizontalLayout_6">
            <property name="bottomMargin">
             <number>0</number>
@@ -2017,6 +2082,7 @@ color: rgb(255, 255, 255);</string>
   <tabstop>tabWidget</tabstop>
   <tabstop>cStartIndicator</tabstop>
   <tabstop>extraStatusAfterGroupCheck</tabstop>
+  <tabstop>legacyGroupCommandsCheck</tabstop>
   <tabstop>comboBox</tabstop>
  </tabstops>
  <resources/>
