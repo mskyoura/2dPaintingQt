@@ -218,8 +218,6 @@ void wAppsett::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
         case 26: _t->on_eg4_textChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         case 27: _t->on_cancelBtn_clicked(); break;
         case 28: _t->on_logfileWrEnabled_clicked(); break;
-        case 29: _t->on_e10_textChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 30: _t->on_e11_textChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         case 31: _t->on_e12_textChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         case 32: _t->on_extraStatusAfterGroupCheck_clicked((*reinterpret_cast< bool(*)>(_a[1]))); break;
         case 33: _t->on_legacyGroupCommandsCheck_clicked((*reinterpret_cast< bool(*)>(_a[1]))); break;

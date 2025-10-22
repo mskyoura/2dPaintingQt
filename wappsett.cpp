@@ -109,8 +109,7 @@ void wAppsett::comportChange(){
 }
 
 void wAppsett::setE(int _e1, int _e2, double _e3, int _e4, double _e5,
-                    int _e6, int _e7, int _e8, int _e9, int _e10,
-                    double _e11, int _e12, QList <QString> & _names, QList <QFont> & _fonts, QList <int> & _fontsMaxWidth,
+                    int _e6, int _e7, int _e8, int _e9, int _e12, QList <QString> & _names, QList <QFont> & _fonts, QList <int> & _fontsMaxWidth,
                     QPainter* _FontPainter){
 
     FontPainter = _FontPainter;
@@ -126,8 +125,6 @@ void wAppsett::setE(int _e1, int _e2, double _e3, int _e4, double _e5,
     ui->checkUseRBdlit->setChecked(_e8);
     on_checkUseRBdlit_clicked(_e8);
     ui->e9->setText(QString::number(_e9));
-    ui->e10->setText(QString::number(_e10));
-    ui->e11->setText(QString::number(_e11, 0,1));
     ui->e12->setText(QString::number(_e12));
     // send timeout now read from settings.ini only; UI removed
 
@@ -528,10 +525,10 @@ void wAppsett::applyFontScale(double scale)
 
     // Commands tab: labels and edits
     QWidget* cmds[] = { ui->label, ui->label_5, ui->label_7, ui->label_6, ui->label_9, ui->label_11,
-                        ui->label_15, ui->label_21, ui->label_25, ui->label_24, ui->label_27,
+                        ui->label_15, ui->label_21, /* ui->label_25, ui->label_24, */ ui->label_27,
                         ui->label_12, ui->label_13, ui->label_14, ui->label_16, ui->label_19, ui->label_20,
-                        ui->label_22, ui->label_23,
-                        ui->e1, ui->e2, ui->e3, ui->e4, ui->e5, ui->e6, ui->e7, ui->e9, ui->e10, ui->e11, ui->e12 };
+                        ui->label_22,
+                        ui->e1, ui->e2, ui->e3, ui->e4, ui->e5, ui->e6, ui->e7, ui->e9, ui->e12 };
     for (QWidget* w : cmds) scaleWidgetFont(w);
 
     // Names tab
@@ -779,18 +776,6 @@ void wAppsett::setValueLogWriteOn(bool a){
     ValueLogWriteOn = a;
 }
 
-
-
-void wAppsett::on_e10_textChanged(const QString &arg1)
-{
-    pWin->TestInRange(0.0, 120.0, E10, arg1, ui->e10, e10Accepted);
-}
-
-void wAppsett::on_e11_textChanged(const QString &arg1)
-{
-    pWin->TestInRange(0.0, 255.0, E11, arg1, ui->e11, e11Accepted);
-}
-
 void wAppsett::on_e12_textChanged(const QString &arg1)
 {
     pWin->TestInRange(0.0, 1000, E12, arg1, ui->e12, e12Accepted);
@@ -846,12 +831,10 @@ void wAppsett::applyLegacyBlockState()
 
     if (ui->e9)  ui->e9->setEnabled(!block);
     if (ui->e12) ui->e12->setEnabled(!block);
-    if (ui->e10) ui->e10->setEnabled(!block);
-    if (ui->e11) ui->e11->setEnabled(!block);
 
     // Also visually indicate disabled state by adjusting labels if available
     // (labels optional; ignore if not present)
     QList<QWidget*> labels;
-    labels << ui->label_21 << ui->label_24 << ui->label_25 << ui->label_27; // time slot, add delay, T1, T2
+    labels << ui->label_21 /*<< ui->label_24 << ui->label_25*/ << ui->label_27; // time slot, add delay, T1, T2
     for (QWidget* l : labels) if (l) l->setEnabled(!block);
 }

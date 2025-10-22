@@ -26,8 +26,6 @@ class CSerialport
     int     rUseRBdlit;  //использовать ли ограничение на время разблокировки
     int     rTimeSlot;
     int     rSlotAddDelay = 50;
-    int       rT1 = 1;
-    double    rT2 = 0;
 
 
     int GroupCmdNum;
@@ -58,12 +56,6 @@ public:
     void setrUseRBdlit(int _rUseRBdlit);
     void setrTimeSlot(int _rTimeSlot);
     void setrSlotAddDelay(int _rSlotAddDelay);
-    void setT1(int a);
-    void setT2(double a);
-
-    int     _T1();
-    double  _T2();
-
 
 
     int    _iTAnswerWait();
@@ -77,6 +69,10 @@ public:
     int    _rUseRBdlit();
     int     _rTimeSlot();
     int     _rSlotAddDelay();
+    int     _T1();
+    double  _T2();
+
+    // Текстовые представления T1/T2
     QString getT1(bool txt = false);
     QString getT2(bool txt = false);
 

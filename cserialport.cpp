@@ -15,7 +15,6 @@ CSerialport::CSerialport(Window* _pWin)
       gTBtwGrInd    =100;
       rRBdlit       =60; //огр. на длит. РБ
       rUseRBdlit    =1;
-      rTimeSlot = 0;
 }
 
 void CSerialport::setComPortNum(QString port){
@@ -28,6 +27,7 @@ int CSerialport::groupCmdNum() {
 
 int CSerialport::incGroupCmdNum() {
     GroupCmdNum = (GroupCmdNum + 1) % 255;
+    return GroupCmdNum;
 }
 
 void CSerialport::setiTAnswerWait(int _iTAnswerWait){
@@ -71,26 +71,11 @@ void CSerialport::setrTimeSlot(int _rTimeSlot)
     rTimeSlot = _rTimeSlot;
 }
 
-void CSerialport::setT1(int a){
-    rT1 = a;
-}
-
-void CSerialport::setT2(double a){
-    rT2 = a;
-}
-
 void CSerialport::setrSlotAddDelay(int _rSlotAddDelay)
 {
     rSlotAddDelay = _rSlotAddDelay;
 }
 
-int CSerialport::_T1(){
-    return rT1;
-}
-
-double CSerialport::_T2(){
-    return rT2;
-}
 
 int    CSerialport::_iTAnswerWait(){
     return iTAnswerWait;
@@ -124,13 +109,6 @@ int    CSerialport::_rRBdlit(){
     return rRBdlit;
 }
 
-QString CSerialport::getT1(bool txt){
-    return QString::number(rT1) + (txt?" с":"");
-}
-
-QString CSerialport::getT2(bool txt){
-    return QString::number(rT2, 0,1) + (txt?" с":"");
-}
 
 int    CSerialport::_rUseRBdlit(){
     return rUseRBdlit;

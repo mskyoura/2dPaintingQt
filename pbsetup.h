@@ -72,10 +72,8 @@ private:
     
     // Constants for device limits
     static const int MAX_PB_GROUPS = 5;
-    static const int DEVICES_PER_GROUP = 8;
     static const int MAX_VM_DEVICES = 40;
-    static const int MAX_PB_DEVICES = 8;
-    static const int MAX_SLOTS = 8;
+    static const int DEVICES_PER_GROUP = 8;
 
     // Safety helpers
     bool hasUsb() const;
@@ -86,7 +84,7 @@ private:
     int CalculateActiveSlots(CmdTypes cmdType, QList<int> donorsNum);
     bool waitWithProgress(int ms, int& passed_ms, int total_ms, const QString& text);
     QString buildGroupCommand(int gCmdNumber0_255, CmdTypes cmdType, const QList<int>& donorsNum, QString& rbdlit,
-                              int timeSlot, const QString& t1, const QString& t2);
+                              int timeSlot, bool legacyEnabled);
     // Формирование одиночной команды для одного ПБ
     QString buildSingleCommand(const QString& deviceId, CmdTypes cmdType, const QString& iCmdNum,
                                const QString& rbdlit, const QString& t1, const QString& t2);
@@ -98,8 +96,6 @@ private:
         int gTAfterCmd_ms;
     };
     GroupTimings loadGroupTimings() const;
-    int sendGroupCommands(QSerialPort& serialPort, const QList<int>& donorsNum, CmdTypes cmdType,
-                           const GroupTimings& gt);
     // Отправка одиночной команды по старой логике с повторами и ожиданием ответа
     struct IndividualTimings {
         int iTries;
@@ -136,8 +132,7 @@ private:
     // Backward-compatible overload for callers that don't have donors list
     void scheduleStatusChangeForId(const QString& id, RelayStatus statusToSet, int delayMs);
     // Определение необходимости и вычисление задержки смены статуса для указанного ПБ
-    int computeStatusChangeDelayMs(Saver* donor, CmdTypes cmdType, RelayStatus statusToSet,
-                                   int t1 = -1);
+    int computeStatusChangeDelayMs(Saver* donor, CmdTypes cmdType, RelayStatus statusToSet);
 
     // Checks before scheduling status change
     bool canScheduleStatusChange(Saver* donor, RelayStatus statusToSet) const;

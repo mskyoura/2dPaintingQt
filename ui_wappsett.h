@@ -74,13 +74,12 @@ public:
     QGridLayout *gridLayout_3;
     QLabel *label_19;
     QLabel *label_20;
-    QLineEdit *e9;
+    QLabel *label_13;
     QLabel *label_16;
     QLabel *label_21;
     QLabel *label_14;
-    QLabel *label_13;
-    QLabel *label_23;
-    QLineEdit *e10;
+    QLineEdit *e9;
+    QLineEdit *e6;
     QGridLayout *gridLayout_4;
     QSpacerItem *horizontalSpacer_20;
     QCheckBox *checkUseRBdlit;
@@ -88,28 +87,23 @@ public:
     QLabel *label_8;
     QSpacerItem *verticalSpacer_4;
     QLabel *label_9;
-    QLineEdit *e6;
-    QLineEdit *e7;
-    QLabel *label_5;
     QLineEdit *e3;
-    QLineEdit *e4;
     QLabel *label_7;
-    QLabel *label_6;
+    QLineEdit *e4;
+    QLabel *label_5;
+    QLineEdit *e7;
     QLineEdit *e5;
     QLineEdit *e2;
-    QLabel *label_24;
-    QLineEdit *e11;
-    QLabel *label_26;
-    QLabel *label_25;
-    QSpacerItem *verticalSpacer_3;
+    QLabel *label_6;
     QSpacerItem *horizontalSpacer_4;
+    QSpacerItem *verticalSpacer_3;
     QLabel *label_15;
-    QHBoxLayout *horizontalLayout_4;
-    QLineEdit *e1;
-    QLabel *label_12;
-    QLabel *label_11;
     QLabel *label_17;
     QLabel *label;
+    QLabel *label_11;
+    QLabel *label_12;
+    QHBoxLayout *horizontalLayout_4;
+    QLineEdit *e1;
     QLabel *label_27;
     QLabel *label_22;
     QLineEdit *e12;
@@ -392,24 +386,17 @@ public:
         label_19 = new QLabel(gridLayoutWidget_3);
         label_19->setObjectName(QStringLiteral("label_19"));
 
-        gridLayout_3->addWidget(label_19, 17, 3, 1, 1);
+        gridLayout_3->addWidget(label_19, 15, 3, 1, 1);
 
         label_20 = new QLabel(gridLayoutWidget_3);
         label_20->setObjectName(QStringLiteral("label_20"));
 
         gridLayout_3->addWidget(label_20, 12, 3, 1, 1);
 
-        e9 = new QLineEdit(gridLayoutWidget_3);
-        e9->setObjectName(QStringLiteral("e9"));
-        QSizePolicy sizePolicy3(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        sizePolicy3.setHorizontalStretch(0);
-        sizePolicy3.setVerticalStretch(0);
-        sizePolicy3.setHeightForWidth(e9->sizePolicy().hasHeightForWidth());
-        e9->setSizePolicy(sizePolicy3);
-        e9->setMaximumSize(QSize(120, 16777215));
-        e9->setFont(font);
+        label_13 = new QLabel(gridLayoutWidget_3);
+        label_13->setObjectName(QStringLiteral("label_13"));
 
-        gridLayout_3->addWidget(e9, 12, 2, 1, 1);
+        gridLayout_3->addWidget(label_13, 6, 3, 1, 1);
 
         label_16 = new QLabel(gridLayoutWidget_3);
         label_16->setObjectName(QStringLiteral("label_16"));
@@ -427,24 +414,24 @@ public:
 
         gridLayout_3->addWidget(label_14, 10, 3, 1, 1);
 
-        label_13 = new QLabel(gridLayoutWidget_3);
-        label_13->setObjectName(QStringLiteral("label_13"));
+        e9 = new QLineEdit(gridLayoutWidget_3);
+        e9->setObjectName(QStringLiteral("e9"));
+        QSizePolicy sizePolicy3(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        sizePolicy3.setHorizontalStretch(0);
+        sizePolicy3.setVerticalStretch(0);
+        sizePolicy3.setHeightForWidth(e9->sizePolicy().hasHeightForWidth());
+        e9->setSizePolicy(sizePolicy3);
+        e9->setMaximumSize(QSize(120, 16777215));
+        e9->setFont(font);
 
-        gridLayout_3->addWidget(label_13, 6, 3, 1, 1);
+        gridLayout_3->addWidget(e9, 12, 2, 1, 1);
 
-        label_23 = new QLabel(gridLayoutWidget_3);
-        label_23->setObjectName(QStringLiteral("label_23"));
+        e6 = new QLineEdit(gridLayoutWidget_3);
+        e6->setObjectName(QStringLiteral("e6"));
+        e6->setMaximumSize(QSize(120, 16777215));
+        e6->setFont(font);
 
-        gridLayout_3->addWidget(label_23, 14, 3, 1, 1);
-
-        e10 = new QLineEdit(gridLayoutWidget_3);
-        e10->setObjectName(QStringLiteral("e10"));
-        sizePolicy3.setHeightForWidth(e10->sizePolicy().hasHeightForWidth());
-        e10->setSizePolicy(sizePolicy3);
-        e10->setMaximumSize(QSize(120, 16777215));
-        e10->setFont(font);
-
-        gridLayout_3->addWidget(e10, 14, 2, 1, 1);
+        gridLayout_3->addWidget(e6, 11, 2, 1, 1);
 
         gridLayout_4 = new QGridLayout();
         gridLayout_4->setObjectName(QStringLiteral("gridLayout_4"));
@@ -467,7 +454,7 @@ public:
         gridLayout_4->addWidget(label_18, 0, 2, 1, 1);
 
 
-        gridLayout_3->addLayout(gridLayout_4, 17, 1, 1, 1);
+        gridLayout_3->addLayout(gridLayout_4, 15, 1, 1, 1);
 
         label_8 = new QLabel(gridLayoutWidget_3);
         label_8->setObjectName(QStringLiteral("label_8"));
@@ -485,26 +472,6 @@ public:
 
         gridLayout_3->addWidget(label_9, 10, 1, 1, 1);
 
-        e6 = new QLineEdit(gridLayoutWidget_3);
-        e6->setObjectName(QStringLiteral("e6"));
-        e6->setMaximumSize(QSize(120, 16777215));
-        e6->setFont(font);
-
-        gridLayout_3->addWidget(e6, 11, 2, 1, 1);
-
-        e7 = new QLineEdit(gridLayoutWidget_3);
-        e7->setObjectName(QStringLiteral("e7"));
-        e7->setMaximumSize(QSize(120, 16777215));
-        e7->setFont(font);
-
-        gridLayout_3->addWidget(e7, 17, 2, 1, 1);
-
-        label_5 = new QLabel(gridLayoutWidget_3);
-        label_5->setObjectName(QStringLiteral("label_5"));
-        label_5->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
-
-        gridLayout_3->addWidget(label_5, 3, 1, 1, 1);
-
         e3 = new QLineEdit(gridLayoutWidget_3);
         e3->setObjectName(QStringLiteral("e3"));
         sizePolicy3.setHeightForWidth(e3->sizePolicy().hasHeightForWidth());
@@ -513,6 +480,12 @@ public:
         e3->setFont(font);
 
         gridLayout_3->addWidget(e3, 6, 2, 1, 1);
+
+        label_7 = new QLabel(gridLayoutWidget_3);
+        label_7->setObjectName(QStringLiteral("label_7"));
+        label_7->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+
+        gridLayout_3->addWidget(label_7, 5, 1, 1, 1);
 
         e4 = new QLineEdit(gridLayoutWidget_3);
         e4->setObjectName(QStringLiteral("e4"));
@@ -523,17 +496,18 @@ public:
 
         gridLayout_3->addWidget(e4, 9, 2, 1, 1);
 
-        label_7 = new QLabel(gridLayoutWidget_3);
-        label_7->setObjectName(QStringLiteral("label_7"));
-        label_7->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+        label_5 = new QLabel(gridLayoutWidget_3);
+        label_5->setObjectName(QStringLiteral("label_5"));
+        label_5->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
-        gridLayout_3->addWidget(label_7, 5, 1, 1, 1);
+        gridLayout_3->addWidget(label_5, 3, 1, 1, 1);
 
-        label_6 = new QLabel(gridLayoutWidget_3);
-        label_6->setObjectName(QStringLiteral("label_6"));
-        label_6->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+        e7 = new QLineEdit(gridLayoutWidget_3);
+        e7->setObjectName(QStringLiteral("e7"));
+        e7->setMaximumSize(QSize(120, 16777215));
+        e7->setFont(font);
 
-        gridLayout_3->addWidget(label_6, 6, 1, 1, 1);
+        gridLayout_3->addWidget(e7, 15, 2, 1, 1);
 
         e5 = new QLineEdit(gridLayoutWidget_3);
         e5->setObjectName(QStringLiteral("e5"));
@@ -553,45 +527,56 @@ public:
 
         gridLayout_3->addWidget(e2, 5, 2, 1, 1);
 
-        label_24 = new QLabel(gridLayoutWidget_3);
-        label_24->setObjectName(QStringLiteral("label_24"));
-        label_24->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+        label_6 = new QLabel(gridLayoutWidget_3);
+        label_6->setObjectName(QStringLiteral("label_6"));
+        label_6->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
-        gridLayout_3->addWidget(label_24, 15, 1, 1, 1);
-
-        e11 = new QLineEdit(gridLayoutWidget_3);
-        e11->setObjectName(QStringLiteral("e11"));
-        sizePolicy3.setHeightForWidth(e11->sizePolicy().hasHeightForWidth());
-        e11->setSizePolicy(sizePolicy3);
-        e11->setMaximumSize(QSize(120, 16777215));
-        e11->setFont(font);
-
-        gridLayout_3->addWidget(e11, 15, 2, 1, 1);
-
-        label_26 = new QLabel(gridLayoutWidget_3);
-        label_26->setObjectName(QStringLiteral("label_26"));
-
-        gridLayout_3->addWidget(label_26, 15, 3, 1, 1);
-
-        label_25 = new QLabel(gridLayoutWidget_3);
-        label_25->setObjectName(QStringLiteral("label_25"));
-        label_25->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
-
-        gridLayout_3->addWidget(label_25, 14, 1, 1, 1);
-
-        verticalSpacer_3 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
-        gridLayout_3->addItem(verticalSpacer_3, 23, 2, 1, 1);
+        gridLayout_3->addWidget(label_6, 6, 1, 1, 1);
 
         horizontalSpacer_4 = new QSpacerItem(20, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
 
         gridLayout_3->addItem(horizontalSpacer_4, 3, 0, 1, 1);
+
+        verticalSpacer_3 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        gridLayout_3->addItem(verticalSpacer_3, 21, 2, 1, 1);
 
         label_15 = new QLabel(gridLayoutWidget_3);
         label_15->setObjectName(QStringLiteral("label_15"));
         label_15->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
         gridLayout_3->addWidget(label_15, 11, 1, 1, 1);
+
+        label_17 = new QLabel(gridLayoutWidget_3);
+        label_17->setObjectName(QStringLiteral("label_17"));
+        QFont font1;
+        font1.setBold(true);
+        font1.setWeight(75);
+        label_17->setFont(font1);
+
+        gridLayout_3->addWidget(label_17, 14, 1, 1, 3);
+
+        label = new QLabel(gridLayoutWidget_3);
+        label->setObjectName(QStringLiteral("label"));
+        label->setFont(font1);
+
+        gridLayout_3->addWidget(label, 2, 1, 1, 2);
+
+        label_11 = new QLabel(gridLayoutWidget_3);
+        label_11->setObjectName(QStringLiteral("label_11"));
+        QSizePolicy sizePolicy4(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        sizePolicy4.setHorizontalStretch(0);
+        sizePolicy4.setVerticalStretch(1);
+        sizePolicy4.setHeightForWidth(label_11->sizePolicy().hasHeightForWidth());
+        label_11->setSizePolicy(sizePolicy4);
+        label_11->setFont(font1);
+
+        gridLayout_3->addWidget(label_11, 7, 1, 1, 3);
+
+        label_12 = new QLabel(gridLayoutWidget_3);
+        label_12->setObjectName(QStringLiteral("label_12"));
+
+        gridLayout_3->addWidget(label_12, 3, 3, 1, 1);
 
         horizontalLayout_4 = new QHBoxLayout();
         horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
@@ -608,37 +593,6 @@ public:
 
 
         gridLayout_3->addLayout(horizontalLayout_4, 3, 2, 1, 1);
-
-        label_12 = new QLabel(gridLayoutWidget_3);
-        label_12->setObjectName(QStringLiteral("label_12"));
-
-        gridLayout_3->addWidget(label_12, 3, 3, 1, 1);
-
-        label_11 = new QLabel(gridLayoutWidget_3);
-        label_11->setObjectName(QStringLiteral("label_11"));
-        QSizePolicy sizePolicy4(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        sizePolicy4.setHorizontalStretch(0);
-        sizePolicy4.setVerticalStretch(1);
-        sizePolicy4.setHeightForWidth(label_11->sizePolicy().hasHeightForWidth());
-        label_11->setSizePolicy(sizePolicy4);
-        QFont font1;
-        font1.setBold(true);
-        font1.setWeight(75);
-        label_11->setFont(font1);
-
-        gridLayout_3->addWidget(label_11, 7, 1, 1, 3);
-
-        label_17 = new QLabel(gridLayoutWidget_3);
-        label_17->setObjectName(QStringLiteral("label_17"));
-        label_17->setFont(font1);
-
-        gridLayout_3->addWidget(label_17, 16, 1, 1, 3);
-
-        label = new QLabel(gridLayoutWidget_3);
-        label->setObjectName(QStringLiteral("label"));
-        label->setFont(font1);
-
-        gridLayout_3->addWidget(label, 2, 1, 1, 2);
 
         label_27 = new QLabel(gridLayoutWidget_3);
         label_27->setObjectName(QStringLiteral("label_27"));
@@ -1116,7 +1070,7 @@ public:
 
         retranslateUi(wAppsett);
 
-        tabWidget->setCurrentIndex(3);
+        tabWidget->setCurrentIndex(1);
 
 
         QMetaObject::connectSlotsByName(wAppsett);
@@ -1137,26 +1091,22 @@ public:
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("wAppsett", "\320\236\321\201\320\275\320\276\320\262\320\275\321\213\320\265", Q_NULLPTR));
         label_19->setText(QApplication::translate("wAppsett", "\321\201", Q_NULLPTR));
         label_20->setText(QApplication::translate("wAppsett", "x10\320\274\321\201", Q_NULLPTR));
+        label_13->setText(QApplication::translate("wAppsett", "\321\201", Q_NULLPTR));
         label_16->setText(QApplication::translate("wAppsett", "\320\274\321\201", Q_NULLPTR));
         label_21->setText(QApplication::translate("wAppsett", "\320\222\321\200\320\265\320\274\321\217 \321\201\320\273\320\276\321\202\320\260 (0..256):", Q_NULLPTR));
         label_14->setText(QApplication::translate("wAppsett", "\321\201", Q_NULLPTR));
-        label_13->setText(QApplication::translate("wAppsett", "\321\201", Q_NULLPTR));
-        label_23->setText(QApplication::translate("wAppsett", "c", Q_NULLPTR));
         checkUseRBdlit->setText(QString());
         label_18->setText(QApplication::translate("wAppsett", "\320\236\320\263\321\200\320\260\320\275\320\270\321\207\320\270\321\202\321\214 \320\264\320\273\320\270\321\202\320\265\320\273\321\214\320\275\320\276\321\201\321\202\321\214 \320\240\320\265\320\273\320\2651 (1...255):", Q_NULLPTR));
         label_8->setText(QApplication::translate("wAppsett", "\320\232\320\276\320\273-\320\262\320\276 \320\277\320\276\320\277\321\213\321\202\320\276\320\272 (1...5):", Q_NULLPTR));
         label_9->setText(QApplication::translate("wAppsett", "\320\222\321\200\320\265\320\274\321\217 \320\274\320\265\320\266\320\264\321\203 \320\277\320\276\320\262\321\202\320\276\321\200\320\260\320\274\320\270 (0...10.0):", Q_NULLPTR));
-        label_5->setText(QApplication::translate("wAppsett", "\320\222\321\200\320\265\320\274\321\217 \320\276\320\266\320\270\320\264\320\260\320\275\320\270\321\217 \320\276\321\202\320\262\320\265\321\202\320\260 (10...3000):", Q_NULLPTR));
         label_7->setText(QApplication::translate("wAppsett", "\320\232\320\276\320\273-\320\262\320\276 \320\277\320\276\320\277\321\213\321\202\320\276\320\272 (1...5):", Q_NULLPTR));
+        label_5->setText(QApplication::translate("wAppsett", "\320\222\321\200\320\265\320\274\321\217 \320\276\320\266\320\270\320\264\320\260\320\275\320\270\321\217 \320\276\321\202\320\262\320\265\321\202\320\260 (10...3000):", Q_NULLPTR));
         label_6->setText(QApplication::translate("wAppsett", "\320\222\321\200\320\265\320\274\321\217 \320\274\320\265\320\266\320\264\321\203 \320\277\320\276\320\262\321\202\320\276\321\200\320\260\320\274\320\270 (0...10.0):", Q_NULLPTR));
-        label_24->setText(QApplication::translate("wAppsett", "\320\227\320\260\320\264\320\265\321\200\320\266\320\272\320\260 \320\262\320\272\320\273\321\216\321\207\320\265\320\275\320\270\321\217 \321\200\320\265\320\273\320\265 \320\237\320\243\320\241\320\232 (0..120):", Q_NULLPTR));
-        label_26->setText(QApplication::translate("wAppsett", "c", Q_NULLPTR));
-        label_25->setText(QApplication::translate("wAppsett", "\320\222\321\200\320\265\320\274\321\217 \320\262\320\272\320\273\321\216\321\207\320\265\320\275\320\270\321\217 \321\200\320\265\320\273\320\265 \320\237\320\243\320\241\320\232 (0..255):", Q_NULLPTR));
         label_15->setText(QApplication::translate("wAppsett", "\320\222\321\200\320\265\320\274\321\217 \320\274\320\265\320\266\320\264\321\203 \320\263\321\200\321\203\320\277\320\277\320\276\320\262\320\276\320\271 \320\270 \320\270\320\275\320\264\320\270\320\262\320\270\320\264\321\203\320\260\320\273\321\214\320\275\320\276\320\271 \320\272\320\276\320\274\320\260\320\275\320\264\320\260\320\274\320\270 (10...1000):", Q_NULLPTR));
-        label_12->setText(QApplication::translate("wAppsett", "\320\274\321\201", Q_NULLPTR));
-        label_11->setText(QApplication::translate("wAppsett", "\320\237\320\260\321\200\320\260\320\274\320\265\321\202\321\200\321\213 \320\263\321\200\321\203\320\277\320\277\320\276\320\262\321\213\321\205 \320\272\320\276\320\274\320\260\320\275\320\264:", Q_NULLPTR));
         label_17->setText(QApplication::translate("wAppsett", "\320\236\320\263\321\200\320\260\320\275\320\270\321\207\320\265\320\275\320\270\321\217:", Q_NULLPTR));
         label->setText(QApplication::translate("wAppsett", "\320\237\320\260\321\200\320\260\320\274\320\265\321\202\321\200\321\213 \320\270\320\275\320\264\320\270\320\262\320\270\320\264\321\203\320\260\320\273\321\214\320\275\321\213\321\205 \320\272\320\276\320\274\320\260\320\275\320\264:", Q_NULLPTR));
+        label_11->setText(QApplication::translate("wAppsett", "\320\237\320\260\321\200\320\260\320\274\320\265\321\202\321\200\321\213 \320\263\321\200\321\203\320\277\320\277\320\276\320\262\321\213\321\205 \320\272\320\276\320\274\320\260\320\275\320\264:", Q_NULLPTR));
+        label_12->setText(QApplication::translate("wAppsett", "\320\274\321\201", Q_NULLPTR));
         label_27->setText(QApplication::translate("wAppsett", "\320\224\320\276\320\261\320\260\320\262\320\276\321\207\320\275\320\276\320\265 \320\262\321\200\320\265\320\274\321\217 (0..1000):", Q_NULLPTR));
         label_22->setText(QApplication::translate("wAppsett", "\320\274\321\201", Q_NULLPTR));
         tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("wAppsett", "\320\236\321\202\320\277\321\200\320\260\320\262\320\272\320\260 \320\272\320\276\320\274\320\260\320\275\320\264", Q_NULLPTR));
