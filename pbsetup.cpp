@@ -217,7 +217,7 @@ QString PBsetup::buildGroupCommand(int gCmdNumber0_255, CmdTypes cmdType, const 
             cmdRq = "FF10" + QString("0000");
             // Old-size and function block for 0000..000E (as previously used for single write multi-reg)
             // 0007 words (0x0007) starting at 0x0000, byte count 0x0E
-            cmdRq += "0007000E";
+            cmdRq += "00070E";
             // Command number (register 0000)
             cmdRq += "00" + pWin->Usb->byteToQStr(gCmdNumber0_255);
             // R1 on/off + delay (registers 0001-0002)
@@ -368,14 +368,14 @@ PBsetup::CommandParams PBsetup::prepareCommandParams() {
     return params;
 }
 
-PBsetup::CommandParams PBsetup::prepareSingleCommandParams(Saver& donor = nullptr) {
+PBsetup::CommandParams PBsetup::prepareSingleCommandParams(Saver* donor) {
     CommandParams params;
     params.rbdlit = pWin->Usb->byteToQStr(pWin->Usb->_rUseRBdlit() == 0 ? 0 : pWin->Usb->_rRBdlit());
     if (donor)
     {
-        params.t1 = pWin->Usb->byteToQStr(donor._Duration());
+        params.t1 = pWin->Usb->byteToQStr(donor->_Duration());
 
-        int intT2 = donor._Delay() * 10.0;
+        int intT2 = donor->_Delay() * 10.0;
         params.t2 = pWin->Usb->byteToQStr((intT2 & 0xFF00) >> 8) +
                     pWin->Usb->byteToQStr(intT2 & 0x00FF);
 
@@ -906,7 +906,7 @@ bool PBsetup::sendSingleCommand(QSerialPort& serialPort, int donorVmIndex, CmdTy
         donor->CmdNumReq(donor->getNext0_255(donor->CmdNumReq()));
     }
 
-    auto params = prepareSingleCommandParams(*donor);
+    auto params = prepareSingleCommandParams(donor);
 
     // Формирование команды (одиночная отправка)
     QString cmdNumber = QString("%1").arg(donor->CmdNumReq(), 1, 16).toUpper();
@@ -1053,7 +1053,9 @@ bool PBsetup::readSingleResponse(QSerialPort& serialPort, CmdTypes cmdType, Save
                 donor.setLastGoodAnswerTime(now);
                 donor.setParams(sr.Input, sr.U, rStatus);
                 // Use overload that schedules two-stage transition for RELAY2ON
-                scheduleStatusChanges(donor, donor.getLastCommand());
+                // For legacy commands, use lastWriteCommand instead of donor.getLastCommand()
+                CmdTypes cmdToSchedule = (lastWriteCommand != _UNKNOWN) ? lastWriteCommand : donor.getLastCommand();
+                scheduleStatusChanges(donor, cmdToSchedule);
                 donor.setLastCommand(_STATUS);
                 // Убрано отдельное доп. логирование времени — теперь добавляется в Параметры в logResponse
                 contCurrDev = false;
@@ -1341,138 +1343,83 @@ void PBsetup::executeGroupCommand(const QList<int>& donorsNum, CmdTypes cmdType)
     }
 }
 
-void PBsetup::executeLegacyCommand(const QList<int>& donorsNum, CmdTypes cmdType)
-{
-    // Legacy group commands: Send GROUP command without waiting for confirmations,
-    // then send MULTIPLE status command and wait for answers
-    if (cmdType == _RELAY1ON || cmdType == _RELAY1OFF) {
-        // For RELAY1ON and RELAY1OFF, send GROUP command without waiting for confirmations
-        executeLegacyGroupCommand(donorsNum, cmdType);
-
-        // After GROUP command, send MULTIPLE status request to all devices
-        if (!donorsNum.isEmpty()) {
-            // Send status request to all devices in the group
-            // (delay and buffer clearing already handled in executeLegacyGroupCommandWithoutConfirmations)
-            executeMultipleCommand(donorsNum, _STATUS);
-        }
-    } else if (cmdType == _RELAY2ON) {
-        // For RELAY2ON, use MULTIPLE command followed by status request
-        executeMultipleCommand(donorsNum, cmdType);
-
-        // After MULTIPLE RELAY2ON, send status request to all devices
-        if (!donorsNum.isEmpty()) {
-            // Add delay before status request
-            {
-                int dummyPassed = 0;
-                int totalMs = pWin->Usb->_gTBtwGrInd();
-                QString progressText = QString("Ожидание между групповой и индивидуальной командами (%1 мс)...")
-                                       .arg(totalMs);
-                waitWithProgress(totalMs, dummyPassed, totalMs, progressText);
-            }
-
-            // Clear serial buffer before status commands
-            if (serialPort.isOpen()) {
-                serialPort.clear();
-                serialPort.flush();
-            }
-
-            // Send status request to all devices in the group
-            executeMultipleCommand(donorsNum, _STATUS);
-        }
-    } else {
-        // For other commands, fall back to standard group command
-        executeGroupCommand(donorsNum, cmdType);
-    }
-}
-
 void PBsetup::executeLegacyGroupCommand(const QList<int>& donorsNum, CmdTypes cmdType)
 {
-    // Send GROUP command without waiting for confirmations (legacy behavior)
-    GroupTimings gt = loadGroupTimings();
-    QList<QString> activeIds = FindActiveSlotsId(cmdType, donorsNum);
+    if (donorsNum.isEmpty()) return;
 
-    if (activeIds.isEmpty()) {
-        return; // No active devices to send command to
-    }
+    // Восстановление прежнего поведения:
+    // - Для _RELAY1ON/_RELAY1OFF: отправляем только ГК (legacy), затем ПС (_STATUS) по всем ПБ
+    // - Для _RELAY2ON: MULTIPLE _RELAY2ON, затем пауза gTAfterCmd_ms, затем MULTIPLE _STATUS
+    // - Остальные: стандартная групповая логика
 
-    int groupCmdNumber = calcGroupCmdNum(donorsNum);
+    if (cmdType == _RELAY1ON || cmdType == _RELAY1OFF) {
+        // Запоминаем команду записи для последующего планирования таймеров
+        lastWriteCommand = cmdType;
+        
+        // Групповая legasy команда без ожидания подтверждений + внутренняя задержка реализована внутри
+        sendLegacyGroupCommand(donorsNum, cmdType);
 
-    auto params = prepareSingleCommandParams();
-
-    // Build and send group command frame
-    QString cmdRq = buildGroupCommand(groupCmdNumber, cmdType, donorsNum, params.rbdlit, gt.timeSlot, true);
-    if (cmdRq.isEmpty() || !sendCommand(serialPort, cmdRq)) {
-        resetExecutionStatusForIds(activeIds);
+        // После ГК читаем статусы по всем ПБ
+        if (serialPort.isOpen()) { serialPort.clear(); serialPort.flush(); }
+        executeMultipleCommand(donorsNum, _STATUS);
         return;
     }
 
-    // Log the request
-    if (pWin->wAppsettings->getValueLogWriteOn()) {
-        QString cmdArgs;
-        if (cmdType == _RELAY2ON) {
-            cmdArgs = QString("№ %1, %2 с, %3 с")
-                     .arg(groupCmdNumber)
-                     .arg(firstDonor->getDuration(true))
-                     .arg(firstDonor->getDelay(true));
-        } else {
-            cmdArgs = QString("№ %1").arg(groupCmdNumber);
+    if (cmdType == _RELAY2ON) {
+        // Запоминаем команду записи для последующего планирования таймеров
+        lastWriteCommand = cmdType;
+        
+        // Сначала индивидуально отправляем RELAY2ON всем из группы
+        executeMultipleCommand(donorsNum, _RELAY2ON);
+
+        // Пауза между ГК и ПС (используем gt.gTAfterCmd_ms/_gTBtwGrInd)
+        GroupTimings gt = loadGroupTimings();
+        int dummyPassed = 0;
+        int totalMs = pWin->Usb ? pWin->Usb->_gTBtwGrInd() : gt.gTAfterCmd_ms;
+        waitWithProgress(totalMs, dummyPassed, totalMs, QString("Ожидание между групповой и индивидуальной командами (%1 мс)...").arg(totalMs));
+
+        // Очистка буфера и чтение статусов
+        if (serialPort.isOpen()) { serialPort.clear(); serialPort.flush(); }
+        executeMultipleCommand(donorsNum, _STATUS);
+        return;
+    }
+}
+
+void PBsetup::sendLegacyGroupCommand(const QList<int>& donorsNum, CmdTypes cmdType)
+{
+    // Send GROUP command gTries times with pauses; do not wait for confirmations (legacy behavior)
+    GroupTimings gt = loadGroupTimings();
+    if (donorsNum.isEmpty()) return;
+
+    int groupCmdNumber = calcGroupCmdNum(donorsNum);
+    auto params = prepareCommandParams();
+    QString cmdRq = buildGroupCommand(groupCmdNumber, cmdType, donorsNum, params.rbdlit, gt.timeSlot, true);
+    int timeout_ms = hasUsb() ? pWin->Usb->_sendTimeoutMs() : 500;
+    for (int tryNum = 0; tryNum < gt.gTries; ++tryNum) {
+        if (tryNum > 0) {
+            int dummyPassed = 0;
+            int totalMs = int(gt.gTBtwRepeats);
+            waitWithProgress(totalMs, dummyPassed, totalMs, "Ожидание перед отправкой " + QString::number(tryNum+1) +  "-й из " +
+                             QString::number(gt.gTries) + " групповой команды " +
+                             pWin->cmdFullName(cmdType, GROUP) +
+                             ".");
         }
-        pWin->Usb->logRequest(cmdRq, cmdType, GROUP, cmdArgs, "Группа ПБ", tableLine);
+        if (cmdRq.isEmpty() || !sendCommand(serialPort, cmdRq)) return;
+
+        if (pWin->wAppsettings->getValueLogWriteOn()) {
+            int tableLine = -1;
+            QString cmdArgs = QString("№ %1, попытка %2 из %3").arg(groupCmdNumber).arg(tryNum + 1).arg(gt.gTries);
+            pWin->Usb->logRequest(cmdRq, cmdType, GROUP, cmdArgs, "Группа ПБ", tableLine);
+        }
+
+        serialPort.waitForBytesWritten(timeout_ms);
     }
 
-    // For legacy commands, we don't wait for confirmations after the GROUP command
-    // The status command will be sent separately and we'll wait for those responses
-
-    // Read write confirmations in legacy mode the same way as the new-format group command,
-    // with visible progress bar like in the old UI
+    // Pause between GROUP and individual STATUS phase (handled by caller)
     {
-        int activeSlotsQty = CalculateActiveSlots(cmdType, donorsNum);
-        int windowMs = gt.gTAfterCmd_ms;
-        QSet<QString> respondedIds;
-        QDateTime tryStart = QDateTime::currentDateTime();
-
-        // Prepare and show progress text
-        if (!wProcess->isVisible()) wProcess->show();
-        QString humanAction = (cmdType == _RELAY2ON) ? "Запустить Реле" :
-                             (cmdType == _RELAY1OFF) ? "Выключить Реле" :
-                             (cmdType == _RELAY1ON)  ? "Включить Реле"  :
-                              pWin->cmdFullName(cmdType, GROUP);
-        QStringList pbList;
-        for (const QString& id : activeIds) pbList << (QString("ПБ(") + id + ")");
-        QString blocksText = pbList.isEmpty() ? QString("Группа ПБ") : QString("Блоки: ") + pbList.join(", ");
-        wProcess->setText(humanAction + " " + blocksText);
-
-        // Read confirmations with progress
-        readConfirmationsUntilAllOrTimeout(serialPort, cmdType, groupCmdNumber, activeIds, windowMs, respondedIds, true, 0, &tryStart);
-
-        // Schedule status changes for responders (mirror of processDeviceSlots)
-        for (const QString& id : respondedIds) {
-            Saver* donor = findDonorByDeviceId(id);
-            if (!donor || donor->_ID().isEmpty()) continue;
-            
-            int delayMsR1 = pWin->Usb->_rUseRBdlit() ? computeStatusChangeDelayMs(donor, cmdType, RELAY1OFF) : 0;
-            if (delayMsR1 > 0) {
-                scheduleStatusChangeForId(id, donorsNum, RELAY1OFF, delayMsR1);
-            }
-            
-            // Для команды RELAY2ON используем двухэтапный переход
-            if (cmdType == _RELAY2ON) {
-                scheduleTwoStageRelayTransition(id, donorsNum, donor);
-            } else {
-                int delayMsR2 = computeStatusChangeDelayMs(donor, cmdType, RELAY1ON);
-                if (delayMsR2 > 0) {
-                    scheduleStatusChangeForId(id, donorsNum, RELAY1ON, delayMsR2);
-                }
-            }
-        }
-
-        // Log non-responders like old behavior
-        for (const QString& id : activeIds) {
-            if (!respondedIds.contains(id)) {
-                SResponse sr;
-                pWin->Usb->parseAndLogResponse("", sr, 0);
-            }
-        }
+        int dummyPassed = 0;
+        int totalMs = pWin->Usb ? pWin->Usb->_gTBtwGrInd() : gt.gTAfterCmd_ms;
+        waitWithProgress(totalMs, dummyPassed, totalMs, QString("Ожидание между групповой и индивидуальной командами (%1 мс)...").arg(totalMs));
     }
 }
 
@@ -1592,6 +1539,11 @@ void PBsetup::executeMultipleCommand(const QList<int>& donorsNum, CmdTypes cmdTy
     // Ensure progress reaches 100% at the end of STATUS checks
     if (cmdType == _STATUS && wProcess) {
         wProcess->setProgress(100);
+    }
+    
+    // Reset lastWriteCommand after processing STATUS commands for legacy group commands
+    if (cmdType == _STATUS) {
+        lastWriteCommand = _UNKNOWN;
     }
 }
 

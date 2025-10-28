@@ -66,6 +66,9 @@ private:
     QSerialPort serialPort;
     QDateTime lastSendTime;
     int lastLatencyMs = -1;
+    
+    // For legacy group commands: remember last write command before STATUS
+    CmdTypes lastWriteCommand = _UNKNOWN;
 
     static QString CRLF,
                    LFCR;
@@ -149,7 +152,7 @@ private:
         QString t2;
     };
     CommandParams prepareCommandParams();
-    CommandParams prepareSingleCommandParams(Saver& donor = nullptr);
+    CommandParams prepareSingleCommandParams(Saver *donor = nullptr);
     QString formatCommandArgs(CmdTypes cmdType, int cmdNumber, int tryNum, int totalTries);
     QString formatSingleCommandArgs(CmdTypes cmdType, Saver& donor, const QString& cmdNum);
     RelayStatus determineRelayStatus(int relay1, int relay2);
@@ -173,7 +176,7 @@ private:
     void setupProgressWindow();
     void cleanupSerialPort();
     void executeGroupCommand(const QList<int>& donorsNum, CmdTypes cmdType);
-    void executeLegacyCommand(const QList<int>& donorsNum, CmdTypes cmdType);
+    void sendLegacyGroupCommand(const QList<int>& donorsNum, CmdTypes cmdType);
     void executeLegacyGroupCommand(const QList<int>& donorsNum, CmdTypes cmdType);
     void executeLegacyStatusCommandWithFailureHandling(const QList<int>& donorsNum);
     void executeSingleCommand(const QList<int>& donorsNum, CmdTypes cmdType);
