@@ -26,12 +26,12 @@ Appset::~Appset()
     delete ui;
 }
 
-void Appset::set(QString _ID, QString _Dst, int _T1, double _T2, double _U1, double _U2, bool _Polarity, const QList<int> & _usedIDs) {
+void Appset::set(QString _ID, QString _Dst, int _Duration, double _Delay, double _U1, double _U2, bool _Polarity, const QList<int> & _usedIDs) {
 
     ID = _ID;
     Dst = _Dst;
-    T1 = _T1;
-    T2 = _T2;
+    T1 = _Duration;
+    T2 = _Delay;
     U1 = _U1;
     U2 = _U2;
     Polarity = _Polarity;

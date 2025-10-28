@@ -19,7 +19,7 @@ class Appset : public QDialog
 public:
     explicit Appset(QWidget *parent = 0);
     ~Appset();
-    void set(QString _ID, QString _Dst, int _T1, double _T2, double _U1, double _U2, bool _Polarity, const QList<int> &_usedIDs);
+    void set(QString _ID, QString _Dst, int _Duration, double _Delay, double _U1, double _U2, bool _Polarity, const QList<int> &_usedIDs);
     void accept();
 
     QString ID;

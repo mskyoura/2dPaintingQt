@@ -149,7 +149,7 @@ private:
         QString t2;
     };
     CommandParams prepareCommandParams();
-    CommandParams prepareSingleCommandParams(Saver& donor);
+    CommandParams prepareSingleCommandParams(Saver& donor = nullptr);
     QString formatCommandArgs(CmdTypes cmdType, int cmdNumber, int tryNum, int totalTries);
     QString formatSingleCommandArgs(CmdTypes cmdType, Saver& donor, const QString& cmdNum);
     RelayStatus determineRelayStatus(int relay1, int relay2);

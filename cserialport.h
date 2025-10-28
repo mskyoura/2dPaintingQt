@@ -71,12 +71,12 @@ public:
     int    _rUseRBdlit();
     int     _rTimeSlot();
     int     _rSlotAddDelay();
-    int     _T1();
-    double  _T2();
+    int     _Duration();
+    double  _Delay();
 
     // Текстовые представления T1/T2
-    QString getT1(bool txt = false);
-    QString getT2(bool txt = false);
+    QString getDuration(bool txt = false);
+    QString getDelay(bool txt = false);
 
 
 

@@ -507,8 +507,8 @@ void Window::mousePressEvent(QMouseEvent *event){
 
 
                             Saver& newby = pb[pb.count()-1];
-                            newby.setT1(donor._T1());
-                            newby.setT2(donor._T2());
+                            newby.setDuration(donor._Duration());
+                            newby.setDelay(donor._Delay());
                             newby.setU1(donor._U1());
                             newby.setU2(donor._U2());
                             newby.setPolarity(donor._Polarity());
@@ -856,11 +856,11 @@ int Window::saveSettings(QString fn){
                                     xmlWriter.writeEndElement();
 
                                     xmlWriter.writeStartElement("T1");
-                                    xmlWriter.writeCharacters(donor.getT1());
+                                    xmlWriter.writeCharacters(donor.getDuration());
                                     xmlWriter.writeEndElement();
 
                                     xmlWriter.writeStartElement("T2");
-                                    xmlWriter.writeCharacters(donor.getT2());
+                                    xmlWriter.writeCharacters(donor.getDelay());
                                     xmlWriter.writeEndElement();
 
                                     xmlWriter.writeStartElement("U1");
@@ -1020,8 +1020,8 @@ int Window::readSettings(QString fn){
         xmlReader.setDevice(&file);
 
         QString   rID;
-        int       rT1;
-        double    rT2;
+        int       rDuration;
+        double    rDelay;
         double    rU1;
         double    rU2;
         int       rPolarity;
@@ -1063,12 +1063,12 @@ int Window::readSettings(QString fn){
                     indexInGroup = 0;
                 } else if (n == "T1") {
                     xmlReader.readNext();
-                    rT1 = xmlReader.text().toInt(&ok);
-                    if (!ok) rT1 = 0;
+                    rDuration = xmlReader.text().toInt(&ok);
+                    if (!ok) rDuration = 0;
                 } else if (n == "T2") {
                     xmlReader.readNext();
-                    rT2 = xmlReader.text().toDouble(&ok);
-                    if (!ok) rT2 = 0.0;
+                    rDelay = xmlReader.text().toDouble(&ok);
+                    if (!ok) rDelay = 0.0;
                 } else if (n == "U1") {
                     xmlReader.readNext();
                     rU1 = xmlReader.text().toDouble(&ok);
@@ -1086,7 +1086,7 @@ int Window::readSettings(QString fn){
                     rDst = xmlReader.text().toString();
                     pb << Saver(
                                 rID,
-                                rT1,rT2,
+                                rDuration,rDelay,
                                 rU1,rU2,
                                 rPolarity,
                                 rDst

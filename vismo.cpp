@@ -456,8 +456,8 @@ double Vismo::Inside(bool painting, int i, bool blinktoggle, int ActiveCntInGrou
 
         blnk = !((*pb)[pbIndex].getHasLastOperationGoodAnswer()) && blinktoggle?
                     empty: (*pb)[pbIndex].getLastOperationWithGoodAnswer(mode, statusClr, Vismo::PBstatuses);
-        t1 = (*pb)[pbIndex].getT1(1);
-        t2 = (*pb)[pbIndex].getT2(1);
+        t1 = (*pb)[pbIndex].getDuration(1);
+        t2 = (*pb)[pbIndex].getDelay(1);
         (*pb)[pbIndex].getU_coil(u,uClr,coil,coilClr);
         nums = "#" + QString::number((*pb)[pbIndex].CmdNumReq()) + "/" + QString::number((*pb)[pbIndex].CmdNumReq());
     }
@@ -531,9 +531,9 @@ double Vismo::Inside(bool painting, int i, bool blinktoggle, int ActiveCntInGrou
         DrawText(i,0.7,  1.2, blnk,  statusClr, QColor(215, 215, 215), 1);
         LineY += 0.3*moTxtLineHeight;
         DrawText(i,0.7,  0.8, QString("Длительность Реле2") + ": " +
-                             (active? (*pb)[pbIndex].getT1()+" с":none), Qt::magenta, QColor(165, 165, 165), 0, QColor(188,188,188), 1);
+                             (active? (*pb)[pbIndex].getDuration()+" с":none), Qt::magenta, QColor(165, 165, 165), 0, QColor(188,188,188), 1);
         DrawText(i,0.7,  0.8, QString("Задержка Реле2: ")+
-                             (active? (*pb)[pbIndex].getT2()+" с":none),Qt::magenta, QColor(165, 165, 165), 0, QColor(188,188,188), 1);
+                             (active? (*pb)[pbIndex].getDelay()+" с":none),Qt::magenta, QColor(165, 165, 165), 0, QColor(188,188,188), 1);
         LineY += 0.2*moTxtLineHeight;
         DrawText(i,0.7,  0.8, QString("Питание: ")+
                               u,   Qt::magenta,     QColor(165, 165, 165), 0, uClr, 1);

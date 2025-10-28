@@ -6,12 +6,12 @@ QString Saver::getID(int mode){
     return (rID!=""? rID: mode==0?"Укажите ID":mode==1?"---":"");
 }
 
-QString Saver::getT1(bool txt){
-    return QString::number(rT1) + (txt?" с":"");
+QString Saver::getDuration(bool txt){
+    return QString::number(rDuration) + (txt?" с":"");
 }
 
-QString Saver::getT2(bool txt){
-    return QString::number(rT2,0,1) + (txt?" с":"");
+QString Saver::getDelay(bool txt){
+    return QString::number(rDelay,0,1) + (txt?" с":"");
 }
 
 QString Saver::getU1(){
@@ -38,12 +38,12 @@ double Saver::_U2(){
     return rU2;
 }
 
-int Saver::_T1(){
-    return rT1;
+int Saver::_Duration(){
+    return rDuration;
 }
 
-double Saver::_T2(){
-    return rT2;
+double Saver::_Delay(){
+    return rDelay;
 }
 
 int Saver::_Polarity(){
@@ -139,12 +139,12 @@ void Saver::setID(QString a){
     rID = a.length()==1?"0"+a:a;
 }
 
-void Saver::setT1(int a){
-    rT1 = a;
+void Saver::setDuration(int a){
+    rDuration = a;
 }
 
-void Saver::setT2(double a){
-    rT2 = a;
+void Saver::setDelay(double a){
+    rDelay = a;
 }
 
 void Saver::setU1(double a){
@@ -310,7 +310,7 @@ void Saver::setStatusNI(){
 }
 
 Saver::Saver(QString _rID,
-             int     _rT1, double _rT2,
+             int     _rDuration, double _rDelay,
              double  _rU1, double _rU2,
              int     _rPolarity,
              QString _rDst)
@@ -318,8 +318,8 @@ Saver::Saver(QString _rID,
     Cmd_WaitingForDelayT2 = "";
 
     setID(_rID);
-    rT1 = _rT1;
-    rT2 = _rT2;
+    rDuration = _rDuration;
+    rDelay = _rDelay;
     rU1 = _rU1;
     rU2 = _rU2;
     rPolarity = _rPolarity;

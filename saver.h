@@ -13,8 +13,8 @@
 class Saver
 {
     QString   rID;
-    int       rT1;
-    double    rT2;
+    int       rDuration;
+    double    rDelay;
     double    rU1;
     double    rU2;
     int       rPolarity;
@@ -48,7 +48,7 @@ class Saver
 
 public:
     Saver(QString   _rID = "",
-          int       _rT1 = 1, double _rT2 = 0,
+          int       _duration = 1, double _delay = 0,
           double    _rU1 = 10.2, double _rU2  = 11.2,
           int       _rPolarity = 0,
           QString   _rDst = "");
@@ -68,8 +68,8 @@ public:
     static QDateTime noTime();
 
     QString getID(int mode);
-    QString getT1(bool txt = false);
-    QString getT2(bool txt = false);
+    QString getDuration(bool txt = false);
+    QString getDelay(bool txt = false);
     QString getU();
     QString getU1();
     QString getU2();
@@ -91,15 +91,15 @@ public:
     int     _Polarity();
     double  _U1();
     double  _U2();
-    int     _T1();
-    double  _T2();
+    int     _Duration();
+    double  _Delay();
     QString _ID();
 
     double  _U();
 
     void setID(QString a);
-    void setT1(int a);
-    void setT2(double a);
+    void setDuration(int a);
+    void setDelay(double a);
     void setU(double a);
     void setU1(double a);
     void setU2(double a);

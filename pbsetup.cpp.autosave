@@ -368,7 +368,7 @@ PBsetup::CommandParams PBsetup::prepareCommandParams() {
     return params;
 }
 
-PBsetup::CommandParams PBsetup::prepareSingleCommandParams(Saver& donor = nullptr) {
+PBsetup::CommandParams PBsetup::prepareSingleCommandParams() {
     CommandParams params;
     params.rbdlit = pWin->Usb->byteToQStr(pWin->Usb->_rUseRBdlit() == 0 ? 0 : pWin->Usb->_rRBdlit());
     if (donor)
@@ -1426,8 +1426,7 @@ void PBsetup::executeLegacyGroupCommand(const QList<int>& donorsNum, CmdTypes cm
     // Read write confirmations in legacy mode the same way as the new-format group command,
     // with visible progress bar like in the old UI
     {
-        int activeSlotsQty = CalculateActiveSlots(cmdType, donorsNum);
-        int windowMs = gt.gTAfterCmd_ms;
+        int tTotalGroup_ms = (gTries-1)*gTBtwRepeats + gTAfterCmd_ms;
         QSet<QString> respondedIds;
         QDateTime tryStart = QDateTime::currentDateTime();
 
@@ -1443,7 +1442,7 @@ void PBsetup::executeLegacyGroupCommand(const QList<int>& donorsNum, CmdTypes cm
         wProcess->setText(humanAction + " " + blocksText);
 
         // Read confirmations with progress
-        readConfirmationsUntilAllOrTimeout(serialPort, cmdType, groupCmdNumber, activeIds, windowMs, respondedIds, true, 0, &tryStart);
+        readConfirmationsUntilAllOrTimeout(serialPort, cmdType, groupCmdNumber, activeIds, , respondedIds, true, 0, &tryStart);
 
         // Schedule status changes for responders (mirror of processDeviceSlots)
         for (const QString& id : respondedIds) {
