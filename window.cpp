@@ -603,7 +603,6 @@ void Window::mousePressEvent(QMouseEvent *event){
                                    Usb->_gNRepeat(), Usb->_gTBtwRepeats(), Usb->_gTBtwGrInd(),
                                    Usb->_rRBdlit(), Usb->_rUseRBdlit(), Usb->_rTimeSlot(), Usb->_rSlotAddDelay(), names, fonts, pixels, Vismo::FontPainter);
 
-            wAppsettings->setStartIndicatorFading(Saver::_isStartIndicatorFading());
 
             wAppsettings->setFocusOnDefaultBtn();
             applyAdaptiveDialogSizing(wAppsettings);
@@ -647,9 +646,6 @@ void Window::mousePressEvent(QMouseEvent *event){
                     wAppsettings->getComPortNum(port);
                     Usb->setComPortNum(port);
 
-                    bool SIFflag;
-                    wAppsettings->getStartIndicatorFading(SIFflag);
-                    Saver::setIsStartIndicatorFading(SIFflag);
 
                     wAppsettings->setValueLogWriteOn(wAppsettings->getCheckLogWriteOn());
 
@@ -890,20 +886,7 @@ int Window::saveSettings(QString fn){
 
                 xmlWriter.writeStartElement("Settings");
 
-                    xmlWriter.writeStartElement("A");
-                    xmlWriter.writeCharacters(QString::number(admin->getCurrentPwd()));
-                    xmlWriter.writeEndElement();
-
-                    xmlWriter.writeStartElement("AE");
-                    int f = wAppsettings->adminPwdEnabled()? 0x55AA:0xAA55;
-                    xmlWriter.writeCharacters(QString::number(
-                       admin->hash(QString::number(admin->getCurrentPwd() & f))));
-                    xmlWriter.writeEndElement();
-
-                    xmlWriter.writeStartElement("COM");
-                    xmlWriter.writeCharacters(wAppsettings->comPortName(0));
-                    xmlWriter.writeEndElement();
-
+                    // Timings and protocol parameters (match read order)
                     xmlWriter.writeStartElement("iTAnswerWait");
                     xmlWriter.writeCharacters(QString::number(Usb->_iTAnswerWait()));
                     xmlWriter.writeEndElement();
@@ -948,16 +931,34 @@ int Window::saveSettings(QString fn){
                     xmlWriter.writeCharacters(QString::number(Usb->_rSlotAddDelay()));
                     xmlWriter.writeEndElement();
 
-                    xmlWriter.writeStartElement("cStartIndicatorFading");
-                    xmlWriter.writeCharacters(QString::number(Saver::_isStartIndicatorFading()));
+                    // Credentials and COM
+                    xmlWriter.writeStartElement("A");
+                    xmlWriter.writeCharacters(QString::number(admin->getCurrentPwd()));
                     xmlWriter.writeEndElement();
 
+                    xmlWriter.writeStartElement("AE");
+                    {
+                        int f = wAppsettings->adminPwdEnabled()? 0x55AA:0xAA55;
+                        xmlWriter.writeCharacters(QString::number(
+                           admin->hash(QString::number(admin->getCurrentPwd() & f))));
+                    }
+                    xmlWriter.writeEndElement();
+
+                    xmlWriter.writeStartElement("COM");
+                    xmlWriter.writeCharacters(wAppsettings->comPortName(0));
+                    xmlWriter.writeEndElement();
+
+                    // About and flags
                     xmlWriter.writeStartElement("About");
                     xmlWriter.writeCharacters(wAboutprog->getAboutText());
                     xmlWriter.writeEndElement();
 
                     xmlWriter.writeStartElement("SaveLog");
                     xmlWriter.writeCharacters(QString::number(wAppsettings->getValueLogWriteOn()));
+                    xmlWriter.writeEndElement();
+
+                    xmlWriter.writeStartElement("isDebug");
+                    xmlWriter.writeCharacters(QString::number(wAppsettings->getIsDebug() ? 1 : 0));
                     xmlWriter.writeEndElement();
 
                     xmlWriter.writeStartElement("extraStatusAfterGroup");
@@ -1163,10 +1164,6 @@ int Window::readSettings(QString fn){
                     xmlReader.readNext();
                     QString s = xmlReader.text().toString();
                     wAppsettings->setComPortName(s);
-                } else if (xmlReader.name() == "cStartIndicatorFading") {
-                    xmlReader.readNext();
-                    int ri = xmlReader.text().toInt(&ok);
-                    if (ok) Saver::setIsStartIndicatorFading(ri==1);
                 } else if (xmlReader.name() == "About") {
                     xmlReader.readNext();
                     QString s = xmlReader.text().toString();
@@ -1175,6 +1172,10 @@ int Window::readSettings(QString fn){
                     xmlReader.readNext();
                     int ri = xmlReader.text().toInt(&ok);
                     if (ok) wAppsettings->setValueLogWriteOn(ri==1);
+                } else if (xmlReader.name() == "isDebug") {
+                    xmlReader.readNext();
+                    int ri = xmlReader.text().toInt(&ok);
+                    if (ok) wAppsettings->setIsDebug(ri==1);
                 } else if (xmlReader.name() == "extraStatusAfterGroup") {
                     xmlReader.readNext();
                     int ri = xmlReader.text().toInt(&ok);

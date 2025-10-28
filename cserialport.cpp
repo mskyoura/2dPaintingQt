@@ -15,6 +15,7 @@ CSerialport::CSerialport(Window* _pWin)
       gTBtwGrInd    =100;
       rRBdlit       =60; //огр. на длит. РБ
       rUseRBdlit    =1;
+      rTimeSlot     =9;  //время слота по умолчанию
 }
 
 void CSerialport::setComPortNum(QString port){
@@ -191,20 +192,33 @@ void CSerialport::logResponse(const QString& raw, int code, const SResponse& sr,
 
     if (code > 0) {
         pWin->SaveToLog("Детально: ", "   Ответ");
-        QString info = (code == 2) ?
-            QString("v.%1, U=%2 В, Реле1=%3, Реле2=%4, № %5, Готов=%6")
-                .arg(sr.Version)
-                .arg(QString::number(sr.U, 'f', 2))
-                .arg(sr.Relay1 ? "вкл." : "выкл.")
-                .arg(sr.Relay2 ? "вкл." : "выкл.")
-                .arg(sr.CmdNumRsp)
-                .arg(sr.Input ? "1" : "0")
-            : "Подтверждение";
+        QString info;
+        if (code == 2) {
+            info = QString("v.%1, U=%2 В, Реле1=%3, Реле2=%4, № %5, Готов=%6")
+                    .arg(sr.Version)
+                    .arg(QString::number(sr.U, 'f', 2))
+                    .arg(sr.Relay1 ? "вкл." : "выкл.")
+                    .arg(sr.Relay2 ? "вкл." : "выкл.")
+                    .arg(sr.CmdNumRsp)
+                    .arg(sr.Input ? "1" : "0");
+        } else {
+            info = "Подтверждение";
+        }
+        if (pWin->wAppsettings->getIsDebug() && lastResponseWaitMs >= 0) {
+            if (!info.isEmpty()) info += ", ";
+            info += QString("Время ожидания ответа: %1 мс").arg(lastResponseWaitMs);
+            lastResponseWaitMs = -1;
+        }
         pWin->SaveToLog("Параметры: ", info);
         pWin->SaveToLog("ПБ: ", QString("ID ") + sr.DeviceId);
     } else {
         pWin->SaveToLog("Детально: ", raw.isEmpty() ? "Нет ответа" : "Неверный ответ");
-        pWin->SaveToLog("Параметры: ", QString("Попытка %1").arg(tryNum + 1));
+        QString info = QString("Попытка %1").arg(tryNum + 1);
+        if (pWin->wAppsettings->getIsDebug() && lastResponseWaitMs >= 0) {
+            info += QString(", Время ожидания ответа: %1 мс").arg(lastResponseWaitMs);
+            lastResponseWaitMs = -1;
+        }
+        pWin->SaveToLog("Параметры: ", info);
     }
 
     pWin->SaveToLog("Код: ", formatRawBytes(raw));

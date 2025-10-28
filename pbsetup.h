@@ -131,6 +131,10 @@ private:
     void scheduleStatusChangeForId(const QString& id, const QList<int>& donorsNum, RelayStatus statusToSet, int delayMs);
     // Backward-compatible overload for callers that don't have donors list
     void scheduleStatusChangeForId(const QString& id, RelayStatus statusToSet, int delayMs);
+    // Планирование двухэтапного перехода: RELAY1ON -> RELAY2ON (через T2) -> RELAY1ON (через T1)
+    void scheduleTwoStageRelayTransition(const QString& id, const QList<int>& donorsNum, Saver* donor);
+    // Backward-compatible overload for two-stage transition
+    void scheduleTwoStageRelayTransition(const QString& id, Saver* donor);
     // Определение необходимости и вычисление задержки смены статуса для указанного ПБ
     int computeStatusChangeDelayMs(Saver* donor, CmdTypes cmdType, RelayStatus statusToSet);
 
@@ -148,7 +152,6 @@ private:
     CommandParams prepareSingleCommandParams(Saver& donor);
     QString formatCommandArgs(CmdTypes cmdType, int cmdNumber, int tryNum, int totalTries);
     QString formatSingleCommandArgs(CmdTypes cmdType, Saver& donor, const QString& cmdNum);
-    void logWaitTime(const QDateTime& start, int timeoutMs);
     RelayStatus determineRelayStatus(int relay1, int relay2);
     // Converter: RelayStatus -> CmdTypes
     CmdTypes relayStatusToCmdType(RelayStatus status) const;

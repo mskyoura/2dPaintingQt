@@ -38,7 +38,6 @@ class Saver
     QString   coil;
     QColor    coilClr;
 
-    static bool isStartIndicatorFading;
 
     void setDebugText(QString a);
     QString debugText;
@@ -65,8 +64,6 @@ public:
     void  CmdNumRsp(int n);
     int   CmdNumRsp();
 
-    static void setIsStartIndicatorFading(bool b);
-    static bool _isStartIndicatorFading();
 
     static QDateTime noTime();
 
@@ -78,8 +75,6 @@ public:
     QString getU2();
     QString getCoil_StatusAtGoodAnswer();
     QString getDst(bool txt = false);
-    bool isWaitingForDelayT2();
-    void setCmd_WaitingForDelayT2(QString);
     QString getElapsedTime();
     QString getLastOperationWithGoodAnswer(int mode, QColor &clr, QList<QString> &PBstatuses);
     QString getLastGoodAnswerTime();

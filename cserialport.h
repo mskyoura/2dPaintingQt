@@ -24,12 +24,14 @@ class CSerialport
     int     sendTimeoutMs = 500; // таймаут отправки команды (мс)
     int     rRBdlit;     //ограничение на время разблокировки
     int     rUseRBdlit;  //использовать ли ограничение на время разблокировки
-    int     rTimeSlot;
+    int     rTimeSlot = 9;
     int     rSlotAddDelay = 50;
 
 
     int GroupCmdNum;
     QString ComPort;
+
+    int lastResponseWaitMs = -1; // set by callers before parse/log
 
     QString stripFrame(const QString& raw);
     QString extractMessage(const QString& frame);
@@ -91,6 +93,9 @@ public:
     int incGroupCmdNum();
     QString computeLRC(const QString& hexString);
     QString byteToQStr(int byte);
+
+    // Propagate measured wait time for inclusion in logResponse
+    void setLastResponseWaitMs(int ms) { lastResponseWaitMs = ms; }
 
     Processing* wProcess;
 

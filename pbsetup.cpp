@@ -200,7 +200,6 @@ bool PBsetup::isCommandAllowedForDonor(Saver& donor, CmdTypes cmdType) const
 {
     if (donor._ID().isEmpty()) return false;
     if (!donor.canExecute(cmdType)) return false;
-    if (cmdType == _RELAY2ON && !donor.mayStart()) return false;
     return true;
 }
 
@@ -414,14 +413,6 @@ QString PBsetup::formatSingleCommandArgs(CmdTypes cmdType, Saver& donor, const Q
     }
 }
 
-void PBsetup::logWaitTime(const QDateTime& start, int timeoutMs) {
-        if (pWin->wAppsettings->getValueLogWriteOn()) {
-        int waitedMs = start.msecsTo(QDateTime::currentDateTime());
-        pWin->SaveToLog("", QString("Фактическое ожидание ответа %1 мс (таймаут: %2 мс)")
-                       .arg(waitedMs).arg(timeoutMs));
-    }
-}
-
 RelayStatus PBsetup::determineRelayStatus(int relay1, int relay2) {
     if (relay2 == 1) return RELAY2ON;
     if (relay1 == 1) return RELAY1ON;
@@ -459,10 +450,15 @@ void PBsetup::scheduleStatusChanges(Saver& donor, CmdTypes lastWriteCmd) {
     if (delayMsR1 > 0)
         scheduleStatusChangeForId(deviceId, RELAY1OFF, delayMsR1);
 
-    // Relay2 -> Relay1 ON после T1 конкретного ПБ, если применимо
-    int delayMsR2 = computeStatusChangeDelayMs(&donor, lastWriteCmd, RELAY1ON);
-    if (delayMsR2)
-        scheduleStatusChangeForId(deviceId, RELAY1ON, delayMsR2);
+    // Для команды RELAY2ON используем двухэтапный переход: RELAY1ON -> RELAY2ON (через T2) -> RELAY1ON (через T1)
+    if (lastWriteCmd == _RELAY2ON) {
+        scheduleTwoStageRelayTransition(deviceId, &donor);
+    } else {
+        // Relay2 -> Relay1 ON после T1 конкретного ПБ, если применимо (для других команд)
+        int delayMsR2 = computeStatusChangeDelayMs(&donor, lastWriteCmd, RELAY1ON);
+        if (delayMsR2)
+            scheduleStatusChangeForId(deviceId, RELAY1ON, delayMsR2);
+    }
 }
 
 void PBsetup::scheduleStatusChanges(Saver& donor, RelayStatus lastStatus, CmdTypes lastWriteCommand) {
@@ -575,6 +571,17 @@ void PBsetup::readConfirmationsUntilAllOrTimeout(QSerialPort& serialPort, CmdTyp
                     serialPort.clear();
                     break;
                 }
+            } else {
+                // Log frames that could not be parsed to a valid device id
+                if (pWin && pWin->wAppsettings && pWin->wAppsettings->getValueLogWriteOn() && pWin->wAppsettings->getIsDebug()) {
+                    pWin->SaveToLog("", "");
+                    pWin->SaveToLog("Детально: ", "notParsed");
+                    if (pWin->Usb) {
+                        pWin->SaveToLog("Код: ", pWin->Usb->bytesForShow(line));
+                    } else {
+                        pWin->SaveToLog("Код: ", line);
+                    }
+                }
             }
         }
         if (showProgress) {
@@ -631,15 +638,24 @@ void PBsetup::processDeviceSlots(QSerialPort& serialPort, CmdTypes cmdType, int 
     // Проверка необходимости смены статуса и планирование по каждому ПБ
     // Планируем смену статуса только для тех ПБ, которые реально прислали подтверждение
     for (const QString& id : respondedIds) {
+        Saver* donor = findDonorByDeviceId(id);
+        if (!donor || donor->_ID().isEmpty()) continue;
+        
         // Relay1 -> OFF после rbDlit, если применимо
-        int delayMsR1 = pWin->Usb->_rUseRBdlit() ? computeStatusChangeDelayMs(findDonorByDeviceId(id), cmdType, RELAY1OFF) : 0;
+        int delayMsR1 = pWin->Usb->_rUseRBdlit() ? computeStatusChangeDelayMs(donor, cmdType, RELAY1OFF) : 0;
         if (delayMsR1 > 0) {
             scheduleStatusChangeForId(id, donorsNum, RELAY1OFF, delayMsR1);
         }
-        // Relay2 -> Relay1 ON после T1, если применимо
-        int delayMsR2 = computeStatusChangeDelayMs(findDonorByDeviceId(id), cmdType, RELAY1ON);
-        if (delayMsR2 > 0) {
-            scheduleStatusChangeForId(id, donorsNum, RELAY1ON, delayMsR2);
+        
+        // Для команды RELAY2ON используем двухэтапный переход
+        if (cmdType == _RELAY2ON) {
+            scheduleTwoStageRelayTransition(id, donorsNum, donor);
+        } else {
+            // Relay2 -> Relay1 ON после T1, если применимо (для других команд)
+            int delayMsR2 = computeStatusChangeDelayMs(donor, cmdType, RELAY1ON);
+            if (delayMsR2 > 0) {
+                scheduleStatusChangeForId(id, donorsNum, RELAY1ON, delayMsR2);
+            }
         }
     }
 
@@ -708,6 +724,64 @@ void PBsetup::scheduleStatusChangeForId(const QString& id, RelayStatus statusToS
     scheduleStatusChangeForId(id, vmIndexes, statusToSet, delayMs);
 }
 
+void PBsetup::scheduleTwoStageRelayTransition(const QString& id, const QList<int>& donorsNum, Saver* donor)
+{
+    if (!donor || id.isEmpty()) return;
+    
+    // Этап 1: RELAY1ON -> RELAY2ON через T2 секунд
+    int t2DelayMs = donor->_T2() * 1000; // T2 в миллисекундах
+    if (t2DelayMs > 0) {
+        QTimer* timer1 = new QTimer(this);
+        timer1->setSingleShot(true);
+        connect(timer1, &QTimer::timeout, this, [this, id, donorsNum, donor, timer1]() {
+            // Устанавливаем RELAY2ON
+            for (int vmIndex : donorsNum) {
+                Saver* targetDonor = donorByVmIndexPtr(vmIndex);
+                if (!targetDonor) continue;
+                if (targetDonor->_ID().isEmpty()) continue;
+                if (targetDonor->_ID() == id) {
+                    if (canScheduleStatusChange(targetDonor, RELAY2ON)) {
+                        targetDonor->setStatus(RELAY2ON);
+                        targetDonor->setHasLastOperationGoodAnswer(true);
+                        targetDonor->setLastGoodAnswerTime(QDateTime::currentDateTime());
+                        
+                        // Этап 2: RELAY2ON -> RELAY1ON через T1 секунд
+                        int t1DelayMs = donor->_T1() * 1000; // T1 в миллисекундах
+                        if (t1DelayMs > 0) {
+                            QTimer* timer2 = new QTimer(this);
+                            timer2->setSingleShot(true);
+                            connect(timer2, &QTimer::timeout, this, [this, id, donorsNum, targetDonor, timer2]() {
+                                if (canScheduleStatusChange(targetDonor, RELAY1ON)) {
+                                    targetDonor->setStatus(RELAY1ON);
+                                    targetDonor->setHasLastOperationGoodAnswer(true);
+                                    targetDonor->setLastGoodAnswerTime(QDateTime::currentDateTime());
+                                }
+                                timer2->deleteLater();
+                            });
+                            timer2->start(t1DelayMs);
+                        }
+                    }
+                    break;
+                }
+            }
+            timer1->deleteLater();
+        });
+        timer1->start(t2DelayMs);
+    }
+}
+
+void PBsetup::scheduleTwoStageRelayTransition(const QString& id, Saver* donor)
+{
+    if (!donor || id.isEmpty()) return;
+    
+    // Fallback: iterate over all known PB slots when donors list is not available
+    QList<int> vmIndexes;
+    for (int i = 0; i < MAX_VM_DEVICES; ++i) {
+        vmIndexes.append(i);
+    }
+    scheduleTwoStageRelayTransition(id, vmIndexes, donor);
+}
+
 int PBsetup::computeStatusChangeDelayMs(Saver* donor, CmdTypes cmdType, RelayStatus statusToSet)
 {
     // Логика вычисления задержки вынесена сюда, чтобы легко расширять по требованиям
@@ -737,11 +811,11 @@ QString PBsetup::readResponseInSlot(const QString& oneLine, RelayStatus rStatus,
     if (!hasUsb()) return QString();
     pWin->Usb->emulAnswer = oneLine;
 
-    // Логирование времени задержки
+    // Логирование времени задержки (только в режиме Debug и только для STATUS)
     if (lastSendTime.isValid()) {
         lastLatencyMs = lastSendTime.msecsTo(QDateTime::currentDateTime());
-        if (pWin->wAppsettings->getValueLogWriteOn()) {
-            pWin->SaveToLog("", "Время между отправкой и получением: " + QString::number(lastLatencyMs) + " мс");
+        if (pWin->wAppsettings->getValueLogWriteOn() && pWin->wAppsettings->getIsDebug() && rStatus == _STATUS) {
+            pWin->SaveToLog("", "Время между отправкой и получением ответа для заданного ПБ: " + QString::number(lastLatencyMs) + " мс");
         }
     }
 
@@ -755,9 +829,24 @@ QString PBsetup::readResponseInSlot(const QString& oneLine, RelayStatus rStatus,
         Saver* donor = findDonorByDeviceId(sr.DeviceId);
         if (donor != nullptr) {
             donor->CmdNumReq(gCmdNumber);
-            donor->setStatus(rStatus);
-            donor->setLastGoodAnswerTime(QDateTime::currentDateTime());
-            donor->setHasLastOperationGoodAnswer(true);
+            
+            // Для команды RELAY2ON не устанавливаем статус немедленно, 
+            // а только планируем двухэтапный переход
+            if (rStatus == RELAY2ON) {
+                // Не устанавливаем статус RELAY2ON немедленно
+                // Он будет установлен через T2 секунд в scheduleTwoStageRelayTransition
+                donor->setLastGoodAnswerTime(QDateTime::currentDateTime());
+                donor->setHasLastOperationGoodAnswer(true);
+            } else {
+                // Для всех других команд устанавливаем статус немедленно
+                donor->setStatus(rStatus);
+                donor->setLastGoodAnswerTime(QDateTime::currentDateTime());
+                donor->setHasLastOperationGoodAnswer(true);
+            }
+            // На каждое подтверждение в конце — время ожидания ответа для заданного ПБ
+            if (pWin && pWin->wAppsettings && pWin->wAppsettings->getValueLogWriteOn() && lastSendTime.isValid()) {
+                pWin->SaveToLog("", QString("Время ожидания ответа для заданного ПБ: %1 мс").arg(lastSendTime.msecsTo(QDateTime::currentDateTime())));
+            }
             return sr.DeviceId;
         }
     }
@@ -889,14 +978,12 @@ QString PBsetup::readAllWithTimeout(QSerialPort& serialPort, int timeoutMs, bool
                 if (response.length() > 2) {
                     QString ansEnd = response.right(2);
                     if ((ansEnd == CRLF) || (ansEnd == LFCR)) {
-                        logWaitTime(start, timeoutMs);
                         return response;
                     }
                 }
             }
         }
 
-        logWaitTime(start, timeoutMs);
         // Очистить буфер после завершения чтения (даже если ответа нет)
         if (serialPort.isOpen()) {
             serialPort.clear();
@@ -948,6 +1035,12 @@ bool PBsetup::readSingleResponse(QSerialPort& serialPort, CmdTypes cmdType, Save
         try {
             pWin->Usb->emulAnswer = response.trimmed();
             QDateTime now = QDateTime::currentDateTime();
+            // Перед разбором установим время ожидания для включения в Параметры
+            if (lastSendTime.isValid()) {
+                pWin->Usb->setLastResponseWaitMs(lastSendTime.msecsTo(now));
+            } else {
+                pWin->Usb->setLastResponseWaitMs(-1);
+            }
             int ParsingCode = pWin->Usb->parseAndLogResponse(pWin->Usb->emulAnswer, sr, -1);
             if (ParsingCode == 2) {
                 donor.CmdNumRsp(sr.CmdNumRsp);
@@ -956,8 +1049,10 @@ bool PBsetup::readSingleResponse(QSerialPort& serialPort, CmdTypes cmdType, Save
                 donor.setHasLastOperationGoodAnswer(true);
                 donor.setLastGoodAnswerTime(now);
                 donor.setParams(sr.Input, sr.U, rStatus);
-                scheduleStatusChanges(donor, donor.getLastStatus(), donor.getLastCommand());
+                // Use overload that schedules two-stage transition for RELAY2ON
+                scheduleStatusChanges(donor, donor.getLastCommand());
                 donor.setLastCommand(_STATUS);
+                // Убрано отдельное доп. логирование времени — теперь добавляется в Параметры в logResponse
                 contCurrDev = false;
             } else if (ParsingCode >= 0) {
                 donor.setLastCommand(cmdType);
@@ -975,7 +1070,18 @@ bool PBsetup::readSingleResponse(QSerialPort& serialPort, CmdTypes cmdType, Save
         }
     } else {
         // Логируем отсутствие ответа
-        pWin->Usb->parseAndLogResponse("", sr, tryNum);
+        if (cmdType == _STATUS && pWin && pWin->wAppsettings && pWin->wAppsettings->getValueLogWriteOn()) {
+            // Соблюдаем структуру как в общем логировании
+            // Используем централизованный логер: передаём время ожидания и пустой raw
+            if (lastSendTime.isValid()) {
+                pWin->Usb->setLastResponseWaitMs(lastSendTime.msecsTo(QDateTime::currentDateTime()));
+            } else {
+                pWin->Usb->setLastResponseWaitMs(-1);
+            }
+            pWin->Usb->logResponse("", 0, sr, tryNum);
+        } else {
+            pWin->Usb->parseAndLogResponse("", sr, tryNum);
+        }
         donor.setLastCommand(_UNKNOWN);
         // Сброс статуса выполнения и счётчиков по старой логике
         donor.setHasLastOperationGoodAnswer(false);
@@ -1143,11 +1249,7 @@ void PBsetup::executeGroupCommand(const QList<int>& donorsNum, CmdTypes cmdType)
         }
         readConfirmationsUntilAllOrTimeout(serialPort, cmdType, groupCmdNumber, activeIds, windowMs, respondedIds, showProgress, tryNum, &tryStart);
 
-        // Calculate elapsed time for this try (sending + reading window)
-        int elapsedMs = tryStart.msecsTo(QDateTime::currentDateTime());
-        if (pWin->wAppsettings->getValueLogWriteOn()) {
-            pWin->SaveToLog("","Время попытки " + QString::number(tryNum+1) + ": " + QString::number(elapsedMs) + " мс");
-        }
+        // Skip logging "Время попытки ..." per new requirements
 
         // If all responded, stop early
         if (respondedIds.size() >= activeIds.size()) {
@@ -1177,13 +1279,22 @@ void PBsetup::executeGroupCommand(const QList<int>& donorsNum, CmdTypes cmdType)
 
     // Schedule status changes only for devices that actually confirmed
     for (const QString& id : respondedIds) {
-        int delayMsR1 = pWin->Usb->_rUseRBdlit() ? computeStatusChangeDelayMs(findDonorByDeviceId(id), cmdType, RELAY1OFF) : 0;
+        Saver* donor = findDonorByDeviceId(id);
+        if (!donor || donor->_ID().isEmpty()) continue;
+        
+        int delayMsR1 = pWin->Usb->_rUseRBdlit() ? computeStatusChangeDelayMs(donor, cmdType, RELAY1OFF) : 0;
         if (delayMsR1 > 0) {
             scheduleStatusChangeForId(id, donorsNum, RELAY1OFF, delayMsR1);
         }
-        int delayMsR2 = computeStatusChangeDelayMs(findDonorByDeviceId(id), cmdType, RELAY1ON);
-        if (delayMsR2 > 0) {
-            scheduleStatusChangeForId(id, donorsNum, RELAY1ON, delayMsR2);
+        
+        // Для команды RELAY2ON используем двухэтапный переход
+        if (cmdType == _RELAY2ON) {
+            scheduleTwoStageRelayTransition(id, donorsNum, donor);
+        } else {
+            int delayMsR2 = computeStatusChangeDelayMs(donor, cmdType, RELAY1ON);
+            if (delayMsR2 > 0) {
+                scheduleStatusChangeForId(id, donorsNum, RELAY1ON, delayMsR2);
+            }
         }
     }
 
@@ -1350,14 +1461,22 @@ void PBsetup::executeLegacyGroupCommand(const QList<int>& donorsNum, CmdTypes cm
 
         // Schedule status changes for responders (mirror of processDeviceSlots)
         for (const QString& id : respondedIds) {
-            int delayMsR1 = pWin->Usb->_rUseRBdlit() ? computeStatusChangeDelayMs(findDonorByDeviceId(id), cmdType, RELAY1OFF) : 0;
+            Saver* donor = findDonorByDeviceId(id);
+            if (!donor || donor->_ID().isEmpty()) continue;
+            
+            int delayMsR1 = pWin->Usb->_rUseRBdlit() ? computeStatusChangeDelayMs(donor, cmdType, RELAY1OFF) : 0;
             if (delayMsR1 > 0) {
                 scheduleStatusChangeForId(id, donorsNum, RELAY1OFF, delayMsR1);
             }
-            Saver* d = findDonorByDeviceId(id);
-            int delayMsR2 = computeStatusChangeDelayMs(d, cmdType, RELAY1ON);
-            if (delayMsR2 > 0) {
-                scheduleStatusChangeForId(id, donorsNum, RELAY1ON, delayMsR2);
+            
+            // Для команды RELAY2ON используем двухэтапный переход
+            if (cmdType == _RELAY2ON) {
+                scheduleTwoStageRelayTransition(id, donorsNum, donor);
+            } else {
+                int delayMsR2 = computeStatusChangeDelayMs(donor, cmdType, RELAY1ON);
+                if (delayMsR2 > 0) {
+                    scheduleStatusChangeForId(id, donorsNum, RELAY1ON, delayMsR2);
+                }
             }
         }
 

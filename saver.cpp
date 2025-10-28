@@ -1,7 +1,6 @@
 #include "saver.h"
 #include "QFile"
 
-bool Saver::isStartIndicatorFading = true;
 
 QString Saver::getID(int mode){
     return (rID!=""? rID: mode==0?"Укажите ID":mode==1?"---":"");
@@ -67,19 +66,6 @@ double Saver::_U(){
     return rU;
 }
 
-//2021-02-26
-bool Saver::isWaitingForDelayT2(){
-    return isCmdBtw_PK_gPK && (rLastGoodAnswerTime.secsTo(QDateTime::currentDateTime()) < rT2);
-}
-
-//2021-02-26
-void Saver::setCmd_WaitingForDelayT2(QString cmd){
-
-    //isCmdBtw_gPK_gPS = (Cmd_WaitingForDelayT2 == "ПК" || Cmd_WaitingForDelayT2 == "ГПК") && (cmd == "ПC" || cmd == "ГПC");
-    //Cmd_WaitingForDelayT2 = cmd;
-
-    isCmdBtw_PK_gPK = (cmd == "ПК" || cmd == "ГПК");
-}
 
 QString Saver::getElapsedTime(){
 
@@ -89,7 +75,6 @@ QString Saver::getElapsedTime(){
 
         qint64 elapsedSec = rLastGoodAnswerTime.secsTo(QDateTime::currentDateTime());
 
-        int timeStartIndicatorFading = ceil(rT1 + rT2);
 
         int h = elapsedSec/3600;
         int m = (elapsedSec - h*3600)/60;
@@ -375,10 +360,3 @@ QDateTime Saver::noTime(){
     return QDateTime(date,time);
 }
 
-void Saver::setIsStartIndicatorFading(bool b){
-    isStartIndicatorFading = b;
-}
-
-bool Saver::_isStartIndicatorFading(){
-    return isStartIndicatorFading;
-}

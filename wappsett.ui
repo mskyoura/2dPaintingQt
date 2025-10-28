@@ -25,7 +25,7 @@
      <x>0</x>
      <y>10</y>
      <width>1234</width>
-     <height>794</height>
+     <height>796</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
@@ -500,7 +500,7 @@ color: rgb(255, 255, 255);</string>
          <rect>
           <x>-10</x>
           <y>20</y>
-          <width>804</width>
+          <width>871</width>
           <height>611</height>
          </rect>
         </property>
@@ -933,7 +933,7 @@ color: rgb(255, 255, 255);</string>
          <item row="13" column="1">
           <widget class="QLabel" name="label_27">
            <property name="text">
-            <string>Добавочное время (0..1000):</string>
+            <string>Добавочное время (0..5000):</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1654,7 +1654,7 @@ color: rgb(255, 255, 255);</string>
           <x>50</x>
           <y>20</y>
           <width>1568</width>
-          <height>302</height>
+          <height>396</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout">
@@ -1675,72 +1675,40 @@ color: rgb(255, 255, 255);</string>
           </spacer>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <spacer name="horizontalSpacer_5">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="cStartIndicator">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Отключать индикацию &quot;Реле2 включено&quot; в соответствии с настройками ПБ</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_6">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
+          <widget class="QCheckBox" name="extraStatusAfterGroupCheck">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Отправлять дополнительную команду статуса, если подтверждение на команду записи не пришло</string>
+           </property>
+          </widget>
          </item>
          <item>
-          <spacer name="verticalSpacer_9">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
+          <widget class="QCheckBox" name="legacyGroupCommandsCheck">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Fixed</enum>
+           <property name="text">
+            <string>Отправка групповых команд старого формата</string>
            </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
+          </widget>
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_extraStatus">
+           <item>
+            <widget class="QLabel" name="label_10">
+             <property name="text">
+              <string>Дополнительный текст в окне &quot;О программе&quot;:</string>
+             </property>
+            </widget>
+           </item>
            <item>
             <spacer name="horizontalSpacer_extraStatus_left">
              <property name="orientation">
@@ -1756,19 +1724,6 @@ color: rgb(255, 255, 255);</string>
               </size>
              </property>
             </spacer>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="extraStatusAfterGroupCheck">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Отправлять дополнительную команду статуса, если подтверждение на команду записи не пришло</string>
-             </property>
-            </widget>
            </item>
            <item>
             <spacer name="horizontalSpacer_extraStatus_right">
@@ -1789,72 +1744,10 @@ color: rgb(255, 255, 255);</string>
           </layout>
          </item>
          <item>
+          <widget class="QTextEdit" name="textEdit"/>
+         </item>
+         <item>
           <spacer name="verticalSpacer_extraStatus">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_legacyGroup">
-           <item>
-            <spacer name="horizontalSpacer_legacyGroup_left">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="legacyGroupCommandsCheck">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Отправка групповых команд старого формата</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_legacyGroup_right">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer name="verticalSpacer_legacyGroup">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
@@ -1874,61 +1767,6 @@ color: rgb(255, 255, 255);</string>
            <property name="bottomMargin">
             <number>0</number>
            </property>
-           <item>
-            <spacer name="horizontalSpacer_17">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_10">
-             <property name="text">
-              <string>Дополнительный текст в окне &quot;О программе&quot;:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_19">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_18">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
           </layout>
          </item>
          <item>
@@ -1936,58 +1774,7 @@ color: rgb(255, 255, 255);</string>
            <property name="bottomMargin">
             <number>0</number>
            </property>
-           <item>
-            <spacer name="horizontalSpacer_15">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QTextEdit" name="textEdit"/>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_16">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
           </layout>
-         </item>
-         <item>
-          <spacer name="verticalSpacer_8">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </widget>
@@ -2004,9 +1791,6 @@ color: rgb(255, 255, 255);</string>
   <tabstop>e5</tabstop>
   <tabstop>e6</tabstop>
   <tabstop>tabWidget</tabstop>
-  <tabstop>cStartIndicator</tabstop>
-  <tabstop>extraStatusAfterGroupCheck</tabstop>
-  <tabstop>legacyGroupCommandsCheck</tabstop>
   <tabstop>comboBox</tabstop>
  </tabstops>
  <resources/>

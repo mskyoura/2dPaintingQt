@@ -149,31 +149,16 @@ public:
     QWidget *verticalLayoutWidget;
     QVBoxLayout *verticalLayout;
     QSpacerItem *verticalSpacer_7;
-    QHBoxLayout *horizontalLayout;
-    QSpacerItem *horizontalSpacer_5;
-    QCheckBox *cStartIndicator;
-    QSpacerItem *horizontalSpacer_6;
-    QSpacerItem *verticalSpacer_9;
-    QHBoxLayout *horizontalLayout_extraStatus;
-    QSpacerItem *horizontalSpacer_extraStatus_left;
     QCheckBox *extraStatusAfterGroupCheck;
-    QSpacerItem *horizontalSpacer_extraStatus_right;
-    QSpacerItem *verticalSpacer_extraStatus;
-    QHBoxLayout *horizontalLayout_legacyGroup;
-    QSpacerItem *horizontalSpacer_legacyGroup_left;
     QCheckBox *legacyGroupCommandsCheck;
-    QSpacerItem *horizontalSpacer_legacyGroup_right;
-    QSpacerItem *verticalSpacer_legacyGroup;
-    QHBoxLayout *horizontalLayout_6;
-    QSpacerItem *horizontalSpacer_17;
+    QHBoxLayout *horizontalLayout_extraStatus;
     QLabel *label_10;
-    QSpacerItem *horizontalSpacer_19;
-    QSpacerItem *horizontalSpacer_18;
-    QHBoxLayout *horizontalLayout_5;
-    QSpacerItem *horizontalSpacer_15;
+    QSpacerItem *horizontalSpacer_extraStatus_left;
+    QSpacerItem *horizontalSpacer_extraStatus_right;
     QTextEdit *textEdit;
-    QSpacerItem *horizontalSpacer_16;
-    QSpacerItem *verticalSpacer_8;
+    QSpacerItem *verticalSpacer_extraStatus;
+    QHBoxLayout *horizontalLayout_6;
+    QHBoxLayout *horizontalLayout_5;
 
     void setupUi(QDialog *wAppsett)
     {
@@ -187,7 +172,7 @@ public:
         wAppsett->setSizePolicy(sizePolicy);
         gridLayoutWidget_2 = new QWidget(wAppsett);
         gridLayoutWidget_2->setObjectName(QStringLiteral("gridLayoutWidget_2"));
-        gridLayoutWidget_2->setGeometry(QRect(0, 10, 1234, 794));
+        gridLayoutWidget_2->setGeometry(QRect(0, 10, 1234, 796));
         gridLayout_2 = new QGridLayout(gridLayoutWidget_2);
         gridLayout_2->setObjectName(QStringLiteral("gridLayout_2"));
         gridLayout_2->setContentsMargins(0, 0, 0, 0);
@@ -378,7 +363,7 @@ public:
         tab_2->setObjectName(QStringLiteral("tab_2"));
         gridLayoutWidget_3 = new QWidget(tab_2);
         gridLayoutWidget_3->setObjectName(QStringLiteral("gridLayoutWidget_3"));
-        gridLayoutWidget_3->setGeometry(QRect(-10, 20, 804, 611));
+        gridLayoutWidget_3->setGeometry(QRect(-10, 20, 871, 611));
         gridLayout_3 = new QGridLayout(gridLayoutWidget_3);
         gridLayout_3->setObjectName(QStringLiteral("gridLayout_3"));
         gridLayout_3->setHorizontalSpacing(7);
@@ -928,7 +913,7 @@ public:
         tab_3->setObjectName(QStringLiteral("tab_3"));
         verticalLayoutWidget = new QWidget(tab_3);
         verticalLayoutWidget->setObjectName(QStringLiteral("verticalLayoutWidget"));
-        verticalLayoutWidget->setGeometry(QRect(50, 20, 1568, 302));
+        verticalLayoutWidget->setGeometry(QRect(50, 20, 1568, 396));
         verticalLayout = new QVBoxLayout(verticalLayoutWidget);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         verticalLayout->setContentsMargins(0, 0, 0, 0);
@@ -936,42 +921,30 @@ public:
 
         verticalLayout->addItem(verticalSpacer_7);
 
-        horizontalLayout = new QHBoxLayout();
-        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        horizontalSpacer_5 = new QSpacerItem(20, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
-
-        horizontalLayout->addItem(horizontalSpacer_5);
-
-        cStartIndicator = new QCheckBox(verticalLayoutWidget);
-        cStartIndicator->setObjectName(QStringLiteral("cStartIndicator"));
-        sizePolicy2.setHeightForWidth(cStartIndicator->sizePolicy().hasHeightForWidth());
-        cStartIndicator->setSizePolicy(sizePolicy2);
-
-        horizontalLayout->addWidget(cStartIndicator);
-
-        horizontalSpacer_6 = new QSpacerItem(20, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
-
-        horizontalLayout->addItem(horizontalSpacer_6);
-
-
-        verticalLayout->addLayout(horizontalLayout);
-
-        verticalSpacer_9 = new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Fixed);
-
-        verticalLayout->addItem(verticalSpacer_9);
-
-        horizontalLayout_extraStatus = new QHBoxLayout();
-        horizontalLayout_extraStatus->setObjectName(QStringLiteral("horizontalLayout_extraStatus"));
-        horizontalSpacer_extraStatus_left = new QSpacerItem(20, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
-
-        horizontalLayout_extraStatus->addItem(horizontalSpacer_extraStatus_left);
-
         extraStatusAfterGroupCheck = new QCheckBox(verticalLayoutWidget);
         extraStatusAfterGroupCheck->setObjectName(QStringLiteral("extraStatusAfterGroupCheck"));
         sizePolicy2.setHeightForWidth(extraStatusAfterGroupCheck->sizePolicy().hasHeightForWidth());
         extraStatusAfterGroupCheck->setSizePolicy(sizePolicy2);
 
-        horizontalLayout_extraStatus->addWidget(extraStatusAfterGroupCheck);
+        verticalLayout->addWidget(extraStatusAfterGroupCheck);
+
+        legacyGroupCommandsCheck = new QCheckBox(verticalLayoutWidget);
+        legacyGroupCommandsCheck->setObjectName(QStringLiteral("legacyGroupCommandsCheck"));
+        sizePolicy2.setHeightForWidth(legacyGroupCommandsCheck->sizePolicy().hasHeightForWidth());
+        legacyGroupCommandsCheck->setSizePolicy(sizePolicy2);
+
+        verticalLayout->addWidget(legacyGroupCommandsCheck);
+
+        horizontalLayout_extraStatus = new QHBoxLayout();
+        horizontalLayout_extraStatus->setObjectName(QStringLiteral("horizontalLayout_extraStatus"));
+        label_10 = new QLabel(verticalLayoutWidget);
+        label_10->setObjectName(QStringLiteral("label_10"));
+
+        horizontalLayout_extraStatus->addWidget(label_10);
+
+        horizontalSpacer_extraStatus_left = new QSpacerItem(20, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
+
+        horizontalLayout_extraStatus->addItem(horizontalSpacer_extraStatus_left);
 
         horizontalSpacer_extraStatus_right = new QSpacerItem(20, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
 
@@ -980,79 +953,26 @@ public:
 
         verticalLayout->addLayout(horizontalLayout_extraStatus);
 
+        textEdit = new QTextEdit(verticalLayoutWidget);
+        textEdit->setObjectName(QStringLiteral("textEdit"));
+
+        verticalLayout->addWidget(textEdit);
+
         verticalSpacer_extraStatus = new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Fixed);
 
         verticalLayout->addItem(verticalSpacer_extraStatus);
 
-        horizontalLayout_legacyGroup = new QHBoxLayout();
-        horizontalLayout_legacyGroup->setObjectName(QStringLiteral("horizontalLayout_legacyGroup"));
-        horizontalSpacer_legacyGroup_left = new QSpacerItem(20, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
-
-        horizontalLayout_legacyGroup->addItem(horizontalSpacer_legacyGroup_left);
-
-        legacyGroupCommandsCheck = new QCheckBox(verticalLayoutWidget);
-        legacyGroupCommandsCheck->setObjectName(QStringLiteral("legacyGroupCommandsCheck"));
-        sizePolicy2.setHeightForWidth(legacyGroupCommandsCheck->sizePolicy().hasHeightForWidth());
-        legacyGroupCommandsCheck->setSizePolicy(sizePolicy2);
-
-        horizontalLayout_legacyGroup->addWidget(legacyGroupCommandsCheck);
-
-        horizontalSpacer_legacyGroup_right = new QSpacerItem(20, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
-
-        horizontalLayout_legacyGroup->addItem(horizontalSpacer_legacyGroup_right);
-
-
-        verticalLayout->addLayout(horizontalLayout_legacyGroup);
-
-        verticalSpacer_legacyGroup = new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Fixed);
-
-        verticalLayout->addItem(verticalSpacer_legacyGroup);
-
         horizontalLayout_6 = new QHBoxLayout();
         horizontalLayout_6->setObjectName(QStringLiteral("horizontalLayout_6"));
         horizontalLayout_6->setContentsMargins(-1, -1, -1, 0);
-        horizontalSpacer_17 = new QSpacerItem(20, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
-
-        horizontalLayout_6->addItem(horizontalSpacer_17);
-
-        label_10 = new QLabel(verticalLayoutWidget);
-        label_10->setObjectName(QStringLiteral("label_10"));
-
-        horizontalLayout_6->addWidget(label_10);
-
-        horizontalSpacer_19 = new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        horizontalLayout_6->addItem(horizontalSpacer_19);
-
-        horizontalSpacer_18 = new QSpacerItem(20, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
-
-        horizontalLayout_6->addItem(horizontalSpacer_18);
-
 
         verticalLayout->addLayout(horizontalLayout_6);
 
         horizontalLayout_5 = new QHBoxLayout();
         horizontalLayout_5->setObjectName(QStringLiteral("horizontalLayout_5"));
         horizontalLayout_5->setContentsMargins(-1, -1, -1, 0);
-        horizontalSpacer_15 = new QSpacerItem(20, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
-
-        horizontalLayout_5->addItem(horizontalSpacer_15);
-
-        textEdit = new QTextEdit(verticalLayoutWidget);
-        textEdit->setObjectName(QStringLiteral("textEdit"));
-
-        horizontalLayout_5->addWidget(textEdit);
-
-        horizontalSpacer_16 = new QSpacerItem(20, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
-
-        horizontalLayout_5->addItem(horizontalSpacer_16);
-
 
         verticalLayout->addLayout(horizontalLayout_5);
-
-        verticalSpacer_8 = new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Fixed);
-
-        verticalLayout->addItem(verticalSpacer_8);
 
         tabWidget->addTab(tab_3, QString());
 
@@ -1063,10 +983,7 @@ public:
         QWidget::setTabOrder(e4, e5);
         QWidget::setTabOrder(e5, e6);
         QWidget::setTabOrder(e6, tabWidget);
-        QWidget::setTabOrder(tabWidget, cStartIndicator);
-        QWidget::setTabOrder(cStartIndicator, extraStatusAfterGroupCheck);
-        QWidget::setTabOrder(extraStatusAfterGroupCheck, legacyGroupCommandsCheck);
-        QWidget::setTabOrder(legacyGroupCommandsCheck, comboBox);
+        QWidget::setTabOrder(tabWidget, comboBox);
 
         retranslateUi(wAppsett);
 
@@ -1107,7 +1024,7 @@ public:
         label->setText(QApplication::translate("wAppsett", "\320\237\320\260\321\200\320\260\320\274\320\265\321\202\321\200\321\213 \320\270\320\275\320\264\320\270\320\262\320\270\320\264\321\203\320\260\320\273\321\214\320\275\321\213\321\205 \320\272\320\276\320\274\320\260\320\275\320\264:", Q_NULLPTR));
         label_11->setText(QApplication::translate("wAppsett", "\320\237\320\260\321\200\320\260\320\274\320\265\321\202\321\200\321\213 \320\263\321\200\321\203\320\277\320\277\320\276\320\262\321\213\321\205 \320\272\320\276\320\274\320\260\320\275\320\264:", Q_NULLPTR));
         label_12->setText(QApplication::translate("wAppsett", "\320\274\321\201", Q_NULLPTR));
-        label_27->setText(QApplication::translate("wAppsett", "\320\224\320\276\320\261\320\260\320\262\320\276\321\207\320\275\320\276\320\265 \320\262\321\200\320\265\320\274\321\217 (0..1000):", Q_NULLPTR));
+        label_27->setText(QApplication::translate("wAppsett", "\320\224\320\276\320\261\320\260\320\262\320\276\321\207\320\275\320\276\320\265 \320\262\321\200\320\265\320\274\321\217 (0..5000):", Q_NULLPTR));
         label_22->setText(QApplication::translate("wAppsett", "\320\274\321\201", Q_NULLPTR));
         tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("wAppsett", "\320\236\321\202\320\277\321\200\320\260\320\262\320\272\320\260 \320\272\320\276\320\274\320\260\320\275\320\264", Q_NULLPTR));
         label_55->setText(QApplication::translate("wAppsett", "\320\235\320\260\320\267\320\262\320\260\320\275\320\270\321\217 \320\272\320\276\320\274\320\260\320\275\320\264 \320\270 \321\201\320\276\321\201\321\202\320\276\321\217\320\275\320\270\320\271", Q_NULLPTR));
@@ -1126,7 +1043,6 @@ public:
         lab_eg3->setText(QApplication::translate("wAppsett", "\320\223\320\240\320\243\320\237\320\237\320\220 4:", Q_NULLPTR));
         lab_eg4->setText(QApplication::translate("wAppsett", "\320\223\320\240\320\243\320\237\320\237\320\220 5:", Q_NULLPTR));
         tabWidget->setTabText(tabWidget->indexOf(tab_7), QApplication::translate("wAppsett", "\320\235\320\260\320\267\320\262\320\260\320\275\320\270\321\217", Q_NULLPTR));
-        cStartIndicator->setText(QApplication::translate("wAppsett", "\320\236\321\202\320\272\320\273\321\216\321\207\320\260\321\202\321\214 \320\270\320\275\320\264\320\270\320\272\320\260\321\206\320\270\321\216 \"\320\240\320\265\320\273\320\2652 \320\262\320\272\320\273\321\216\321\207\320\265\320\275\320\276\" \320\262 \321\201\320\276\320\276\321\202\320\262\320\265\321\202\321\201\321\202\320\262\320\270\320\270 \321\201 \320\275\320\260\321\201\321\202\321\200\320\276\320\271\320\272\320\260\320\274\320\270 \320\237\320\221", Q_NULLPTR));
         extraStatusAfterGroupCheck->setText(QApplication::translate("wAppsett", "\320\236\321\202\320\277\321\200\320\260\320\262\320\273\321\217\321\202\321\214 \320\264\320\276\320\277\320\276\320\273\320\275\320\270\321\202\320\265\320\273\321\214\320\275\321\203\321\216 \320\272\320\276\320\274\320\260\320\275\320\264\321\203 \321\201\321\202\320\260\321\202\321\203\321\201\320\260, \320\265\321\201\320\273\320\270 \320\277\320\276\320\264\321\202\320\262\320\265\321\200\320\266\320\264\320\265\320\275\320\270\320\265 \320\275\320\260 \320\272\320\276\320\274\320\260\320\275\320\264\321\203 \320\267\320\260\320\277\320\270\321\201\320\270 \320\275\320\265 \320\277\321\200\320\270\321\210\320\273\320\276", Q_NULLPTR));
         legacyGroupCommandsCheck->setText(QApplication::translate("wAppsett", "\320\236\321\202\320\277\321\200\320\260\320\262\320\272\320\260 \320\263\321\200\321\203\320\277\320\277\320\276\320\262\321\213\321\205 \320\272\320\276\320\274\320\260\320\275\320\264 \321\201\321\202\320\260\321\200\320\276\320\263\320\276 \321\204\320\276\321\200\320\274\320\260\321\202\320\260", Q_NULLPTR));
         label_10->setText(QApplication::translate("wAppsett", "\320\224\320\276\320\277\320\276\320\273\320\275\320\270\321\202\320\265\320\273\321\214\320\275\321\213\320\271 \321\202\320\265\320\272\321\201\321\202 \320\262 \320\276\320\272\320\275\320\265 \"\320\236 \320\277\321\200\320\276\320\263\321\200\320\260\320\274\320\274\320\265\":", Q_NULLPTR));

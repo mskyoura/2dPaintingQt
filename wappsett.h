@@ -28,13 +28,11 @@ public:
               int _e8, int _e9, int _e12,
               QList<QString> &_names, QList <QFont> & _fonts, QList <int> & _fontsMaxWidth,
               QPainter* _FontPainter);
-    void setStartIndicatorFading(bool b);
     void setFocusOnDefaultBtn();
 
     void getE(int& _e1, int& _e2, double& _e3, int& _e4, double& _e5,
               int &_e6, int &_e7, int &_e8, int &_e9, int &_e10,
               double &_e11, int &_e12, QList<QString> &_names);
-    void getStartIndicatorFading(bool& b);
     void getComPortNum(QString& a);
 
     void setAdminPwdEnabled(int a);
@@ -59,6 +57,13 @@ public:
     bool getLegacyGroupCommands() const;
     void setLegacyGroupCommands(bool);
 
+    // Debug flag synced with settings.ini
+    bool getIsDebug() const { return debugMode; }
+    void setIsDebug(bool b)
+    {
+        debugMode = b;
+    }
+
     QPainter* painter;
 
 private slots:
@@ -77,7 +82,6 @@ private slots:
 
     void on_e9_textChanged(const QString &arg1);
 
-    void on_cStartIndicator_stateChanged(int arg1);
 
     void on_pushButton_5_clicked();
 
@@ -110,12 +114,6 @@ private slots:
     void on_cancelBtn_clicked();
 
     void on_logfileWrEnabled_clicked();
-
-
-
-    void on_e10_textChanged(const QString &arg1);
-
-    void on_e11_textChanged(const QString &arg1);
 
     void on_e12_textChanged(const QString &arg1);
 
@@ -157,7 +155,6 @@ private:
 
     QList <QString> list;
 
-    bool eSflag;
 
     void comportChange();
 
@@ -171,6 +168,7 @@ private:
     bool ValueLogWriteOn;
     bool extraStatusAfterGroup;
     bool legacyGroupCommands;
+    bool debugMode = false;
 
     void applyLegacyBlockState();
 

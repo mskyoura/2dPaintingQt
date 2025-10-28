@@ -418,8 +418,6 @@ double Vismo::getSumOfKSizePUindiv(){
 double Vismo::Inside(bool painting, int i, bool blinktoggle, int ActiveCntInGroup){
     LineY = 0;
 
-    bool isWaitingForDelay = false;
-
     bool active = (pb!=NULL) && (pbIndex >-1);
     QString empty("");
 
@@ -443,7 +441,6 @@ double Vismo::Inside(bool painting, int i, bool blinktoggle, int ActiveCntInGrou
         elpsd = (*pb)[pbIndex].getElapsedTime();
 
         //2021-01-22
-        isWaitingForDelay = (*pb)[pbIndex].isWaitingForDelayT2();
         //В режиме отладки почему-то ответы от платы не отрабатываются (нет ответа). В режиме релиза - работает, отлаживать через debugText.
         //debugText = (*pb)[pbIndex].getPressedButton() + "/" + (*pb)[pbIndex].getDebugText();
         if (debugText != 0){
@@ -465,9 +462,6 @@ double Vismo::Inside(bool painting, int i, bool blinktoggle, int ActiveCntInGrou
         nums = "#" + QString::number((*pb)[pbIndex].CmdNumReq()) + "/" + QString::number((*pb)[pbIndex].CmdNumReq());
     }
 
-    QColor  statusClrModif = isWaitingForDelay? /*RBdelaycolor*/ /*Qt::yellow*/ QColor(255,60,0) : statusClr;
-    QString blnkModif      = isWaitingForDelay? (*pb)[pbIndex].getLastOperationWithGoodAnswer(mode, statusClr, Vismo::PBstatuses) : blnk;
-
     if (mode == 1) { //отрисовка всех доступных ПБ1-8, кнопки добавления ПБ (+)
 
         //при изменении кол-ва и значений коэф-тов - обнови результат getSumOfKSize()
@@ -485,7 +479,7 @@ double Vismo::Inside(bool painting, int i, bool blinktoggle, int ActiveCntInGrou
         LineY +=         0.1*moTxtLineHeight;
         DrawText(i,0.7,  1.0, elpsd, Qt::magenta, QColor(242, 194, 94));
         LineY +=         0.1*moTxtLineHeight;
-        DrawText(i,0.7,  1.0, blnkModif,  statusClrModif, Qt::white);
+        DrawText(i,0.7,  1.0, blnk,  statusClr, Qt::white);
         LineY +=         0.1*moTxtLineHeight;
         DrawText(i,0.7,  1.0, t1,    Qt::magenta, GrayTxt);
         DrawText(i,0.7,  1.0, t2,    Qt::magenta, GrayTxt);
@@ -534,7 +528,7 @@ double Vismo::Inside(bool painting, int i, bool blinktoggle, int ActiveCntInGrou
         DrawText(i,0.7,  0.8,elpsd +
                               " назад",     Qt::magenta, QColor(188,188,188), 1);
         LineY += 0.3*moTxtLineHeight;
-        DrawText(i,0.7,  1.2, blnkModif,  statusClrModif, QColor(215, 215, 215), 1);
+        DrawText(i,0.7,  1.2, blnk,  statusClr, QColor(215, 215, 215), 1);
         LineY += 0.3*moTxtLineHeight;
         DrawText(i,0.7,  0.8, QString("Длительность Реле2") + ": " +
                              (active? (*pb)[pbIndex].getT1()+" с":none), Qt::magenta, QColor(165, 165, 165), 0, QColor(188,188,188), 1);

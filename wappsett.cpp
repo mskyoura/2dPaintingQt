@@ -86,6 +86,7 @@ wAppsett::wAppsett(QWidget *parent) :
     e8Accepted = 1;
     extraStatusAfterGroup = false;
     legacyGroupCommands = false;
+    debugMode = false;
 
     fillComboBox();
 
@@ -160,9 +161,6 @@ void wAppsett::setE(int _e1, int _e2, double _e3, int _e4, double _e5,
 
 }
 
-void wAppsett::setStartIndicatorFading(bool b){
-    ui->cStartIndicator->setChecked(b);
-}
 
 void wAppsett::getE(int& _e1, int& _e2, double& _e3, int& _e4, double& _e5, int& _e6, int &_e7,
                     int &_e8, int &_e9, int &_e10, double &_e11, int &_e12, QList <QString> &_names){
@@ -201,9 +199,6 @@ void wAppsett::getE(int& _e1, int& _e2, double& _e3, int& _e4, double& _e5, int&
 
 }
 
-void wAppsett::getStartIndicatorFading(bool& b){
-    b = eSflag;
-}
 
 void wAppsett::getComPortNum(QString& a){
     a = ui->comboBox->itemText(ui->comboBox->currentIndex());
@@ -370,10 +365,6 @@ void wAppsett::setFocusOnDefaultBtn(){
     ui->okBtn->setFocus();
 }
 
-void wAppsett::on_cStartIndicator_stateChanged(int arg1)
-{
-    eSflag = arg1;
-}
 
 /*void wAppsett::on_pushButton_3_clicked()
 {
@@ -490,8 +481,6 @@ void wAppsett::applyCompactLayout()
 
     // Additional tab
     if (ui->verticalSpacer_7)    ui->verticalSpacer_7->changeSize(20, 6,  QSizePolicy::Minimum, QSizePolicy::Fixed);
-    if (ui->verticalSpacer_8)    ui->verticalSpacer_8->changeSize(20, 6,  QSizePolicy::Minimum, QSizePolicy::Fixed);
-    if (ui->verticalSpacer_9)    ui->verticalSpacer_9->changeSize(20, 6,  QSizePolicy::Minimum, QSizePolicy::Fixed);
 }
 
 void wAppsett::applyFontScale(double scale)
@@ -540,7 +529,7 @@ void wAppsett::applyFontScale(double scale)
     for (QWidget* w : names) scaleWidgetFont(w);
 
     // Additional tab
-    QWidget* add[] = { ui->cStartIndicator, ui->extraStatusAfterGroupCheck, ui->legacyGroupCommandsCheck, ui->label_10, ui->textEdit };
+    QWidget* add[] = { ui->extraStatusAfterGroupCheck, ui->legacyGroupCommandsCheck, ui->label_10, ui->textEdit };
     for (QWidget* w : add) scaleWidgetFont(w);
 }
 
@@ -565,8 +554,6 @@ void wAppsett::applyProportionalLayoutScale(double scale)
     scaleSpacer(ui->verticalSpacer_3,  qMax(10, (int)qRound(28 * scale)));
     scaleSpacer(ui->verticalSpacer_11, qMax(10, (int)qRound(28 * scale)));
     scaleSpacer(ui->verticalSpacer_7,  qMax(6,  (int)qRound(20 * scale)));
-    scaleSpacer(ui->verticalSpacer_8,  qMax(6,  (int)qRound(20 * scale)));
-    scaleSpacer(ui->verticalSpacer_9,  qMax(6,  (int)qRound(20 * scale)));
 
     // Ensure row heights accommodate larger fonts: raise min heights of edits and labels
     int rowH = qMax(22, (int)qRound(24 * scale));
@@ -778,7 +765,7 @@ void wAppsett::setValueLogWriteOn(bool a){
 
 void wAppsett::on_e12_textChanged(const QString &arg1)
 {
-    pWin->TestInRange(0.0, 1000, E12, arg1, ui->e12, e12Accepted);
+    pWin->TestInRange(0.0, 5000, E12, arg1, ui->e12, e12Accepted);
 }
 
 bool wAppsett::getExtraStatusAfterGroup() const
