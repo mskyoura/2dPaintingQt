@@ -74,6 +74,22 @@ void Appset::accept(){
         if ((found && (pWin->confirm->showConfirm(QString("ID ") + ID + QString(" уже используется в другой группе (группах),\nВы уверены, что следует использовать этот ID здесь?")) == QDialog::Accepted))
             || !found)
             QDialog::accept();
+    } else {
+        // Отладочная информация о том, какие флаги блокируют сохранение (только в debug режиме)
+        if (pWin && pWin->wAppsettings && pWin->wAppsettings->getIsDebug()) {
+            QString debugInfo = QString("Appset::accept() - блокировка сохранения. Состояние флагов:\n");
+            debugInfo += QString("IDaccepted: %1 (ID='%2')\n").arg(IDaccepted ? "true" : "false").arg(ID);
+            debugInfo += QString("T1accepted: %1 (T1=%2)\n").arg(T1accepted ? "true" : "false").arg(T1);
+            debugInfo += QString("T2accepted: %1 (T2=%2)\n").arg(T2accepted ? "true" : "false").arg(T2);
+            debugInfo += QString("U1accepted: %1 (U1=%2)\n").arg(U1accepted ? "true" : "false").arg(U1);
+            debugInfo += QString("U2accepted: %1 (U2=%2)\n").arg(U2accepted ? "true" : "false").arg(U2);
+            debugInfo += QString("Dst='%1'\n").arg(Dst);
+            debugInfo += QString("Polarity=%1\n").arg(Polarity ? "true" : "false");
+            
+            if (pWin->warn) {
+                pWin->warn->showWarning(debugInfo);
+            }
+        }
     }
 
 }
@@ -124,6 +140,21 @@ void Appset::TestInRange(int min, int max, QString& var, QString value, QLineEdi
     e->setStyleSheet(ok?"QLineEdit {background-color: white;}":"QLineEdit {background-color:#FFBFBF;}");
 
     eAccepted = ok;
+    
+    // Отладочная информация для проблемных значений
+    if (!ok && pWin && pWin->warn) {
+        QString debugInfo = QString("Appset::TestInRange (QString) - ошибка валидации:\n");
+        debugInfo += QString("Значение: '%1'\n").arg(value);
+        debugInfo += QString("Диапазон: %1 - %2\n").arg(min).arg(max);
+        debugInfo += QString("Результат парсинга: %1\n").arg(ok ? "OK" : "FAIL");
+        debugInfo += QString("Числовое значение: %1\n").arg(_int);
+        debugInfo += QString("Поле: %1\n").arg(e->objectName());
+        
+        // Показываем предупреждение только в debug режиме
+        if (pWin->wAppsettings && pWin->wAppsettings->getIsDebug()) {
+            pWin->warn->showWarning(debugInfo);
+        }
+    }
 }
 
 void Appset::TestInRange(int min, int max, int& var, QString value, QLineEdit *e, bool &eAccepted){
@@ -135,6 +166,21 @@ void Appset::TestInRange(int min, int max, int& var, QString value, QLineEdit *e
     e->setStyleSheet(ok?"QLineEdit {background-color: white;}":"QLineEdit {background-color:#FFBFBF;}");
 
     eAccepted = ok;
+    
+    // Отладочная информация для проблемных значений
+    if (!ok && pWin && pWin->warn) {
+        QString debugInfo = QString("Appset::TestInRange (int) - ошибка валидации:\n");
+        debugInfo += QString("Значение: '%1'\n").arg(value);
+        debugInfo += QString("Диапазон: %1 - %2\n").arg(min).arg(max);
+        debugInfo += QString("Результат парсинга: %1\n").arg(ok ? "OK" : "FAIL");
+        debugInfo += QString("Числовое значение: %1\n").arg(_int);
+        debugInfo += QString("Поле: %1\n").arg(e->objectName());
+        
+        // Показываем предупреждение только в debug режиме
+        if (pWin->wAppsettings && pWin->wAppsettings->getIsDebug()) {
+            pWin->warn->showWarning(debugInfo);
+        }
+    }
 }
 
 void Appset::TestInRange(double min, double max, double &var,
@@ -147,4 +193,19 @@ void Appset::TestInRange(double min, double max, double &var,
     e->setStyleSheet(ok?"QLineEdit {background-color: white;}":"QLineEdit {background-color:#FFBFBF;}");
 
     eAccepted = ok;
+    
+    // Отладочная информация для проблемных значений
+    if (!ok && pWin && pWin->warn) {
+        QString debugInfo = QString("Appset::TestInRange (double) - ошибка валидации:\n");
+        debugInfo += QString("Значение: '%1'\n").arg(value);
+        debugInfo += QString("Диапазон: %1 - %2\n").arg(min).arg(max);
+        debugInfo += QString("Результат парсинга: %1\n").arg(ok ? "OK" : "FAIL");
+        debugInfo += QString("Числовое значение: %1\n").arg(_dbl);
+        debugInfo += QString("Поле: %1\n").arg(e->objectName());
+        
+        // Показываем предупреждение только в debug режиме
+        if (pWin->wAppsettings && pWin->wAppsettings->getIsDebug()) {
+            pWin->warn->showWarning(debugInfo);
+        }
+    }
 }

@@ -45,6 +45,7 @@ class Saver
 
     // Track last relay write command for timer scheduling and logic
     CmdTypes  lastCommand = _UNKNOWN;
+    CmdTypes  lastWriteCommand = _UNKNOWN;
 
 public:
     Saver(QString   _rID = "",
@@ -123,6 +124,11 @@ public:
     // Accessors for lastCommand (last executed CmdTypes)
     void setLastCommand(CmdTypes cmdType);
     CmdTypes getLastCommand() const;
+    
+    // Accessors for lastWriteCommand (last write command for timer scheduling)
+    void setLastWriteCommand(CmdTypes cmdType);
+    CmdTypes getLastWriteCommand() const;
+    bool IsLastCommandWrite() const;
 };
 
 #endif // SAVER_H

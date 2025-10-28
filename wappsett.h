@@ -32,7 +32,7 @@ public:
 
     void getE(int& _e1, int& _e2, double& _e3, int& _e4, double& _e5,
               int &_e6, int &_e7, int &_e8, int &_e9, int &_e10,
-              double &_e11, int &_e12, QList<QString> &_names);
+              int &_e12, QList<QString> &_names);
     void getComPortNum(QString& a);
 
     void setAdminPwdEnabled(int a);
@@ -141,11 +141,9 @@ private:
          e8Accepted,
          e9Accepted,
          e10Accepted,
-         e11Accepted,
          e12Accepted;
 
     int E1, E2, E4, E6, E7, E8, E9, E10, E12;
-    double E11;
 
     QList <QFont> NamesFonts;
     QList <int>   NamesMaxWidth;

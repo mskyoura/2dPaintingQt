@@ -359,7 +359,7 @@ debug/moc_widget.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QWidget \
 		widget.h \
 		debug/moc_predefs.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.9.1\5.9.1\mingw53_32\bin\moc.exe $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/mskyo/source/repos/2dPaintingQt -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward widget.h -o debug\moc_widget.cpp
+	C:\Qt\Qt5.9.1\5.9.1\mingw53_32\bin\moc.exe $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/User/source/repos/2dPaintingQt -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward widget.h -o debug\moc_widget.cpp
 
 debug/moc_window.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QBrush \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/qbrush.h \
@@ -535,7 +535,7 @@ debug/moc_window.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QBrush \
 		window.h \
 		debug/moc_predefs.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.9.1\5.9.1\mingw53_32\bin\moc.exe $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/mskyo/source/repos/2dPaintingQt -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward window.h -o debug\moc_window.cpp
+	C:\Qt\Qt5.9.1\5.9.1\mingw53_32\bin\moc.exe $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/User/source/repos/2dPaintingQt -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward window.h -o debug\moc_window.cpp
 
 debug/moc_pbsetup.cpp: dbg.h \
 		widget.h \
@@ -711,7 +711,7 @@ debug/moc_pbsetup.cpp: dbg.h \
 		pbsetup.h \
 		debug/moc_predefs.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.9.1\5.9.1\mingw53_32\bin\moc.exe $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/mskyo/source/repos/2dPaintingQt -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward pbsetup.h -o debug\moc_pbsetup.cpp
+	C:\Qt\Qt5.9.1\5.9.1\mingw53_32\bin\moc.exe $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/User/source/repos/2dPaintingQt -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward pbsetup.h -o debug\moc_pbsetup.cpp
 
 debug/moc_appset.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qdialog.h \
@@ -887,7 +887,7 @@ debug/moc_appset.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog \
 		appset.h \
 		debug/moc_predefs.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.9.1\5.9.1\mingw53_32\bin\moc.exe $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/mskyo/source/repos/2dPaintingQt -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward appset.h -o debug\moc_appset.cpp
+	C:\Qt\Qt5.9.1\5.9.1\mingw53_32\bin\moc.exe $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/User/source/repos/2dPaintingQt -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward appset.h -o debug\moc_appset.cpp
 
 debug/moc_admin.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qdialog.h \
@@ -994,7 +994,7 @@ debug/moc_admin.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog \
 		admin.h \
 		debug/moc_predefs.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.9.1\5.9.1\mingw53_32\bin\moc.exe $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/mskyo/source/repos/2dPaintingQt -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward admin.h -o debug\moc_admin.cpp
+	C:\Qt\Qt5.9.1\5.9.1\mingw53_32\bin\moc.exe $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/User/source/repos/2dPaintingQt -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward admin.h -o debug\moc_admin.cpp
 
 debug/moc_wappsett.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qdialog.h \
@@ -1170,7 +1170,7 @@ debug/moc_wappsett.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog
 		wappsett.h \
 		debug/moc_predefs.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.9.1\5.9.1\mingw53_32\bin\moc.exe $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/mskyo/source/repos/2dPaintingQt -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward wappsett.h -o debug\moc_wappsett.cpp
+	C:\Qt\Qt5.9.1\5.9.1\mingw53_32\bin\moc.exe $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/User/source/repos/2dPaintingQt -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward wappsett.h -o debug\moc_wappsett.cpp
 
 debug/moc_wabout.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qdialog.h \
@@ -1276,7 +1276,7 @@ debug/moc_wabout.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog \
 		wabout.h \
 		debug/moc_predefs.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.9.1\5.9.1\mingw53_32\bin\moc.exe $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/mskyo/source/repos/2dPaintingQt -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward wabout.h -o debug\moc_wabout.cpp
+	C:\Qt\Qt5.9.1\5.9.1\mingw53_32\bin\moc.exe $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/User/source/repos/2dPaintingQt -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward wabout.h -o debug\moc_wabout.cpp
 
 debug/moc_wlog.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qdialog.h \
@@ -1402,7 +1402,7 @@ debug/moc_wlog.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog \
 		wlog.h \
 		debug/moc_predefs.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.9.1\5.9.1\mingw53_32\bin\moc.exe $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/mskyo/source/repos/2dPaintingQt -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward wlog.h -o debug\moc_wlog.cpp
+	C:\Qt\Qt5.9.1\5.9.1\mingw53_32\bin\moc.exe $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/User/source/repos/2dPaintingQt -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward wlog.h -o debug\moc_wlog.cpp
 
 debug/moc_processing.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qdialog.h \
@@ -1508,7 +1508,7 @@ debug/moc_processing.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDial
 		processing.h \
 		debug/moc_predefs.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.9.1\5.9.1\mingw53_32\bin\moc.exe $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/mskyo/source/repos/2dPaintingQt -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward processing.h -o debug\moc_processing.cpp
+	C:\Qt\Qt5.9.1\5.9.1\mingw53_32\bin\moc.exe $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/User/source/repos/2dPaintingQt -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward processing.h -o debug\moc_processing.cpp
 
 debug/moc_wwarning.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qdialog.h \
@@ -1614,7 +1614,7 @@ debug/moc_wwarning.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog
 		wwarning.h \
 		debug/moc_predefs.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.9.1\5.9.1\mingw53_32\bin\moc.exe $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/mskyo/source/repos/2dPaintingQt -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward wwarning.h -o debug\moc_wwarning.cpp
+	C:\Qt\Qt5.9.1\5.9.1\mingw53_32\bin\moc.exe $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/User/source/repos/2dPaintingQt -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward wwarning.h -o debug\moc_wwarning.cpp
 
 debug/moc_wconfirm.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qdialog.h \
@@ -1720,7 +1720,7 @@ debug/moc_wconfirm.cpp: C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QDialog
 		wconfirm.h \
 		debug/moc_predefs.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.9.1\5.9.1\mingw53_32\bin\moc.exe $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/mskyo/source/repos/2dPaintingQt -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward wconfirm.h -o debug\moc_wconfirm.cpp
+	C:\Qt\Qt5.9.1\5.9.1\mingw53_32\bin\moc.exe $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/User/source/repos/2dPaintingQt -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.9.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward wconfirm.h -o debug\moc_wconfirm.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -3105,7 +3105,50 @@ debug/admin.o: admin.cpp admin.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qabstractbutton.h \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QSpacerItem \
 		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QWidget \
-		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QFont
+		window.h \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QBrush \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QFont \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QPen \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QList \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QDebug \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QXmlStreamWriter \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/qxmlstream.h \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QXmlStreamReader \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QXmlStreamAttribute \
+		widget.h \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QPainter \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/qpainter.h \
+		pbsetup.h \
+		dbg.h \
+		vismo.h \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QPaintEvent \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QDateTime \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/qdatetime.h \
+		saver.h \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QString \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtGui/QColor \
+		colors.h \
+		commandtypes.h \
+		relaystatus.h \
+		processing.h \
+		recievertypes.h \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/QSerialPort \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/qserialport.h \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtSerialPort/qserialportglobal.h \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtCore/qbasictimer.h \
+		wabout.h \
+		appset.h \
+		cserialport.h \
+		response.h \
+		wlog.h \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/QTableWidget \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qtablewidget.h \
+		C:/Qt/Qt5.9.1/5.9.1/mingw53_32/include/QtWidgets/qtableview.h \
+		wappsett.h \
+		wwarning.h \
+		wconfirm.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\admin.o admin.cpp
 
 debug/cserialport.o: cserialport.cpp cserialport.h \

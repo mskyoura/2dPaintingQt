@@ -66,9 +66,6 @@ private:
     QSerialPort serialPort;
     QDateTime lastSendTime;
     int lastLatencyMs = -1;
-    
-    // For legacy group commands: remember last write command before STATUS
-    CmdTypes lastWriteCommand = _UNKNOWN;
 
     static QString CRLF,
                    LFCR;

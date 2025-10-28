@@ -291,6 +291,21 @@ CmdTypes Saver::getLastCommand() const
     return lastCommand;
 }
 
+void Saver::setLastWriteCommand(CmdTypes cmdType)
+{
+    lastWriteCommand = cmdType;
+}
+
+CmdTypes Saver::getLastWriteCommand() const
+{
+    return lastWriteCommand;
+}
+
+bool Saver::IsLastCommandWrite() const
+{
+    return (lastWriteCommand == _RELAY1ON || lastWriteCommand == _RELAY1OFF || lastWriteCommand == _RELAY2ON);
+}
+
 void Saver::setStatusNI(){
     rLastGoodAnswerTime = noTime();
     lastRSTatus = UNKNOWN;
@@ -302,6 +317,7 @@ void Saver::setStatusNI(){
     rCmdNumReq = -1;
     rCmdNumRsp = -1;
     lastCommand = _STATUS; // По умолчанию
+    lastWriteCommand = _UNKNOWN; // По умолчанию
 
     u       = "---";
     uClr    = clGray;

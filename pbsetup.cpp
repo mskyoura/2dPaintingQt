@@ -442,7 +442,8 @@ CmdTypes PBsetup::relayStatusToCmdType(RelayStatus status) const
 }
 
 void PBsetup::scheduleStatusChanges(Saver& donor, CmdTypes lastWriteCmd) {
-    if (lastWriteCmd != _RELAY1ON && lastWriteCmd != _RELAY2ON) return;
+    // Проверяем, была ли последняя команда командой записи
+    if (!donor.IsLastCommandWrite()) return;
 
     QString deviceId = donor._ID();
     if (deviceId.isEmpty()) return;
@@ -668,6 +669,7 @@ void PBsetup::processDeviceSlots(QSerialPort& serialPort, CmdTypes cmdType, int 
             Saver* donor = findDonorByDeviceId(id);
             if (donor) {
                 donor->setHasLastOperationGoodAnswer(false);
+                donor->setLastWriteCommand(_UNKNOWN);
             }
     SResponse sr;
             pWin->Usb->parseAndLogResponse("", sr, 0);
@@ -868,6 +870,7 @@ void PBsetup::resetExecutionStatusForActivePBs(const QList<int>& donorsNum)
         if (!donor) continue;
         if (donor->_ID().isEmpty()) continue;
         donor->setHasLastOperationGoodAnswer(false);
+        donor->setLastWriteCommand(_UNKNOWN);
         donor->CmdNumRsp(-1);
         if (pWin && pWin->Usb) {
             SResponse sr;
@@ -883,6 +886,7 @@ void PBsetup::resetExecutionStatusForIds(const QList<QString>& activeIds)
         Saver* donor = findDonorByDeviceId(id);
         if (!donor) continue;
         donor->setHasLastOperationGoodAnswer(false);
+        donor->setLastWriteCommand(_UNKNOWN);
         donor->CmdNumRsp(-1);
         if (pWin && pWin->Usb) {
             SResponse sr;
@@ -904,6 +908,8 @@ bool PBsetup::sendSingleCommand(QSerialPort& serialPort, int donorVmIndex, CmdTy
         donor->setHasLastOperationGoodAnswer(false);
         donor->CmdNumRsp(-1);
         donor->CmdNumReq(donor->getNext0_255(donor->CmdNumReq()));
+        // Устанавливаем lastWriteCommand для команд записи
+        donor->setLastWriteCommand(cmdType);
     }
 
     auto params = prepareSingleCommandParams(donor);
@@ -925,6 +931,18 @@ bool PBsetup::sendSingleCommand(QSerialPort& serialPort, int donorVmIndex, CmdTy
     QByteArray writeData = frameCmd.toLatin1();
     lastSendTime = QDateTime::currentDateTime();
     qint64 bytesWritten = serialPort.write(writeData);
+    
+    // Log successful command sending for debug mode
+    if (bytesWritten != -1 && pWin && pWin->wAppsettings && pWin->wAppsettings->getIsDebug()) {
+        QString methodName = pWin->cmdFullName(cmdType, SINGLE);
+        QString deviceInfo = QString("устройство %1 (%2)").arg(donor->_ID()).arg(pWin->getPBdescription(donorVmIndex));
+        QString logMessage = QString("Метод %1 выполнен успешно для %2").arg(methodName).arg(deviceInfo);
+        
+        if (pWin->wLogtable) {
+            pWin->SaveToLog("", logMessage);
+        }
+    }
+    
     return (bytesWritten != -1);
 }
 
@@ -1029,6 +1047,14 @@ bool PBsetup::readSingleResponse(QSerialPort& serialPort, CmdTypes cmdType, Save
     }
 
     QString response = readAllWithTimeout(serialPort, answerWaitMs, contCurrDev);
+    if (pWin && pWin->wAppsettings && pWin->wAppsettings->getIsDebug()) {
+        QString methodName = "readAllWithTimeout";
+        QString logMessage = QString("Метод %1 выполнен успешно").arg(methodName);
+
+        if (pWin->wLogtable) {
+            pWin->SaveToLog("", logMessage);
+        }
+    }
 
     if (!contCurrDev) {
         return false;
@@ -1053,10 +1079,12 @@ bool PBsetup::readSingleResponse(QSerialPort& serialPort, CmdTypes cmdType, Save
                 donor.setLastGoodAnswerTime(now);
                 donor.setParams(sr.Input, sr.U, rStatus);
                 // Use overload that schedules two-stage transition for RELAY2ON
-                // For legacy commands, use lastWriteCommand instead of donor.getLastCommand()
-                CmdTypes cmdToSchedule = (lastWriteCommand != _UNKNOWN) ? lastWriteCommand : donor.getLastCommand();
+                // Use donor's lastWriteCommand for timer scheduling
+                CmdTypes cmdToSchedule = donor.getLastWriteCommand();
                 scheduleStatusChanges(donor, cmdToSchedule);
                 donor.setLastCommand(_STATUS);
+                // Сбрасываем lastWriteCommand при успешном STATUS
+                donor.setLastWriteCommand(_STATUS);
                 // Убрано отдельное доп. логирование времени — теперь добавляется в Параметры в logResponse
                 contCurrDev = false;
             } else if (ParsingCode >= 0) {
@@ -1088,6 +1116,8 @@ bool PBsetup::readSingleResponse(QSerialPort& serialPort, CmdTypes cmdType, Save
             pWin->Usb->parseAndLogResponse("", sr, tryNum);
         }
         donor.setLastCommand(_UNKNOWN);
+        // Сбрасываем lastWriteCommand при неуспешном ответе
+        donor.setLastWriteCommand(_UNKNOWN);
         // Сброс статуса выполнения и счётчиков по старой логике
         donor.setHasLastOperationGoodAnswer(false);
         donor.CmdNumRsp(-1);
@@ -1310,6 +1340,7 @@ void PBsetup::executeGroupCommand(const QList<int>& donorsNum, CmdTypes cmdType)
             Saver* donor = findDonorByDeviceId(id);
             if (donor) {
                 donor->setHasLastOperationGoodAnswer(false);
+                donor->setLastWriteCommand(_UNKNOWN);
                 // Collect vm index for MULTIPLE _STATUS if feature flag enabled
                 for (int i = 0; i < MAX_VM_DEVICES && i < (pWin ? pWin->vm.size() : 0); ++i) {
                     Saver* d = donorByVmIndexPtr(i);
@@ -1353,8 +1384,13 @@ void PBsetup::executeLegacyGroupCommand(const QList<int>& donorsNum, CmdTypes cm
     // - Остальные: стандартная групповая логика
 
     if (cmdType == _RELAY1ON || cmdType == _RELAY1OFF) {
-        // Запоминаем команду записи для последующего планирования таймеров
-        lastWriteCommand = cmdType;
+        // Устанавливаем lastWriteCommand для всех активных устройств
+        for (int vmIndex : donorsNum) {
+            Saver* donor = donorByVmIndexPtr(vmIndex);
+            if (donor && !donor->_ID().isEmpty()) {
+                donor->setLastWriteCommand(cmdType);
+            }
+        }
         
         // Групповая legasy команда без ожидания подтверждений + внутренняя задержка реализована внутри
         sendLegacyGroupCommand(donorsNum, cmdType);
@@ -1366,21 +1402,79 @@ void PBsetup::executeLegacyGroupCommand(const QList<int>& donorsNum, CmdTypes cm
     }
 
     if (cmdType == _RELAY2ON) {
-        // Запоминаем команду записи для последующего планирования таймеров
-        lastWriteCommand = cmdType;
+        // Устанавливаем lastWriteCommand для всех активных устройств
+        for (int vmIndex : donorsNum) {
+            Saver* donor = donorByVmIndexPtr(vmIndex);
+            if (donor && !donor->_ID().isEmpty()) {
+                donor->setLastWriteCommand(cmdType);
+            }
+        }
         
-        // Сначала индивидуально отправляем RELAY2ON всем из группы
-        executeMultipleCommand(donorsNum, _RELAY2ON);
-
-        // Пауза между ГК и ПС (используем gt.gTAfterCmd_ms/_gTBtwGrInd)
-        GroupTimings gt = loadGroupTimings();
-        int dummyPassed = 0;
-        int totalMs = pWin->Usb ? pWin->Usb->_gTBtwGrInd() : gt.gTAfterCmd_ms;
-        waitWithProgress(totalMs, dummyPassed, totalMs, QString("Ожидание между групповой и индивидуальной командами (%1 мс)...").arg(totalMs));
-
-        // Очистка буфера и чтение статусов
-        if (serialPort.isOpen()) { serialPort.clear(); serialPort.flush(); }
-        executeMultipleCommand(donorsNum, _STATUS);
+        // Старый алгоритм для _RELAY2ON: индивидуальная фаза для каждого устройства
+        // Пропускаем групповую фазу, выполняем ПК+ПС для каждого устройства последовательно
+        IndividualTimings it = loadIndividualTimings();
+        
+        for (int devNum = 0; devNum < donorsNum.size(); ++devNum) {
+            int vmIndex = donorsNum[devNum];
+            Saver* donor = donorByVmIndexPtr(vmIndex);
+            if (!donor || donor->_ID().isEmpty()) continue;
+            
+            // Проверка готовности устройства
+            if (!validateRelay2Command(_RELAY2ON, *donor)) continue;
+            
+            // 3.2. Цикл попыток ПК для устройства
+            bool pkSuccess = false;
+            for (int tryNum = 0; tryNum < it.iTries; ++tryNum) {
+                if (tryNum > 0) {
+                    // Ожидать iTBtwRepeats мс между повторами
+                    int dummyPassed = 0;
+                    int totalMs = int(it.iTBtwRepeats);
+                    QString progressText = QString("Ожидание между повторами ПК (%1 мс)...").arg(totalMs);
+                    if (!waitWithProgress(totalMs, dummyPassed, totalMs, progressText)) {
+                        break; // Если отменено, прекращаем попытки
+                    }
+                }
+                
+                // Отправить команду ПК (Func 10) с номером gCmdNumber0_255 и параметрами T1, T2
+                if (!sendSingleCommand(serialPort, vmIndex, _RELAY2ON)) continue;
+                
+                // Ожидание ответа до iTAnswerWait мс
+                bool contCurrDev = true;
+                bool pkAttemptSucceeded = readSingleResponse(serialPort, _RELAY2ON, *donor, tryNum, it.iTAnswerWait, contCurrDev);
+                
+                if (pkAttemptSucceeded) {
+                    pkSuccess = true;
+                    break; // Выйти из цикла попыток для данного устройства
+                }
+            }
+            
+            // 3.3. После ПК — обязательное выполнение ПС (независимо от успеха ПК)
+            if (pkSuccess) {
+                // 3.4. Цикл попыток ПС для устройства
+                for (int tryNum = 0; tryNum < it.iTries; ++tryNum) {
+                    if (tryNum > 0) {
+                        // Ожидать iTBtwRepeats мс между повторами ПС
+                        int dummyPassed = 0;
+                        int totalMs = int(it.iTBtwRepeats);
+                        QString progressText = QString("Ожидание между повторами ПС (%1 мс)...").arg(totalMs);
+                        if (!waitWithProgress(totalMs, dummyPassed, totalMs, progressText)) {
+                            break; // Если отменено, прекращаем попытки
+                        }
+                    }
+                    
+                    // Отправить команду ПС (Func 04)
+                    if (!sendSingleCommand(serialPort, vmIndex, _STATUS)) continue;
+                    
+                    // Ожидание ответа до iTAnswerWait мс
+                    bool contCurrDev = true;
+                    bool psAttemptSucceeded = readSingleResponse(serialPort, _STATUS, *donor, tryNum, it.iTAnswerWait, contCurrDev);
+                    
+                    if (psAttemptSucceeded) {
+                        break; // При получении валидного ответа ПС — завершить для устройства
+                    }
+                }
+            }
+        }
         return;
     }
 }
@@ -1521,6 +1615,17 @@ void PBsetup::executeMultipleCommand(const QList<int>& donorsNum, CmdTypes cmdTy
         try {
             if (executeSingleCommandWithRetries(serialPort, vmIndex, cmdType, it, *donor)) {
                 // For write commands, follow up with status to confirm, already handled inside
+                
+                // Log successful execution for debug mode
+                if (pWin && pWin->wAppsettings && pWin->wAppsettings->getIsDebug()) {
+                    QString methodName = "executeSingleCommandWithRetries";
+                    QString deviceInfo = QString("устройство %1 (%2)").arg(donor->_ID()).arg(pWin->getPBdescription(vmIndex));
+                    QString logMessage = QString("Метод %1 выполнен успешно для %2").arg(methodName).arg(deviceInfo);
+                    
+                    if (pWin->wLogtable) {
+                        pWin->SaveToLog("", logMessage);
+                    }
+                }
             }
         } catch (...) {
             // Log exception and continue with next device
@@ -1539,11 +1644,6 @@ void PBsetup::executeMultipleCommand(const QList<int>& donorsNum, CmdTypes cmdTy
     // Ensure progress reaches 100% at the end of STATUS checks
     if (cmdType == _STATUS && wProcess) {
         wProcess->setProgress(100);
-    }
-    
-    // Reset lastWriteCommand after processing STATUS commands for legacy group commands
-    if (cmdType == _STATUS) {
-        lastWriteCommand = _UNKNOWN;
     }
 }
 
@@ -1616,7 +1716,15 @@ bool PBsetup::executeSingleCommandWithRetries(QSerialPort& serialPort, int vmInd
         if (!sendSingleCommand(serialPort, vmIndex, cmdType)) {
             continue;
         }
+        if (pWin && pWin->wAppsettings && pWin->wAppsettings->getIsDebug()) {
+            QString methodName = "sendSingleCommand";
+            QString deviceInfo = QString("устройство %1 (%2)").arg(donor._ID()).arg(pWin->getPBdescription(vmIndex));
+            QString logMessage = QString("Метод %1 выполнен успешно для %2").arg(methodName).arg(deviceInfo);
 
+            if (pWin->wLogtable) {
+                pWin->SaveToLog("", logMessage);
+            }
+        }
         bool contCurrDev = true;
         // Validate iTAnswerWait to prevent unreasonable values
         int answerWaitMs = it.iTAnswerWait;
@@ -1624,13 +1732,35 @@ bool PBsetup::executeSingleCommandWithRetries(QSerialPort& serialPort, int vmInd
             answerWaitMs = 500; // Default fallback
         }
         bool anyAttemptSucceeded = readSingleResponse(serialPort, cmdType, donor, tryNum, answerWaitMs, contCurrDev);
-        if (anyAttemptSucceeded && cmdType == _STATUS)
+        if (anyAttemptSucceeded && cmdType == _STATUS) {
+            // Log successful execution for debug mode
+            if (pWin && pWin->wAppsettings && pWin->wAppsettings->getIsDebug()) {
+                QString methodName = "readSingleResponse";
+                QString deviceInfo = QString("устройство %1 (%2)").arg(donor._ID()).arg(pWin->getPBdescription(vmIndex));
+                QString logMessage = QString("Метод %1 выполнен успешно для %2").arg(methodName).arg(deviceInfo);
+                
+                if (pWin->wLogtable) {
+                    pWin->SaveToLog("", logMessage);
+                }
+            }
             return true;
+        }
        else if (anyAttemptSucceeded)
             break;
     }
-    if (cmdType != _STATUS)
+    if (cmdType != _STATUS) {
+        // Log successful execution for debug mode before status check
+        if (pWin && pWin->wAppsettings && pWin->wAppsettings->getIsDebug()) {
+            QString methodName = pWin->cmdFullName(cmdType, SINGLE);
+            QString deviceInfo = QString("устройство %1 (%2)").arg(donor._ID()).arg(pWin->getPBdescription(vmIndex));
+            QString logMessage = QString("Метод %1 выполнен успешно для %2").arg(methodName).arg(deviceInfo);
+            
+            if (pWin->wLogtable) {
+                pWin->SaveToLog("", logMessage);
+            }
+        }
         return executeStatusCommandAfterSuccess(serialPort, vmIndex, it, donor);
+    }
     return false;
     } catch (...) {
         logException(QString("executeSingleCommandWithRetries: SIGILL or other exception caught"), nullptr);

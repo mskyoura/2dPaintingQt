@@ -83,7 +83,19 @@ wAppsett::wAppsett(QWidget *parent) :
 
 //    connect(ui->comboBox, SIGNAL(currentIndexChanged()), SLOT(comportChange()));
 
-    e8Accepted = 1;
+    // Инициализация всех флагов валидации
+    e1Accepted = true;
+    e2Accepted = true;
+    e3Accepted = true;
+    e4Accepted = true;
+    e5Accepted = true;
+    e6Accepted = true;
+    e7Accepted = true;
+    e8Accepted = true;
+    e9Accepted = true;
+    e10Accepted = true;
+    e12Accepted = true;
+    
     extraStatusAfterGroup = false;
     legacyGroupCommands = false;
     debugMode = false;
@@ -163,7 +175,7 @@ void wAppsett::setE(int _e1, int _e2, double _e3, int _e4, double _e5,
 
 
 void wAppsett::getE(int& _e1, int& _e2, double& _e3, int& _e4, double& _e5, int& _e6, int &_e7,
-                    int &_e8, int &_e9, int &_e10, double &_e11, int &_e12, QList <QString> &_names){
+                    int &_e8, int &_e9, int &_e10, int &_e12, QList <QString> &_names){
     _e1 = E1;
     _e2 = E2;
     _e3 = E3;
@@ -174,7 +186,6 @@ void wAppsett::getE(int& _e1, int& _e2, double& _e3, int& _e4, double& _e5, int&
     _e8 = E8;
     _e9 = E9;
     _e10 = E10;
-    _e11 = E11;
     _e12 = E12;
     // send timeout is not edited in UI anymore
 
@@ -211,9 +222,29 @@ wAppsett::~wAppsett()
 
 void wAppsett::accept(){
     if (e1Accepted && e2Accepted && e3Accepted && e4Accepted && e5Accepted && e6Accepted && e7Accepted
-                   && e8Accepted && e9Accepted && e10Accepted && e11Accepted) {
+                   && e8Accepted && e9Accepted && e10Accepted && e12Accepted) {
         pWin->wAboutprog->setAboutText(ui->textEdit->toPlainText());
         QDialog::accept();
+    } else {
+        // Отладочная информация о том, какие флаги блокируют сохранение настроек (только в debug режиме)
+        if (pWin && pWin->wAppsettings && pWin->wAppsettings->getIsDebug()) {
+            QString debugInfo = QString("wAppsett::accept() - блокировка сохранения настроек. Состояние флагов:\n");
+            debugInfo += QString("e1Accepted: %1 (E1=%2)\n").arg(e1Accepted ? "true" : "false").arg(E1);
+            debugInfo += QString("e2Accepted: %1 (E2=%2)\n").arg(e2Accepted ? "true" : "false").arg(E2);
+            debugInfo += QString("e3Accepted: %1 (E3=%2)\n").arg(e3Accepted ? "true" : "false").arg(E3);
+            debugInfo += QString("e4Accepted: %1 (E4=%2)\n").arg(e4Accepted ? "true" : "false").arg(E4);
+            debugInfo += QString("e5Accepted: %1 (E5=%2)\n").arg(e5Accepted ? "true" : "false").arg(E5);
+            debugInfo += QString("e6Accepted: %1 (E6=%2)\n").arg(e6Accepted ? "true" : "false").arg(E6);
+            debugInfo += QString("e7Accepted: %1 (E7=%2)\n").arg(e7Accepted ? "true" : "false").arg(E7);
+            debugInfo += QString("e8Accepted: %1 (E8=%2)\n").arg(e8Accepted ? "true" : "false").arg(E8);
+            debugInfo += QString("e9Accepted: %1 (E9=%2)\n").arg(e9Accepted ? "true" : "false").arg(E9);
+            debugInfo += QString("e10Accepted: %1 (E10=%2)\n").arg(e10Accepted ? "true" : "false").arg(E10);
+            debugInfo += QString("e12Accepted: %1 (E12=%2)\n").arg(e12Accepted ? "true" : "false").arg(E12);
+            
+            if (pWin->warn) {
+                pWin->warn->showWarning(debugInfo);
+            }
+        }
     }
 }
 
@@ -810,7 +841,6 @@ void wAppsett::applyLegacyBlockState()
     // - rTimeSlot (ui->e9)
     // - rSlotAddDelay (ui->e12)
     // - T1 (ui->e10)
-    // - T2 (ui->e11)
     bool block = legacyGroupCommands;
 
     if (ui->extraStatusAfterGroupCheck)

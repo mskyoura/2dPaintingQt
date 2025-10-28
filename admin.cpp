@@ -1,5 +1,6 @@
 #include "admin.h"
 #include "ui_admin.h"
+#include "window.h"
 #include <QFont>
 
 Admin::Admin(QWidget *parent, QRect _desktop) :
@@ -63,7 +64,17 @@ void Admin::accept() {
     } else if (mode == 10) {
 
         if (ui->lineEdit->text() == "") {
-
+            // Отладочная информация для пустого пароля (только в debug режиме)
+            Window* pWin = qobject_cast<Window*>(Parent);
+            if (pWin && pWin->wAppsettings && pWin->wAppsettings->getIsDebug()) {
+                QString debugInfo = QString("Admin::accept() - режим %1: пустой пароль\n").arg(mode);
+                debugInfo += QString("Текущий режим: %1\n").arg(mode);
+                debugInfo += QString("Текст в поле: '%1'\n").arg(ui->lineEdit->text());
+                
+                if (pWin->warn) {
+                    pWin->warn->showWarning(debugInfo);
+                }
+            }
         } else {
             mode = 11;
             launch_pwd1 = hash(ui->lineEdit->text());
@@ -91,6 +102,19 @@ void Admin::accept() {
             mode = 20;
         }
 
+    } else {
+        // Отладочная информация для неизвестного режима (только в debug режиме)
+        Window* pWin = qobject_cast<Window*>(Parent);
+        if (pWin && pWin->wAppsettings && pWin->wAppsettings->getIsDebug()) {
+            QString debugInfo = QString("Admin::accept() - неизвестный режим: %1\n").arg(mode);
+            debugInfo += QString("Текст в поле: '%1'\n").arg(ui->lineEdit->text());
+            debugInfo += QString("launch_pwd1: %1\n").arg(launch_pwd1);
+            debugInfo += QString("launch_pwd2: %1\n").arg(launch_pwd2);
+            
+            if (pWin->warn) {
+                pWin->warn->showWarning(debugInfo);
+            }
+        }
     }
 }
 
